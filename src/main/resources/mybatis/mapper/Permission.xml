@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hao.movieshareback.dao.PermissionMapper">
+    <!--
+    `permission_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `permission_name` VARCHAR(100) NOT NULL COMMENT '名字',
+    `permission_des` VARCHAR(200) NOT NULL COMMENT '描述',
+    `permission_action` VARCHAR(200) NOT NULL COMMENT '权限实体',
+    `created_time` DATETIME    COMMENT '创建时间' ,
+    `created_by` VARCHAR(32)    COMMENT '创建时间',
+    `updated_time` DATETIME    COMMENT '更新时间' ,
+    `updated_by` VARCHAR(32)    COMMENT '更新人' ,
+    `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
+    PRIMARY KEY (permission_id),
+    INDEX (is_delete)
+    -->
+    <resultMap id="PermissionResultMap" type="com.hao.movieshareback.model.Permission">
+        <id property="permissionId" column="permission_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="permissionName" column="permission_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="permissionDes" column="permission_des" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="permissionAction" column="permission_action" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="createdTime" column="created_time" javaType="java.util.Date" jdbcType="DATE"/>
+        <result property="createdBy" column="created_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="updatedTime" column="updated_time" javaType="java.util.Date" jdbcType="DATE"/>
+        <result property="updatedBy" column="updated_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="isDelete" column="is_delete" javaType="java.lang.Boolean" jdbcType="BIT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        permission.permission_id,permission.permission_name,permission.permission_des,permission.permission_action,
+        permission.created_time,permission.created_by,permission.updated_time,permission.updated_by,permission.is_delete
+    </sql>
+
+    <insert id="save" parameterType="com.hao.movieshareback.model.Permission" >
+        insert into permission
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="permissionId != null" >
+                permission_id,
+            </if>
+            <if test="permissionName != null" >
+                permission_name,
+            </if>
+            <if test="permissionDes != null" >
+                permission_des,
+            </if>
+            <if test="permissionAction != null" >
+                permission_action,
+            </if>
+            <if test="createdTime != null" >
+                created_time,
+            </if>
+            <if test="createdBy!=null">
+                created_by,
+            </if>
+            <if test="updatedTime!=null">
+                updated_time,
+            </if>
+            <if test="updatedBy!=null">
+                updated_by,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="permissionId != null" >
+                #{permissionId},
+            </if>
+            <if test="permissionName != null" >
+                #{permissionName},
+            </if>
+            <if test="permissionDes != null" >
+                #{permissionDes},
+            </if>
+            <if test="permissionAction != null" >
+                #{permissionAction},
+            </if>
+            <if test="createdTime != null" >
+                #{createdTime},
+            </if>
+            <if test="createdBy!=null">
+                #{createdBy},
+            </if>
+            <if test="updatedTime!=null">
+                #{updatedTime},
+            </if>
+            <if test="updatedBy!=null">
+                #{updatedBy},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="getPermissionsByRoleId" resultMap="PermissionResultMap">
+        select <include refid="Base_Column_List"></include>
+        from permission join role_permission join role
+        on role.role_id = #{roleId} and role.role_id=role_permission.role_id and permission.permission_id = role_permission.permission_id;
+    </select>
+</mapper>

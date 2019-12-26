@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hao.movieshareback.dao.UserMapper">
+    <resultMap id="UserResultMap" type="com.hao.movieshareback.model.User">
+        <id property="userId" column="user_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="userName" column="user_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="password" column="password" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="salt" column="salt" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="mail" column="mail" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="introduce" column="introduce" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="avatarPicId" column="avatar_pic_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="hasActive" column="has_active" javaType="java.lang.Boolean" jdbcType="BIT"/>
+        <result property="lastPasswordResetDate" column="last_password_reset_date" javaType="java.util.Date" jdbcType="DATE"/>
+        <result property="createdTime" column="created_time" javaType="java.util.Date" jdbcType="DATE"/>
+        <result property="createdBy" column="created_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="updatedTime" column="updated_time" javaType="java.util.Date" jdbcType="DATE"/>
+        <result property="updatedBy" column="updated_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="isDelete" column="is_delete" javaType="java.lang.Boolean" jdbcType="BIT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        user_id,user_name,password,salt,mail,introduce,avatar_pic_id,last_password_reset_date,has_active,created_time,create_by,updated_time,updated_by,is_delete
+    </sql>
+
+    <insert id="save" parameterType="com.hao.movieshareback.model.User" >
+        insert into user
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="userName != null" >
+                user_name,
+            </if>
+            <if test="password != null" >
+                password,
+            </if>
+            <if test="salt != null" >
+                salt,
+            </if>
+            <if test="mail != null" >
+                mail,
+            </if>
+            <if test="introduce != null" >
+                introduce,
+            </if>
+            <if test="avatarPicId != null" >
+                avatar_pic_id,
+            </if>
+            <if test="lastPasswordResetDate!=null">
+                last_password_reset_date,
+            </if>
+            <if test="createdTime != null" >
+                created_time,
+            </if>
+            <if test="createdBy!=null">
+                created_by,
+            </if>
+            <if test="updatedTime!=null">
+                updated_time,
+            </if>
+            <if test="updatedBy!=null">
+                updated_by,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="userName != null" >
+                #{userName},
+            </if>
+            <if test="password != null" >
+                #{password},
+            </if>
+            <if test="salt != null" >
+                #{salt},
+            </if>
+            <if test="mail != null" >
+                #{mail},
+            </if>
+            <if test="introduce != null" >
+                #{introduce},
+            </if>
+            <if test="avatarPicId != null" >
+                #{avatarPicId},
+            </if>
+            <if test="lastPasswordResetDate != null">
+                #{lastPasswordResetDate},
+            </if>
+            <if test="createdTime != null" >
+                #{createdTime},
+            </if>
+            <if test="createdBy!=null">
+                #{createdBy},
+            </if>
+            <if test="updatedTime!=null">
+                #{updatedTime},
+            </if>
+            <if test="updatedBy!=null">
+                #{updatedBy},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="getUserByUserName" resultMap="UserResultMap" parameterType="java.lang.String">
+        SELECT <include refid="Base_Column_List"></include>
+        from user where user.user_name=#{userName}
+    </select>
+</mapper>
