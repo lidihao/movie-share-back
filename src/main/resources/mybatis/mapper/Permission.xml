@@ -90,6 +90,8 @@
     <select id="getPermissionsByRoleId" resultMap="PermissionResultMap">
         select <include refid="Base_Column_List"></include>
         from permission join role_permission join role
-        on role.role_id = #{roleId} and role.role_id=role_permission.role_id and permission.permission_id = role_permission.permission_id;
+        on role.role_id = #{roleId} and role.role_id=role_permission.role_id
+           and permission.permission_id = role_permission.permission_id
+           and role.is_delete=0 and role_permission.is_delete=0 and permission.is_delete=0;
     </select>
 </mapper>

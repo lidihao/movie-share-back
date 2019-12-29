@@ -1,4 +1,4 @@
-package com.hao.movieshareback.utils.auth;
+package com.hao.movieshareback.config.auth;
 
 import com.hao.movieshareback.vo.auth.JwtUser;
 import io.jsonwebtoken.*;
@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Component
-public class JwtTokenUtil implements Serializable {
+public class JwtTokenGenerator implements Serializable {
 
     private static final long serialVersionUID = -3301605591108950415L;
     private Clock clock = DefaultClock.INSTANCE;
@@ -107,10 +107,7 @@ public class JwtTokenUtil implements Serializable {
 
     public String getToken(HttpServletRequest request){
         final String requestHeader = request.getHeader(tokenHeader);
-        if (requestHeader != null && requestHeader.startsWith("Bearer ")) {
-            return requestHeader.substring(7);
-        }
-        return null;
+        return requestHeader;
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {

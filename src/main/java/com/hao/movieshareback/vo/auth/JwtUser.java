@@ -1,6 +1,5 @@
 package com.hao.movieshareback.vo.auth;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -10,33 +9,32 @@ import java.util.Date;
 
 public class JwtUser implements UserDetails {
 
-    @JsonIgnore
     private final Integer userId;
 
-    private final String username;
+    private final String userName;
 
-    @JsonIgnore
+    private final String salt;
+
     private final String password;
 
     private final String avatarUrl;
 
     private final String email;
 
-    @JsonIgnore
     private final Collection<GrantedAuthority> authorities;
 
     private boolean hasActive;
 
-    @JsonIgnore
     private final Date lastPasswordResetDate;
 
     private Date createTime;
 
-    public JwtUser(Integer userId, String username, String password, String avatarUrl,
-                   String email, Collection<GrantedAuthority> authorities,
+    public JwtUser(Integer userId, String username, String salt, String password,
+                   String avatarUrl, String email, Collection<GrantedAuthority> authorities,
                    boolean hasActive, Date lastPasswordResetDate, Date createTime) {
         this.userId = userId;
-        this.username = username;
+        this.userName = username;
+        this.salt = salt;
         this.password = password;
         this.avatarUrl = avatarUrl;
         this.email = email;
@@ -58,7 +56,7 @@ public class JwtUser implements UserDetails {
 
     @Override
     public String getUsername() {
-        return password;
+        return userName;
     }
 
     @Override
@@ -83,6 +81,10 @@ public class JwtUser implements UserDetails {
 
     public Integer getUserId() {
         return userId;
+    }
+
+    public String getSalt() {
+        return salt;
     }
 
     public String getAvatarUrl() {

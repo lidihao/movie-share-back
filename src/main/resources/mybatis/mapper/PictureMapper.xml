@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hao.movieshareback.dao.PictureMapper">
+    <!--
+    `picture_id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+ *     `filename` varchar(255) NOT NULL COMMENT '图片名称',
+ *     `height` bigint NOT NULL COMMENT '图片高度',
+ *     `size` bigint NOT NULL COMMENT '图片大小',
+ *     `url` varchar(255) NOT NULL COMMENT '图片地址',
+ *     `width` bigint NOT NULL COMMENT '图片宽度',
+ *     `created_time` DATETIME    COMMENT '创建时间' ,
+ *     `created_by` VARCHAR(32)    COMMENT '创建时间',
+ *     `updated_time` DATETIME    COMMENT '更新时间' ,
+ *     `updated_by` VARCHAR(32)    COMMENT '更新人' ,
+ *     `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
+ *     PRIMARY KEY (`picture_id`),
+ *     INDEX (is_delete)
+    -->
+    <resultMap id="PictureResultMap" type="com.hao.movieshareback.model.Picture">
+        <id property="pictureId" column="picture_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="filename" column="filename" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="height" column="height" javaType="java.lang.Long" jdbcType="BIGINT"/>
+        <result property="size" column="size" javaType="java.lang.Long" jdbcType="BIGINT"/>
+        <result property="url" column="url" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="width" column="width" javaType="java.lang.Long" jdbcType="BIGINT"/>
+        <result property="createdTime" column="created_time" javaType="java.util.Date" jdbcType="DATE"/>
+        <result property="createdBy" column="created_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="updatedTime" column="updated_time" javaType="java.util.Date" jdbcType="DATE"/>
+        <result property="updatedBy" column="updated_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="isDelete" column="is_delete" javaType="java.lang.Boolean" jdbcType="BIT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        picture.picture_id,picture.filename,picture.height,picture.size,picture.url,picture.width,picture.created_time,
+        picture.created_by,picture.updated_time,picture.updated_by,is_delete
+    </sql>
+
+    <insert id="save" parameterType="com.hao.movieshareback.model.Picture" >
+        insert into picture
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="pictureId != null" >
+                picture_id,
+            </if>
+            <if test="filename != null" >
+                filename,
+            </if>
+            <if test="height != null" >
+                height,
+            </if>
+            <if test="size != null" >
+                size,
+            </if>
+            <if test="url != null">
+                url,
+            </if>
+            <if test="width!=null">
+                width,
+            </if>
+            <if test="createdTime != null" >
+                created_time,
+            </if>
+            <if test="createdBy!=null">
+                created_by,
+            </if>
+            <if test="updatedTime!=null">
+                updated_time,
+            </if>
+            <if test="updatedBy!=null">
+                updated_by,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="pictureId != null" >
+                #{pictureId},
+            </if>
+            <if test="filename != null" >
+                #{filename},
+            </if>
+            <if test="height != null" >
+                #{height},
+            </if>
+            <if test="size != null" >
+                #{size},
+            </if>
+            <if test="url != null" >
+                #{url},
+            </if>
+            <if test="width != null" >
+                #{width},
+            </if>
+            <if test="createdTime != null" >
+                #{createdTime},
+            </if>
+            <if test="createdBy!=null">
+                #{createdBy},
+            </if>
+            <if test="updatedTime!=null">
+                #{updatedTime},
+            </if>
+            <if test="updatedBy!=null">
+                #{updatedBy},
+            </if>
+        </trim>
+    </insert>
+    <select id="selectPictureById" resultMap="PictureResultMap">
+        select <include refid="Base_Column_List"></include>
+        from picture where picture.picture_id=#{pictureId}
+    </select>
+</mapper>

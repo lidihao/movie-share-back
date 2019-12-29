@@ -45,4 +45,10 @@ public interface IRedisService {
      * 清空缓存
      */
     void deleteAll();
+
+    void saveMailVadateToken(String key, Object val);
+
+    String getMailVadateToken(String key);
+
+    void validateCode(String value,String uuid);
 }

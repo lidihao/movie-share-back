@@ -1,8 +1,8 @@
 package com.hao.movieshareback.filter.auth;
 
-import com.hao.movieshareback.utils.auth.JwtTokenUtil;
+import com.hao.movieshareback.config.auth.JwtTokenGenerator;
+import com.hao.movieshareback.model.OnlineUser;
 import com.hao.movieshareback.vo.auth.JwtUser;
-import com.hao.movieshareback.vo.auth.OnlineUser;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,18 +31,18 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
     private String onlineKey;
 
     private final UserDetailsService userDetailsService;
-    private final JwtTokenUtil jwtTokenUtil;
+    private final JwtTokenGenerator jwtTokenGenerator;
     private final RedisTemplate redisTemplate;
 
-    public JwtAuthorizationTokenFilter(@Qualifier("jwtUserDetailsService") UserDetailsService userDetailsService, JwtTokenUtil jwtTokenUtil, RedisTemplate redisTemplate) {
+    public JwtAuthorizationTokenFilter(@Qualifier("jwtUserDetailsService") UserDetailsService userDetailsService, JwtTokenGenerator jwtTokenGenerator, RedisTemplate redisTemplate) {
         this.userDetailsService = userDetailsService;
-        this.jwtTokenUtil = jwtTokenUtil;
+        this.jwtTokenGenerator = jwtTokenGenerator;
         this.redisTemplate = redisTemplate;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-        String authToken = jwtTokenUtil.getToken(request);
+        String authToken = jwtTokenGenerator.getToken(request);
         OnlineUser onlineUser = null;
         try {
             onlineUser = (OnlineUser)redisTemplate.opsForValue().get(onlineKey + authToken);
@@ -55,7 +55,7 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
             JwtUser userDetails = (JwtUser)this.userDetailsService.loadUserByUsername(onlineUser.getUserName());
             // For simple validation it is completely sufficient to just check the token integrity. You don't have to call
             // the database compellingly. Again it's up to you ;)
-            if (jwtTokenUtil.validateToken(authToken, userDetails)) {
+            if (jwtTokenGenerator.validateToken(authToken, userDetails)) {
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);

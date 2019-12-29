@@ -31,11 +31,10 @@ class MovieShareBackApplicationTests {
     void test(){
         User user=new User();
         user.setUserName("李帝豪");
-        user.setAvatarUrl("1");
         user.setIntroduce("1");
-        user.setMail("1");
         user.setPassword("1");
         user.setSalt("1");
+        user.setEmail("19384@163.com");
         user.setCreatedBy("李帝豪");
         user.setCreatedTime(new Date());
         user.setUpdatedBy("李帝豪");

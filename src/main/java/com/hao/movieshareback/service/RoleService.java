@@ -16,4 +16,8 @@ public class RoleService {
     public List<Role> getRolesByUserName(String userName){
         return roleMapper.selectRolesByUserName(userName);
     }
+
+    public Role getRoleByRoleName(String roleName){
+        return roleMapper.selectRoleByRoleName(roleName);
+    }
 }

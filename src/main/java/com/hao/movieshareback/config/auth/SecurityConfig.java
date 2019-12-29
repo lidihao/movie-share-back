@@ -1,6 +1,7 @@
 package com.hao.movieshareback.config.auth;
 
 import com.hao.movieshareback.annotation.auth.AnonymousAccess;
+import com.hao.movieshareback.filter.RestFilter;
 import com.hao.movieshareback.filter.auth.JwtAuthorizationTokenFilter;
 import com.hao.movieshareback.security.JwtAuthenticationEntryPoint;
 import com.hao.movieshareback.service.auth.JwtUserDetailsService;
@@ -107,6 +108,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         HttpMethod.GET,
                         "/*.html",
                         "/**/*.html",
+                        "/**/*.png",
                         "/**/*.css",
                         "/**/*.js"
                 ).anonymous()
@@ -130,6 +132,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().headers().frameOptions().disable();
         httpSecurity
                 .addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
+        //这个拦截器是最先的拦截器，要不然还会出现拦截错误
+        httpSecurity.addFilterBefore(new RestFilter(),JwtAuthorizationTokenFilter.class);
     }
 }
 

@@ -7,12 +7,20 @@ public class User extends BaseModel {
     private String userName;
     private String password;
     private String salt;
-    private String mail;
+    private String email;
     private String introduce;
     private Integer avatarPicId;
+    private boolean hasActive;
     private Date lastPasswordResetDate;
 
     public User() {
+    }
+
+    public User(String userName, String password, String salt, String email) {
+        this.userName = userName;
+        this.password = password;
+        this.salt = salt;
+        this.email = email;
     }
 
     public Integer getUserId() {
@@ -47,16 +55,24 @@ public class User extends BaseModel {
         this.salt = salt;
     }
 
-    public String getMail() {
-        return mail;
+    public String getEmail() {
+        return email;
     }
 
-    public void setMail(String mail) {
-        this.mail = mail;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getIntroduce() {
         return introduce;
+    }
+
+    public boolean isHasActive() {
+        return hasActive;
+    }
+
+    public void setHasActive(boolean hasActive) {
+        this.hasActive = hasActive;
     }
 
     public void setIntroduce(String introduce) {
@@ -86,9 +102,10 @@ public class User extends BaseModel {
         sb.append(", userName='").append(userName).append('\'');
         sb.append(", password='").append(password).append('\'');
         sb.append(", salt='").append(salt).append('\'');
-        sb.append(", mail='").append(mail).append('\'');
+        sb.append(", email='").append(email).append('\'');
         sb.append(", introduce='").append(introduce).append('\'');
         sb.append(", avatarPicId=").append(avatarPicId);
+        sb.append(", hasActive=").append(hasActive);
         sb.append(", lastPasswordResetDate=").append(lastPasswordResetDate);
         sb.append('}');
         return sb.toString();

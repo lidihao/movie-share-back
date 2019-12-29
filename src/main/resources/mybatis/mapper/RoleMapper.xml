@@ -25,7 +25,7 @@
     </resultMap>
 
     <sql id="Base_Column_List" >
-        role.role_id,role.role_name,role.role_des,role.created_time,role.created_by,role.updated_time,role.updated_by,is_delete
+        role.role_id,role.role_name,role.role_des,role.created_time,role.created_by,role.updated_time,role.updated_by,role.is_delete
     </sql>
 
     <insert id="save" parameterType="com.hao.movieshareback.model.Role" >
@@ -81,6 +81,11 @@
     <select id="selectRolesByUserName" resultMap="RoleResultMap">
         select distinct <include refid="Base_Column_List"></include>
         from role join user_role join user
-        on role.role_id=user_role.role_id and user.user_id=user_role.user_id and user.user_name = #{userName}
+        on role.is_delete=0 and user_role.is_delete=0 and user.is_delete=0
+        and role.role_id=user_role.role_id and user.user_id=user_role.user_id and user.user_name = #{userName}
+    </select>
+    <select id="selectRoleByRoleName" resultMap="RoleResultMap">
+        select <include refid="Base_Column_List"></include>
+        from role where role.role_name=#{roleName} and role.is_delete=0
     </select>
 </mapper>

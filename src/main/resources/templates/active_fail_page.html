@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>激活失败</title>
+</head>
+<body>
+    <div><img src="http://localhost:8089/logo.png"></div>
+    <div>
+        <p>激活失败 <strong th:text="${errorMsg}"></strong></p>
+    </div>
+    <div>
+        <a th:href="@{http://localhost:8089/resendMail(userName=${userName})}">重发激活邮件</a>
+        <a th:href="@{http://localhost:8080}">前往注册</a>
+    </div>
+</body>
+</html>

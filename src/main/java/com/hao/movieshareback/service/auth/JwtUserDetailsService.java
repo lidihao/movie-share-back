@@ -1,8 +1,11 @@
 package com.hao.movieshareback.service.auth;
 
+import com.hao.movieshareback.dao.PictureMapper;
 import com.hao.movieshareback.model.Permission;
+import com.hao.movieshareback.model.Picture;
 import com.hao.movieshareback.model.User;
 import com.hao.movieshareback.service.PermissionService;
+import com.hao.movieshareback.service.PictureService;
 import com.hao.movieshareback.service.UserService;
 import com.hao.movieshareback.vo.auth.JwtUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +15,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service("jwtUserDetailsService")
+@Transactional(propagation = Propagation.SUPPORTS,readOnly = true,rollbackFor = Exception.class)
 public class JwtUserDetailsService implements UserDetailsService {
 
     @Autowired
@@ -24,6 +31,9 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     @Autowired
     private PermissionService permissionService;
+
+    @Autowired
+    private PictureService pictureService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -35,6 +45,10 @@ public class JwtUserDetailsService implements UserDetailsService {
         List<GrantedAuthority> grantedAuthorityList = permissionList.stream().
                 map(permission -> new SimpleGrantedAuthority(permission.getPermissionAction()))
                 .collect(Collectors.toList());
-        return null;
+        Picture avatarPic = pictureService.getPicById(user.getUserId());
+        return new JwtUser(user.getUserId(),user.getUserName(),user.getSalt(),user.getPassword(),
+                Optional.ofNullable(avatarPic).map(Picture::getUrl).orElse(""),user.getEmail()
+                ,grantedAuthorityList,user.isHasActive(),user.getLastPasswordResetDate(),user.getCreatedTime()
+        );
     }
 }

@@ -15,4 +15,10 @@ public interface UserMapper {
     int save (User user);
 
     User getUserByUserName(String userName);
+
+    int getCountByEmail(String email);
+
+    int getCountByUserName(String userName);
+
+    int activeUser(String userName);
 }

@@ -3,8 +3,8 @@ create table `user`(
     `user_name` VARCHAR(100) NOT NULL UNIQUE COMMENT '用户名',
     `password` CHAR(128) NOT NULL COMMENT '密码',
     `salt` CHAR(128) NOT NULL COMMENT '盐值',
-    `mail` VARCHAR(100) NOT NULL UNIQUE COMMENT '邮箱',
-    `introduce` VARCHAR(200) NOT NULL COMMENT '简介',
+    `email` VARCHAR(100) NOT NULL UNIQUE COMMENT '邮箱',
+    `introduce` VARCHAR(200) NOT NULL DEFAULT '' COMMENT '简介',
     `avatar_pic_id` int(11) NOT NULL DEFAULT 1000 COMMENT '头像',
     `has_active` BIT NOT NULL DEFAULT 0 COMMENT '是否激活账号',
     `last_password_reset_date` DATETIME COMMENT '密码修改时间',
@@ -25,10 +25,16 @@ create table `role`(
     `created_by` VARCHAR(32)    COMMENT '创建时间',
     `updated_time` DATETIME    COMMENT '更新时间' ,
     `updated_by` VARCHAR(32)    COMMENT '更新人' ,
-    `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
+    `is_delete` BIT NOT NULL  DEFAULT 0 COMMENT '是否删除',
     PRIMARY KEY (role_id),
     INDEX (is_delete)
 )COMMENT '用户角色表' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;
+
+INSERT INTO `movie_share`.`role` (`role_name`, `role_des`, `created_time`, `created_by`, `updated_time`, `updated_by`, `is_delete`) VALUES ('visitor', '游客', '2019-12-29 19:39:52', 'lidihao', '2019-12-29 19:40:07', 'lidihao', DEFAULT);
+
+INSERT INTO `movie_share`.`role` (`role_name`, `role_des`, `created_time`, `created_by`, `updated_time`, `updated_by`, `is_delete`) VALUES ('admin', '管理员，复制系统的管理', '2019-12-29 19:35:55', 'lidihao', '2019-12-29 19:36:03', 'lidihao', DEFAULT);
+
+INSERT INTO `movie_share`.`role` (`role_name`, `role_des`, `created_time`, `created_by`, `updated_time`, `updated_by`, `is_delete`) VALUES ('user', '普通用户', '2019-12-29 19:39:52', 'lidihao', '2019-12-29 19:40:07', 'lidihao', DEFAULT);
 
 create table `user_role`(
     `user_role_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -46,9 +52,9 @@ create table `user_role`(
 create table `menu`(
     `menu_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
     `menu_name` VARCHAR(100) NOT NULL COMMENT '菜单名',
+    `menu_eng` VARCHAR(100) NOT NULL COMMENT '菜单英文名',
     `menu_des` VARCHAR(200) NOT NULL COMMENT '菜单描述',
     `sort` int NOT NULL DEFAULT 0 NULL COMMENT '排序',
-    `component` varchar(255) DEFAULT NULL COMMENT '前端组件位置，用于生成动态路由',
     `menu_url` VARCHAR(200) NOT NULL DEFAULT '' COMMENT '菜单url',
     `parent_menu_id` int(11) NOT NULL DEFAULT -1 COMMENT '父级菜单，顶级菜单的parent_menu_id',
     `has_child` BIT DEFAULT 0 COMMENT '是否有子菜单',
@@ -56,10 +62,14 @@ create table `menu`(
     `created_by` VARCHAR(32)    COMMENT '创建时间',
     `updated_time` DATETIME    COMMENT '更新时间' ,
     `updated_by` VARCHAR(32)    COMMENT '更新人' ,
-    `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
+    `is_delete` BIT NOT NULL  DEFAULT 0 COMMENT '是否删除',
     PRIMARY KEY (menu_id),
     INDEX (is_delete)
 )COMMENT '菜单表' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;
+
+INSERT INTO `movie_share`.`menu` (`menu_name`, `menu_eng`, `menu_des`, `sort`, `menu_url`, `parent_menu_id`, `has_child`, `created_time`, `created_by`, `updated_time`, `updated_by`, `is_delete`) VALUES ('视频类型', 'video-type', '视频分类', 1, '', 0, true, '2019-12-29 19:45:41', 'lidihao', '2019-12-29 19:45:49', 'lidihao', DEFAULT);
+
+INSERT INTO `movie_share`.`menu` (`menu_name`, `menu_eng`, `menu_des`, `sort`, `menu_url`, `parent_menu_id`, `has_child`, `created_time`, `created_by`, `updated_time`, `updated_by`, `is_delete`) VALUES ('动漫', 'video-type-animate', '动漫类型视频', 2, '/video/category-detail?type=animate', 1000, DEFAULT, '2019-12-29 19:47:24', 'lidihao', '2019-12-29 19:47:32', 'lidihao', DEFAULT);
 
 CREATE TABLE `picture`  (
     `picture_id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
@@ -89,6 +99,8 @@ create table `role_menu`(
     PRIMARY KEY (role_menu_id),
     INDEX (is_delete)
 )COMMENT '角色-菜单表' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;
+INSERT INTO `movie_share`.`role_menu` (`role_id`, `menu_id`, `created_time`, `created_by`, `updated_time`, `updated_by`, `is_delete`) VALUES (1000, 1000, '2019-12-29 19:49:05', 'lidihao', '2019-12-29 19:49:10', 'lidihao', DEFAULT);
+INSERT INTO `movie_share`.`role_menu` (`role_id`, `menu_id`, `created_time`, `created_by`, `updated_time`, `updated_by`, `is_delete`) VALUES (1000, 1001, '2019-12-29 19:49:06', 'lidihao', '2019-12-29 19:49:11', 'lidihao', DEFAULT);
 
 create table `permission`(
     `permission_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',

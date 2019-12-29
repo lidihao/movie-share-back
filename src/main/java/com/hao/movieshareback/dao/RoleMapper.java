@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface RoleMapper {
     public List<Role> selectRolesByUserName(String userName);
+    public Role selectRoleByRoleName(String roleName);
 }

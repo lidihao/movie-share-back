@@ -6,7 +6,7 @@
         <result property="userName" column="user_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="password" column="password" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="salt" column="salt" javaType="java.lang.String" jdbcType="VARCHAR"/>
-        <result property="mail" column="mail" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="email" column="email" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="introduce" column="introduce" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="avatarPicId" column="avatar_pic_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result property="hasActive" column="has_active" javaType="java.lang.Boolean" jdbcType="BIT"/>
@@ -19,7 +19,8 @@
     </resultMap>
 
     <sql id="Base_Column_List" >
-        user_id,user_name,password,salt,mail,introduce,avatar_pic_id,last_password_reset_date,has_active,created_time,create_by,updated_time,updated_by,is_delete
+        user.user_id,user.user_name,user.password,user.salt,user.email,user.introduce,
+        user.avatar_pic_id,user.last_password_reset_date,user.has_active,user.created_time,user.created_by,user.updated_time,user.updated_by,user.is_delete
     </sql>
 
     <insert id="save" parameterType="com.hao.movieshareback.model.User" >
@@ -34,8 +35,8 @@
             <if test="salt != null" >
                 salt,
             </if>
-            <if test="mail != null" >
-                mail,
+            <if test="email != null" >
+                email,
             </if>
             <if test="introduce != null" >
                 introduce,
@@ -69,8 +70,8 @@
             <if test="salt != null" >
                 #{salt},
             </if>
-            <if test="mail != null" >
-                #{mail},
+            <if test="email != null" >
+                #{email},
             </if>
             <if test="introduce != null" >
                 #{introduce},
@@ -98,6 +99,20 @@
 
     <select id="getUserByUserName" resultMap="UserResultMap" parameterType="java.lang.String">
         SELECT <include refid="Base_Column_List"></include>
-        from user where user.user_name=#{userName}
+        from user where user.user_name=#{userName} and is_delete=0
     </select>
+
+    <select id="getCountByEmail" resultType="java.lang.Integer">
+        select count(*) from user
+        where user.email=#{email} and is_delete=0
+    </select>
+
+    <select id="getCountByUserName" resultType="java.lang.Integer">
+        select count(*) from user
+        where user.user_name=#{userName} and is_delete=0
+    </select>
+
+    <update id="activeUser">
+        update user set user.has_active = true where user.user_name=#{userName} and is_delete=0
+    </update>
 </mapper>

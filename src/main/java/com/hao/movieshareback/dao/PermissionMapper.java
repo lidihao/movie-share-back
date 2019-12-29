@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface PermissionMapper {
     List<Permission> getPermissionsByRoleId(Integer roleId);
+    int save(Permission permission);
 }

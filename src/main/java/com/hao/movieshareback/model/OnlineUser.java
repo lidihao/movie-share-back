@@ -1,18 +1,19 @@
-package com.hao.movieshareback.vo.auth;
+package com.hao.movieshareback.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class OnlineUser {
+/**
+ * @author Zheng Jie
+ */
+
+public class OnlineUser implements Serializable {
 
     private String userName;
-
-    private String job;
 
     private String browser;
 
     private String ip;
-
-    private String address;
 
     private String key;
 
@@ -21,20 +22,20 @@ public class OnlineUser {
     public OnlineUser() {
     }
 
+    public OnlineUser(String userName, String browser, String ip, String key, Date loginTime) {
+        this.userName = userName;
+        this.browser = browser;
+        this.ip = ip;
+        this.key = key;
+        this.loginTime = loginTime;
+    }
+
     public String getUserName() {
         return userName;
     }
 
     public void setUserName(String userName) {
         this.userName = userName;
-    }
-
-    public String getJob() {
-        return job;
-    }
-
-    public void setJob(String job) {
-        this.job = job;
     }
 
     public String getBrowser() {
@@ -53,13 +54,6 @@ public class OnlineUser {
         this.ip = ip;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
 
     public String getKey() {
         return key;
