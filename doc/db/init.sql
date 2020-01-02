@@ -73,11 +73,11 @@ INSERT INTO `movie_share`.`menu` (`menu_name`, `menu_eng`, `menu_des`, `sort`, `
 
 CREATE TABLE `picture`  (
     `picture_id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
-    `filename` varchar(255) NOT NULL COMMENT '图片名称',
-    `height` bigint NOT NULL COMMENT '图片高度',
+    `file_name` varchar(255) NOT NULL COMMENT '图片名称',
+    `height` int NOT NULL COMMENT '图片高度',
     `size` bigint NOT NULL COMMENT '图片大小',
     `url` varchar(255) NOT NULL COMMENT '图片地址',
-    `width` bigint NOT NULL COMMENT '图片宽度',
+    `width` int NOT NULL COMMENT '图片宽度',
     `created_time` DATETIME    COMMENT '创建时间' ,
     `created_by` VARCHAR(32)    COMMENT '创建时间',
     `updated_time` DATETIME    COMMENT '更新时间' ,
@@ -385,16 +385,20 @@ create table `video_approval`(
     INDEX (is_delete)
 )COMMENT '视频审批' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;
 
-create table `video_episode`(
-    `video_episode_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
-    `episode_name` VARCHAR(100) NOT NULL AUTO_INCREMENT COMMENT '名字',
+create table `video_file`(
+    `video_file_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `uploader_id` int(11) NOT NULL COMMENT '主键',
+    `video_apply_id` int(11) DEFAULT -1 COMMENT'审批Id',
+    `size` bigint NOT NULL COMMENT '大小',
+    `file_name` VARCHAR(100) NOT NULL COMMENT '名字',
     `approval_type` int NOT NULL DEFAULT 0 COMMENT '审批状态',
-    `episode_url` VARCHAR(100) NOT NULL COMMENT '视频url',
+    `file_url` VARCHAR(100) NOT NULL COMMENT '视频url',
+    `file_type` varchar(50) NOT NULL COMMENT '视频类型',
     `created_time` DATETIME    COMMENT '创建时间' ,
     `created_by` VARCHAR(32)    COMMENT '创建时间',
     `updated_time` DATETIME    COMMENT '更新时间' ,
     `updated_by` VARCHAR(32)    COMMENT '更新人' ,
     `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
-    PRIMARY KEY (video_episode_id),
+    PRIMARY KEY (video_file_id),
     INDEX (is_delete)
-)COMMENT '剧集' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;
+)COMMENT '上传的文件' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;

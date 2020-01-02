@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 @Mapper
 public interface PictureMapper {
     Picture selectPictureById(Integer pictureId);
+    int save(Picture picture);
 }

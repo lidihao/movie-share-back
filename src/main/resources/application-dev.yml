@@ -19,11 +19,14 @@ spring:
         smtp:
           socketFactoryClass: javax.net.ssl.SSLSocketFactory
         debug: true
+  servlet:
+    multipart:
+      max-file-size: 2MB
 
   redis:
     #数据库索引
     database: 0
-    host: 192.168.111.138
+    host: 192.168.111.141
     port: 6379
     password:
     #连接超时时间
@@ -61,6 +64,22 @@ mail:
   fromMail:
     addr: 2315447580@qq.com
 
+video:
+  upload:
+    tmp:
+      dir: D://upload/tmp
+    expire: 24
+    root: D://upload/video/root
+    url:
+      root: /video/
+
+
+
+pic:
+  upload:
+    root: D:\webapp\videoshare\image
+    url:
+      root: /image/
 #showSql
 logging:
   level:

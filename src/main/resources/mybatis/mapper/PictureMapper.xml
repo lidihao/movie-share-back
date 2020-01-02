@@ -18,11 +18,11 @@
     -->
     <resultMap id="PictureResultMap" type="com.hao.movieshareback.model.Picture">
         <id property="pictureId" column="picture_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-        <result property="filename" column="filename" javaType="java.lang.String" jdbcType="VARCHAR"/>
-        <result property="height" column="height" javaType="java.lang.Long" jdbcType="BIGINT"/>
+        <result property="fileName" column="file_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="height" column="height" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result property="size" column="size" javaType="java.lang.Long" jdbcType="BIGINT"/>
         <result property="url" column="url" javaType="java.lang.String" jdbcType="VARCHAR"/>
-        <result property="width" column="width" javaType="java.lang.Long" jdbcType="BIGINT"/>
+        <result property="width" column="width" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result property="createdTime" column="created_time" javaType="java.util.Date" jdbcType="DATE"/>
         <result property="createdBy" column="created_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="updatedTime" column="updated_time" javaType="java.util.Date" jdbcType="DATE"/>
@@ -31,18 +31,15 @@
     </resultMap>
 
     <sql id="Base_Column_List" >
-        picture.picture_id,picture.filename,picture.height,picture.size,picture.url,picture.width,picture.created_time,
+        picture.picture_id,picture.file_name,picture.height,picture.size,picture.url,picture.width,picture.created_time,
         picture.created_by,picture.updated_time,picture.updated_by,is_delete
     </sql>
 
-    <insert id="save" parameterType="com.hao.movieshareback.model.Picture" >
+    <insert id="save" parameterType="com.hao.movieshareback.model.Picture" useGeneratedKeys="true" keyProperty="pictureId">
         insert into picture
         <trim prefix="(" suffix=")" suffixOverrides="," >
-            <if test="pictureId != null" >
-                picture_id,
-            </if>
-            <if test="filename != null" >
-                filename,
+            <if test="fileName != null" >
+                file_name,
             </if>
             <if test="height != null" >
                 height,
@@ -70,11 +67,8 @@
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
-            <if test="pictureId != null" >
-                #{pictureId},
-            </if>
-            <if test="filename != null" >
-                #{filename},
+            <if test="fileName != null" >
+                #{fileName},
             </if>
             <if test="height != null" >
                 #{height},

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hao.movieshareback.dao.VideoFileMapper">
+    <!--
+    `video_file_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `uploader_id` int(11) NOT NULL COMMENT '主键',
+    `video_apply_id` int(11) DEFAULT -1 COMMENT'审批Id',
+    `size` bigint NOT NULL COMMENT '大小',
+    `file_name` VARCHAR(100) NOT NULL COMMENT '名字',
+    `approval_type` int NOT NULL DEFAULT 0 COMMENT '审批状态',
+    `file_url` VARCHAR(100) NOT NULL COMMENT '视频url',
+    `file_type` varchar(50) NOT NULL COMMENT '视频类型',
+    `created_time` DATETIME    COMMENT '创建时间' ,
+    `created_by` VARCHAR(32)    COMMENT '创建时间',
+    `updated_time` DATETIME    COMMENT '更新时间' ,
+    `updated_by` VARCHAR(32)    COMMENT '更新人' ,
+    `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
+    PRIMARY KEY (video_file_id),
+    INDEX (is_delete)
+    -->
+    <resultMap id="VideoFileResultMap" type="com.hao.movieshareback.model.VideoFile">
+        <id property="videoFileId" column="video_file_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="uploaderId" column="uploader_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="videoApplyId" column="video_apply_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="size" column="size" javaType="java.lang.Long" jdbcType="BIGINT"/>
+        <result property="fileName" column="file_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="approvalType" column="approval_type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="fileUrl" column="file_url" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="fileType" column="file_type" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="createdTime" column="created_time" javaType="java.util.Date" jdbcType="DATE"/>
+        <result property="createdBy" column="created_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="updatedTime" column="updated_time" javaType="java.util.Date" jdbcType="DATE"/>
+        <result property="updatedBy" column="updated_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="isDelete" column="is_delete" javaType="java.lang.Boolean" jdbcType="BIT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        video_file.video_file_id,video_file.uploader_id,video_file.video_apply_id,video_file.size,video_file.file_name,video_file.approval_type,video_file.file_url,video_file.file_type,
+        video_file.created_time,video_file.created_by,video_file.updated_time,video_file.updated_by,video_file.is_delete
+    </sql>
+
+    <insert id="save" parameterType="com.hao.movieshareback.model.VideoFile" useGeneratedKeys="true" keyProperty="videoFileId">
+        insert into video_file
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="uploaderId!=null">
+                uploader_id,
+            </if>
+            <if test="size!=null">
+                size,
+            </if>
+            <if test="approvalType!=null">
+                approval_type,
+            </if>
+            <if test="fileName!=null">
+                file_name,
+            </if>
+            <if test="fileUrl != null" >
+                file_url,
+            </if>
+            <if test="fileType!=null">
+                file_type,
+            </if>
+            <if test="createdTime != null" >
+                created_time,
+            </if>
+            <if test="createdBy!=null">
+                created_by,
+            </if>
+            <if test="updatedTime!=null">
+                updated_time,
+            </if>
+            <if test="updatedBy!=null">
+                updated_by,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="uploaderId!=null">
+                #{uploaderId},
+            </if>
+            <if test="size!=null">
+                #{size},
+            </if>
+            <if test="approvalType!=null">
+                #{approvalType},
+            </if>
+            <if test="fileName != null" >
+                #{fileName},
+            </if>
+            <if test="fileUrl != null" >
+                #{fileUrl},
+            </if>
+            <if test="fileType != null" >
+                #{fileType},
+            </if>
+            <if test="createdTime != null" >
+                #{createdTime},
+            </if>
+            <if test="createdBy!=null">
+                #{createdBy},
+            </if>
+            <if test="updatedTime!=null">
+                #{updatedTime},
+            </if>
+            <if test="updatedBy!=null">
+                #{updatedBy},
+            </if>
+        </trim>
+    </insert>
+
+</mapper>

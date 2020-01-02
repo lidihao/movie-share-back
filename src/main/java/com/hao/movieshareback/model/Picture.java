@@ -4,10 +4,10 @@ package com.hao.movieshareback.model;
  * CREATE TABLE `picture`  (
  *     `picture_id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
  *     `filename` varchar(255) NOT NULL COMMENT '图片名称',
- *     `height` bigint NOT NULL COMMENT '图片高度',
+ *     `height` int NOT NULL COMMENT '图片高度',
  *     `size` bigint NOT NULL COMMENT '图片大小',
  *     `url` varchar(255) NOT NULL COMMENT '图片地址',
- *     `width` bigint NOT NULL COMMENT '图片宽度',
+ *     `width` int NOT NULL COMMENT '图片宽度',
  *     `created_time` DATETIME    COMMENT '创建时间' ,
  *     `created_by` VARCHAR(32)    COMMENT '创建时间',
  *     `updated_time` DATETIME    COMMENT '更新时间' ,
@@ -20,10 +20,18 @@ package com.hao.movieshareback.model;
 public class Picture extends BaseModel{
     private Integer pictureId;
     private String fileName;
-    private Long height;
+    private Integer height;
     private Long size;
-    private Long width;
+    private Integer width;
     private String url;
+
+    public Picture(String fileName, Integer height, Long size, Integer width, String url) {
+        this.fileName = fileName;
+        this.height = height;
+        this.size = size;
+        this.width = width;
+        this.url = url;
+    }
 
     public Picture() {
     }
@@ -44,11 +52,11 @@ public class Picture extends BaseModel{
         this.fileName = fileName;
     }
 
-    public Long getHeight() {
+    public Integer getHeight() {
         return height;
     }
 
-    public void setHeight(Long height) {
+    public void setHeight(Integer height) {
         this.height = height;
     }
 
@@ -60,11 +68,11 @@ public class Picture extends BaseModel{
         this.size = size;
     }
 
-    public Long getWidth() {
+    public Integer getWidth() {
         return width;
     }
 
-    public void setWidth(Long width) {
+    public void setWidth(Integer width) {
         this.width = width;
     }
 

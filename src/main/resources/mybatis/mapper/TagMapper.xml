@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.hao.movieshareback.dao.RoleMapper">
+<mapper namespace="com.hao.movieshareback.dao.TagMapper">
     <!--
-   `role_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
-    `role_name` VARCHAR(100) NOT NULL COMMENT '角色名称',
-    `role_des` VARCHAR(100) NOT NULL COMMENT '角色描述',
+   `tag_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `tag_name` VARCHAR(100) NOT NULL COMMENT '标签名称',
+    `tag_desc` VARCHAR(200) NOT NULL COMMENT '标签描述',
     `created_time` DATETIME    COMMENT '创建时间' ,
     `created_by` VARCHAR(32)    COMMENT '创建时间',
     `updated_time` DATETIME    COMMENT '更新时间' ,
     `updated_by` VARCHAR(32)    COMMENT '更新人' ,
     `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
-    PRIMARY KEY (role_id),
+    PRIMARY KEY (tag_id),
     INDEX (is_delete)
     -->
-    <resultMap id="RoleResultMap" type="com.hao.movieshareback.model.Role">
-        <id property="roleId" column="role_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-        <result property="roleName" column="role_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
-        <result property="roleDes" column="role_des" javaType="java.lang.String" jdbcType="VARCHAR"/>
+    <resultMap id="TagResultMap" type="com.hao.movieshareback.model.Tag">
+        <id property="tagId" column="tag_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="tagName" column="tag_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="tagDesc" column="tag_desc" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="createdTime" column="created_time" javaType="java.util.Date" jdbcType="DATE"/>
         <result property="createdBy" column="created_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="updatedTime" column="updated_time" javaType="java.util.Date" jdbcType="DATE"/>
@@ -25,17 +25,17 @@
     </resultMap>
 
     <sql id="Base_Column_List" >
-        role.role_id,role.role_name,role.role_des,role.created_time,role.created_by,role.updated_time,role.updated_by,role.is_delete
+        tag.tag_id,tag.tag_name,tag.tag_desc,tag.created_time,tag.created_by,tag.updated_time,tag.updated_by,tag.is_delete
     </sql>
 
-    <insert id="save" parameterType="com.hao.movieshareback.model.Role" >
+    <insert id="save" parameterType="com.hao.movieshareback.model.Tag" >
         insert into role
         <trim prefix="(" suffix=")" suffixOverrides="," >
-            <if test="roleName != null" >
-                role_name,
+            <if test="tagName != null" >
+                tag_name,
             </if>
-            <if test="roleDes != null" >
-                role_des,
+            <if test="tagDesc != null" >
+                tag_des,
             </if>
             <if test="createdTime != null" >
                 created_time,
@@ -51,11 +51,11 @@
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
-            <if test="roleName != null" >
-                #{roleName},
+            <if test="tagName != null" >
+                #{tagName},
             </if>
-            <if test="roleDes != null" >
-                #{roleDes},
+            <if test="tagDesc != null" >
+                #{tagDesc},
             </if>
             <if test="createdTime != null" >
                 #{createdTime},
@@ -71,15 +71,8 @@
             </if>
         </trim>
     </insert>
-
-    <select id="selectRolesByUserName" resultMap="RoleResultMap">
-        select distinct <include refid="Base_Column_List"></include>
-        from role join user_role join user
-        on role.is_delete=0 and user_role.is_delete=0 and user.is_delete=0
-        and role.role_id=user_role.role_id and user.user_id=user_role.user_id and user.user_name = #{userName}
-    </select>
-    <select id="selectRoleByRoleName" resultMap="RoleResultMap">
+    <select id="selectAllTag" resultMap="TagResultMap">
         select <include refid="Base_Column_List"></include>
-        from role where role.role_name=#{roleName} and role.is_delete=0
+        from tag
     </select>
 </mapper>

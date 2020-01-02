@@ -23,7 +23,7 @@
         user.avatar_pic_id,user.last_password_reset_date,user.has_active,user.created_time,user.created_by,user.updated_time,user.updated_by,user.is_delete
     </sql>
 
-    <insert id="save" parameterType="com.hao.movieshareback.model.User" >
+    <insert id="save" parameterType="com.hao.movieshareback.model.User" useGeneratedKeys="true" keyProperty="userId">
         insert into user
         <trim prefix="(" suffix=")" suffixOverrides="," >
             <if test="userName != null" >
