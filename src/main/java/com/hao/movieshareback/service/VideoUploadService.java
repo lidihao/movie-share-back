@@ -2,23 +2,27 @@ package com.hao.movieshareback.service;
 
 import cn.hutool.core.util.IdUtil;
 import com.hao.movieshareback.dao.UserMapper;
+import com.hao.movieshareback.dao.VideoApprovalMapper;
 import com.hao.movieshareback.dao.VideoFileMapper;
 import com.hao.movieshareback.exception.MergeFileException;
-import com.hao.movieshareback.model.Chunk;
-import com.hao.movieshareback.model.User;
-import com.hao.movieshareback.model.VideoFile;
+import com.hao.movieshareback.model.*;
 import com.hao.movieshareback.model.type.ApprovalType;
 import com.hao.movieshareback.utils.FileTypeUtils;
 import com.hao.movieshareback.utils.FileUtil;
 import com.hao.movieshareback.utils.SecurityUtils;
 import com.hao.movieshareback.vo.VideoFileVo;
+import com.hao.movieshareback.vo.VideoMeta;
+import com.hao.movieshareback.vo.auth.JwtUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -50,6 +54,12 @@ public class VideoUploadService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private VideoApprovalMapper videoApprovalMapper;
+
+    @Autowired
+    private TagService tagService;
 
     public void receiveFileChunk(Chunk chunk){
         MultipartFile multipartFile = chunk.getFile();
@@ -96,5 +106,24 @@ public class VideoUploadService {
             hasSendSet.add((Integer) entry.getKey());
         });
         return hasSendSet;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public void addVideoApproval(VideoMeta videoMeta){
+        JwtUser jwtUser = (JwtUser) SecurityUtils.getUserDetails();
+        VideoApproval videoApproval = new VideoApproval(jwtUser.getUserId()
+                ,videoMeta.getPictureId(),videoMeta.getTitle(),
+                videoMeta.getIntroduce(),videoMeta.getCategoryId(),ApprovalType.PROCESSING.getTag());
+        //
+        BaseModel.setNewCreate(videoApproval,jwtUser.getUsername(),new Date());
+        BaseModel.setUpdated(videoApproval,jwtUser.getUsername(),new Date());
+        videoApprovalMapper.save(videoApproval);
+        if (videoMeta.getTagList()!=null) {
+            tagService.relatedTagAndApproval(videoMeta.getTagList(), videoApproval.getVideoApprovalId());
+        }
+        int index=0;
+        for (Integer videoFileId:videoMeta.getVideoFileId()){
+            videoFileMapper.relateVideoApproval(videoFileId,videoApproval.getVideoApprovalId(),index++);
+        }
     }
 }

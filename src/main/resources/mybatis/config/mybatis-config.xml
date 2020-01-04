@@ -9,4 +9,9 @@
     <typeAliases>
         <package name="com.yukong.chapter4.entity"/>
     </typeAliases>
+    <plugins>
+        <plugin interceptor="com.hao.movieshareback.config.MyBatisPageInterceptor">
+            <property name="databaseType" value="mysql" />
+        </plugin>
+    </plugins>
 </configuration>

@@ -35,12 +35,9 @@
         menu.created_time,menu.created_by,menu.updated_time,menu.updated_by,menu.is_delete
     </sql>
 
-    <insert id="save" parameterType="com.hao.movieshareback.model.Permission" >
+    <insert id="save" parameterType="com.hao.movieshareback.model.Permission" useGeneratedKeys="true" keyProperty="menuId">
         insert into menu
         <trim prefix="(" suffix=")" suffixOverrides="," >
-            <if test="menuId != null" >
-                menu_id,
-            </if>
             <if test="menuName != null" >
                 menu_name,
             </if>
@@ -76,9 +73,6 @@
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
-            <if test="menuId != null" >
-                #{menuId},
-            </if>
             <if test="menuName != null" >
                 #{menuName},
             </if>

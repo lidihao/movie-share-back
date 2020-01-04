@@ -13,6 +13,16 @@ public abstract class BaseModel implements Serializable {
     public BaseModel() {
     }
 
+    public static void setNewCreate(BaseModel model,String userName,Date createdTime){
+        model.setCreatedBy(userName);
+        model.setCreatedTime(createdTime);
+    }
+
+    public static void setUpdated(BaseModel model,String userName,Date updatedTime){
+        model.setUpdatedBy(userName);
+        model.setUpdatedTime(updatedTime);
+    }
+
     public Date getCreatedTime() {
         return createdTime;
     }

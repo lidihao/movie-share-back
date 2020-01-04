@@ -370,7 +370,7 @@ create table `message_right`(
 create table `video_approval`(
     `video_approval_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
     `upload_user_id` int(11) NOT NULL COMMENT '上传人id',
-    `poster_url` VARCHAR(100) NOT NULL COMMENT '视频posterURL',
+    `poster_id` int(11) NOT NULL COMMENT '视频posterURL',
     `title` VARCHAR(100) NOT NULL COMMENT '视频题目审批',
     `introduce` VARCHAR(200) NOT NULL COMMENT '视频简介',
     `category_id` int(11) NOT NULL COMMENT '视频类别',
@@ -385,9 +385,17 @@ create table `video_approval`(
     INDEX (is_delete)
 )COMMENT '视频审批' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;
 
+create table `tag_video_approval`(
+    `tag_video_approval` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `tag_id` int(11) NOT NULL COMMENT '标签id',
+    `video_approval_id` int(11) NOT NULL COMMENT '视频审批id',
+    primary key (tag_video_approval)
+)COMMENT '标签与视频申请' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;
+
 create table `video_file`(
     `video_file_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
     `uploader_id` int(11) NOT NULL COMMENT '主键',
+    `sort` int not null DEFAULT 0 COMMENT '排序字段',
     `video_apply_id` int(11) DEFAULT -1 COMMENT'审批Id',
     `size` bigint NOT NULL COMMENT '大小',
     `file_name` VARCHAR(100) NOT NULL COMMENT '名字',

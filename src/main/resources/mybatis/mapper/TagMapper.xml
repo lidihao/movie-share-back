@@ -75,4 +75,7 @@
         select <include refid="Base_Column_List"></include>
         from tag
     </select>
+    <insert id="saveTagVideoApprovalRelation">
+        insert into tag_video_approval(tag_id, video_approval_id) values (#{tagId},#{videoApprovalId})
+    </insert>
 </mapper>

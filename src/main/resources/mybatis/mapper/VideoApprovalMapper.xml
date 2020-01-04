@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hao.movieshareback.dao.VideoApprovalMapper">
+    <!--
+     `video_approval_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `upload_user_id` int(11) NOT NULL COMMENT '上传人id',
+    `poster_id` int(11) NOT NULL COMMENT '视频posterURL',
+    `title` VARCHAR(100) NOT NULL COMMENT '视频题目审批',
+    `introduce` VARCHAR(200) NOT NULL COMMENT '视频简介',
+    `category_id` int(11) NOT NULL COMMENT '视频类别',
+    `video_id` int(11) NOT NULL DEFAULT -1 COMMENT '对应的视频id',
+    `approval_type` int NOT NULL DEFAULT 0 COMMENT '审批状态',
+    `created_time` DATETIME    COMMENT '创建时间' ,
+    `created_by` VARCHAR(32)    COMMENT '创建时间',
+    `updated_time` DATETIME    COMMENT '更新时间' ,
+    `updated_by` VARCHAR(32)    COMMENT '更新人' ,
+    `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
+    PRIMARY KEY (video_approval_id),
+    INDEX (is_delete)
+    -->
+    <resultMap id="VideoApprovalResultMap" type="com.hao.movieshareback.model.VideoApproval">
+        <id property="videoApprovalId" column="video_approval_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="uploadUserId" column="upload_user_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="posterId" column="poster_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="title" column="title" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="introduce" column="introduce" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="categoryId" column="category_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="videoId" column="video_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="approvalType" column="approval_type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="createdTime" column="created_time" javaType="java.util.Date" jdbcType="DATE"/>
+        <result property="createdBy" column="created_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="updatedTime" column="updated_time" javaType="java.util.Date" jdbcType="DATE"/>
+        <result property="updatedBy" column="updated_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="isDelete" column="is_delete" javaType="java.lang.Boolean" jdbcType="BIT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        video_approval.video_approval_id,video_approval.upload_user_id,video_approval.poster_id,
+        video_approval.title,video_approval.introduce,video_approval.category_id,video_approval.video_id,video_approval.approval_type,
+        video_approval.created_time,video_approval.created_by,video_approval.updated_time,video_approval.updated_by,video_approval.is_delete
+    </sql>
+
+    <insert id="save" parameterType="com.hao.movieshareback.model.VideoApproval" useGeneratedKeys="true" keyProperty="videoApprovalId">
+        insert into video_approval
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="uploadUserId != null" >
+                upload_user_id,
+            </if>
+            <if test="posterId != null" >
+                poster_id,
+            </if>
+            <if test="title!=null">
+                title,
+            </if>
+            <if test="introduce != null" >
+                introduce,
+            </if>
+            <if test="categoryId != null">
+                category_id,
+            </if>
+            <if test="videoId!=null">
+                video_id,
+            </if>
+            <if test="approvalType!=null">
+                approval_type,
+            </if>
+            <if test="createdTime != null" >
+                created_time,
+            </if>
+            <if test="createdBy!=null">
+                created_by,
+            </if>
+            <if test="updatedTime!=null">
+                updated_time,
+            </if>
+            <if test="updatedBy!=null">
+                updated_by,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="uploadUserId != null" >
+                #{uploadUserId},
+            </if>
+            <if test="posterId != null" >
+                #{posterId},
+            </if>
+            <if test="title != null" >
+                #{title},
+            </if>
+            <if test="introduce!=null">
+                #{introduce},
+            </if>
+            <if test="categoryId != null" >
+                #{categoryId},
+            </if>
+            <if test="videoId!=null">
+                #{videoId},
+            </if>
+            <if test="approvalType!=null">
+                #{approvalType},
+            </if>
+            <if test="createdTime != null" >
+                #{createdTime},
+            </if>
+            <if test="createdBy!=null">
+                #{createdBy},
+            </if>
+            <if test="updatedTime!=null">
+                #{updatedTime},
+            </if>
+            <if test="updatedBy!=null">
+                #{updatedBy},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="selectVideoApprovalPageList" resultMap="VideoApprovalResultMap">
+        select <include refid="Base_Column_List"></include>
+        from video_approval
+        <if test="categoryId!=null">
+            where video_approval.category_id=#{categoryId}
+        </if>
+        order by video_approval.created_time
+    </select>
+</mapper>

@@ -3,21 +3,14 @@ package com.hao.movieshareback.controller;
 import com.hao.movieshareback.model.Chunk;
 import com.hao.movieshareback.model.VideoFile;
 import com.hao.movieshareback.service.VideoUploadService;
-import com.hao.movieshareback.utils.FileUtil;
 import com.hao.movieshareback.vo.ResultBody;
 import com.hao.movieshareback.vo.VideoFileVo;
+import com.hao.movieshareback.vo.VideoMeta;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -54,5 +47,11 @@ public class VideoUploadController {
             e.printStackTrace();
             return ResultBody.error("融合文件出错");
         }
+    }
+
+    @PostMapping("/videoMeta")
+    public ResultBody addVideoMeta(@RequestBody VideoMeta videoMeta){
+        videoUploadService.addVideoApproval(videoMeta);
+        return ResultBody.success("上传成功");
     }
 }

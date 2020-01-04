@@ -107,4 +107,8 @@
         </trim>
     </insert>
 
+    <select id="relateVideoApproval">
+        update video_file set video_file.video_apply_id=#{videoApprovalId} ,video_file.sort=#{sort}
+        where video_file.video_file_id=#{videoFileId}
+    </select>
 </mapper>

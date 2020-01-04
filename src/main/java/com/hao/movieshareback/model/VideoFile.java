@@ -21,6 +21,7 @@ public class VideoFile extends BaseModel{
     private String fileName;
     private Long size;
     private Integer uploaderId;
+    private Integer videoApplyId;
     private int approvalType;
     private String fileUrl;
     private String fileType;
@@ -32,6 +33,14 @@ public class VideoFile extends BaseModel{
         this.approvalType = approvalType;
         this.fileUrl = fileUrl;
         this.fileType = fileType;
+    }
+
+    public Integer getVideoApplyId() {
+        return videoApplyId;
+    }
+
+    public void setVideoApplyId(Integer videoApplyId) {
+        this.videoApplyId = videoApplyId;
     }
 
     public Integer getVideoFileId() {
