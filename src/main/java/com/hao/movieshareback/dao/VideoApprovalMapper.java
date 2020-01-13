@@ -14,4 +14,6 @@ import java.util.List;
 public interface VideoApprovalMapper {
     int save(VideoApproval videoApproval);
     PageList<VideoApproval> selectVideoApprovalPageList(Page page, @Param("categoryId")Integer categoryId);
+    VideoApproval getVideoApproval(Integer videoApprovalId);
+    int updateApprovalStatus(Integer videoApproval,Integer approvalType);
 }

@@ -12,7 +12,7 @@ public enum  ApprovalType implements Serializable {
         this.tag = tag;
     }
 
-    public ApprovalType getApprovalTypeByTag(int tag){
+    public static ApprovalType getApprovalTypeByTag(int tag){
         ApprovalType[] approvalTypes = ApprovalType.values();
         for (int i=0;i<approvalTypes.length;i++){
             if (tag==approvalTypes[i].tag){

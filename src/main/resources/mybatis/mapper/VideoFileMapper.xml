@@ -27,6 +27,8 @@
         <result property="approvalType" column="approval_type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result property="fileUrl" column="file_url" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="fileType" column="file_type" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="posterId" column="poster_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="sort" column="sort" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result property="createdTime" column="created_time" javaType="java.util.Date" jdbcType="DATE"/>
         <result property="createdBy" column="created_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="updatedTime" column="updated_time" javaType="java.util.Date" jdbcType="DATE"/>
@@ -36,7 +38,7 @@
 
     <sql id="Base_Column_List" >
         video_file.video_file_id,video_file.uploader_id,video_file.video_apply_id,video_file.size,video_file.file_name,video_file.approval_type,video_file.file_url,video_file.file_type,
-        video_file.created_time,video_file.created_by,video_file.updated_time,video_file.updated_by,video_file.is_delete
+        video_file.poster_id,video_file.sort,video_file.created_time,video_file.created_by,video_file.updated_time,video_file.updated_by,video_file.is_delete
     </sql>
 
     <insert id="save" parameterType="com.hao.movieshareback.model.VideoFile" useGeneratedKeys="true" keyProperty="videoFileId">
@@ -59,6 +61,9 @@
             </if>
             <if test="fileType!=null">
                 file_type,
+            </if>
+            <if test="posterId!=null">
+                poster_id,
             </if>
             <if test="createdTime != null" >
                 created_time,
@@ -92,6 +97,9 @@
             <if test="fileType != null" >
                 #{fileType},
             </if>
+            <if test="posterId!=null">
+                #{posterId},
+            </if>
             <if test="createdTime != null" >
                 #{createdTime},
             </if>
@@ -107,8 +115,14 @@
         </trim>
     </insert>
 
-    <select id="relateVideoApproval">
+    <update id="relateVideoApproval">
         update video_file set video_file.video_apply_id=#{videoApprovalId} ,video_file.sort=#{sort}
         where video_file.video_file_id=#{videoFileId}
+    </update>
+
+    <select id="listVideoFileByApprovalId" resultMap="VideoFileResultMap">
+        select <include refid="Base_Column_List"></include>
+        from video_file where video_file.video_apply_id=#{videoApprovalId} and video_file.is_delete=0
+        order by video_file.sort
     </select>
 </mapper>

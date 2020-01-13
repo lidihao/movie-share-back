@@ -9,7 +9,7 @@ public class StaticResourceConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         //将图片的访问路径映射
-        registry.addResourceHandler("/image/**").addResourceLocations("file:D:/webapp/videoshare/image/");
-        registry.addResourceHandler("/video/**").addResourceLocations("file:D:/upload/video/root/");
+        registry.addResourceHandler("/image/**").addResourceLocations("file:/home/lidihao/upload/image/");
+        registry.addResourceHandler("/video/**").addResourceLocations("file:/home/lidihao/upload/video/root/");
     }
 }

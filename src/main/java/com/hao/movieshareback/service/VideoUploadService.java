@@ -1,16 +1,18 @@
 package com.hao.movieshareback.service;
 
 import cn.hutool.core.util.IdUtil;
+import com.hao.movieshareback.dao.PictureMapper;
 import com.hao.movieshareback.dao.UserMapper;
 import com.hao.movieshareback.dao.VideoApprovalMapper;
 import com.hao.movieshareback.dao.VideoFileMapper;
-import com.hao.movieshareback.exception.MergeFileException;
 import com.hao.movieshareback.model.*;
 import com.hao.movieshareback.model.type.ApprovalType;
 import com.hao.movieshareback.utils.FileTypeUtils;
 import com.hao.movieshareback.utils.FileUtil;
 import com.hao.movieshareback.utils.SecurityUtils;
-import com.hao.movieshareback.vo.VideoFileVo;
+import com.hao.movieshareback.utils.VideoUtils;
+import com.hao.movieshareback.vo.ScreenPicture;
+import com.hao.movieshareback.vo.VideoMergeFileVo;
 import com.hao.movieshareback.vo.VideoMeta;
 import com.hao.movieshareback.vo.auth.JwtUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,16 +20,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
-import org.springframework.data.redis.core.ZSetOperations;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -45,6 +43,15 @@ public class VideoUploadService {
 
     @Value("${video.upload.url.root}")
     private String urlRoot;
+
+    @Value("${pic.upload.root}")
+    private String imgRoot;
+
+    @Value("${pic.upload.url.root}")
+    private String imgUrlRoot;
+
+    @Autowired
+    private PictureMapper pictureMapper;
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -69,20 +76,21 @@ public class VideoUploadService {
         redisTemplate.expire(chunk.getIdentifier(),keyExpire, TimeUnit.HOURS);
     }
 
-    public VideoFile mergeFileChunk(VideoFileVo videoFileVo) throws IOException {
+    @Transactional(rollbackFor = Exception.class,propagation = Propagation.REQUIRED)
+    public VideoFile mergeFileChunk(VideoMergeFileVo videoMergeFileVo) throws Exception {
         Map<Integer,String> sortedMap = new TreeMap<>();
-        Cursor<Map.Entry> cursor= redisTemplate.opsForHash().scan(videoFileVo.getUniqueIdentifier(), ScanOptions.NONE);
+        Cursor<Map.Entry> cursor= redisTemplate.opsForHash().scan(videoMergeFileVo.getUniqueIdentifier(), ScanOptions.NONE);
         cursor.forEachRemaining(entry -> {
             sortedMap.put((Integer) entry.getKey(),(String)entry.getValue());
         });
-        redisTemplate.delete(videoFileVo.getUniqueIdentifier());
+        redisTemplate.delete(videoMergeFileVo.getUniqueIdentifier());
         //合并文件
         List<File> sourceFile = new ArrayList<>(sortedMap.size());
         for (Integer chunkNum:sortedMap.keySet()){
             sourceFile.add(new File(tmpFileUrl,sortedMap.get(chunkNum)));
         }
         String uuid = IdUtil.simpleUUID();
-        String suffix = FileUtil.getExtensionName(videoFileVo.getFileName());
+        String suffix = FileUtil.getExtensionName(videoMergeFileVo.getFileName());
         File target = File.createTempFile(uuid,suffix,new File(root));
         FileUtil.mergeFiles(sourceFile,target);
         for (File file:sourceFile){
@@ -92,8 +100,19 @@ public class VideoUploadService {
         String uploaderName = SecurityUtils.getUsername();
         User user=userMapper.getUserByUserName(uploaderName);
         String fileUrl=urlRoot+target.getName();
-        VideoFile videoFile = new VideoFile(videoFileVo.getFileName(),videoFileVo.getSize(),user.getUserId(),
-                ApprovalType.PROCESSING.getTag(),fileUrl, FileTypeUtils.getFileType(suffix));
+        //poster_picture
+        ScreenPicture screenPicture = VideoUtils.getScreenshot(target.getAbsolutePath());
+
+        String imgPath = screenPicture.getPath();
+        File posterSrc = new File(imgPath);
+        File posterDes = new File(imgRoot,IdUtil.simpleUUID()+"."+VideoUtils.SCREEN_SHOT_FORMAT);
+        FileUtil.copy(posterSrc,posterDes,false);
+        posterSrc.delete();
+        Picture picture = new Picture(posterDes.getName(),screenPicture.getHeight(),screenPicture.getSize(),
+                screenPicture.getWidth(),imgUrlRoot+posterDes.getName());
+        pictureMapper.save(picture);
+        VideoFile videoFile = new VideoFile(videoMergeFileVo.getFileName(), videoMergeFileVo.getSize(),user.getUserId(),
+                ApprovalType.PROCESSING.getTag(),fileUrl, FileTypeUtils.getFileType(suffix),picture.getPictureId());
         videoFileMapper.save(videoFile);
         return videoFile;
     }

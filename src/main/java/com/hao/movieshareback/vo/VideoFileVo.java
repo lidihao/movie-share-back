@@ -1,19 +1,38 @@
 package com.hao.movieshareback.vo;
 
 public class VideoFileVo {
+    private Integer videoFileId;
+    private Integer sort;
     private String fileName;
-    private String uniqueIdentifier;
-    private String fileType;
-    private Long size;
+    private String url;
+    private String posterUrl;
+    private String approvalType;
 
-    public VideoFileVo() {
+    public VideoFileVo(Integer videoFileId, Integer sort,
+                       String fileName, String url, String posterUrl,
+                       String approvalType) {
+        this.videoFileId = videoFileId;
+        this.sort = sort;
+        this.fileName = fileName;
+        this.url = url;
+        this.posterUrl = posterUrl;
+        this.approvalType = approvalType;
     }
 
-    public VideoFileVo(String fileName, String uniqueIdentifier, String fileType, Long size) {
-        this.fileName = fileName;
-        this.uniqueIdentifier = uniqueIdentifier;
-        this.fileType = fileType;
-        this.size = size;
+    public Integer getVideoFileId() {
+        return videoFileId;
+    }
+
+    public void setVideoFileId(Integer videoFileId) {
+        this.videoFileId = videoFileId;
+    }
+
+    public Integer getSort() {
+        return sort;
+    }
+
+    public void setSort(Integer sort) {
+        this.sort = sort;
     }
 
     public String getFileName() {
@@ -24,28 +43,27 @@ public class VideoFileVo {
         this.fileName = fileName;
     }
 
-    public String getUniqueIdentifier() {
-        return uniqueIdentifier;
+    public String getUrl() {
+        return url;
     }
 
-    public void setUniqueIdentifier(String uniqueIdentifier) {
-        this.uniqueIdentifier = uniqueIdentifier;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
-    public String getFileType() {
-        return fileType;
+    public String getPosterUrl() {
+        return posterUrl;
     }
 
-    public void setFileType(String fileType) {
-        this.fileType = fileType;
+    public void setPosterUrl(String posterUrl) {
+        this.posterUrl = posterUrl;
     }
 
-    public Long getSize() {
-        return size;
+    public String getApprovalType() {
+        return approvalType;
     }
 
-    public void setSize(Long size) {
-        this.size = size;
+    public void setApprovalType(String approvalType) {
+        this.approvalType = approvalType;
     }
-
 }

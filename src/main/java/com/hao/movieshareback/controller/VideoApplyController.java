@@ -2,13 +2,11 @@ package com.hao.movieshareback.controller;
 
 import com.hao.movieshareback.annotation.auth.AnonymousAccess;
 import com.hao.movieshareback.service.VideoApplyService;
-import com.hao.movieshareback.vo.ResultBody;
-import com.hao.movieshareback.vo.VideoApplyVo;
-import com.hao.movieshareback.vo.XPage;
+import com.hao.movieshareback.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequestMapping("/videoApply")
 @RestController
@@ -30,5 +28,28 @@ public class VideoApplyController {
         }
         XPage<VideoApplyVo> videoApplyVoXPage = applyService.listVideoApply(categoryId,pageNum,pageSize);
         return ResultBody.success(videoApplyVoXPage);
+    }
+
+    @GetMapping("/applyDetail/{videoApprovalId}")
+    public ResultBody getVideoApplyDetail(@PathVariable("videoApprovalId")Integer videoApprovalId){
+        VideoApplyVo videoApplyVo = applyService.getVideoApprovalDetail(videoApprovalId);
+        return ResultBody.success(videoApplyVo);
+    }
+
+    @GetMapping("/applyDetail/videoFileList")
+    public ResultBody listVideoFile(Integer videoApprovalId,Integer pageSize,Integer pageNum){
+        if (pageNum==null){
+            pageNum=1;
+        }
+        if (pageSize==null){
+            pageSize=10;
+        }
+        XPage<VideoFileVo> videoFileVoList = applyService.listVideoFileVo(videoApprovalId,pageSize,pageNum);
+        return ResultBody.success(videoFileVoList);
+    }
+
+    @PostMapping("/doApplyVideo")
+    public ResultBody doApplyVideo(@RequestBody VideoApplyActionReceiver videoApplyActionReceiver){
+
     }
 }

@@ -3,6 +3,7 @@ package com.hao.movieshareback.vo;
 import com.hao.movieshareback.vo.auth.UserVo;
 
 import java.util.Date;
+import java.util.List;
 
 public class VideoApplyVo {
     private Integer videoApprovalId;
@@ -11,15 +12,23 @@ public class VideoApplyVo {
     private String posterUrl;
     private UserVo userVo;
     private Date createdTime;
+    private Integer categoryId;
+    private String introduce;
+    private List<Integer> tagIdList;
 
 
-    public VideoApplyVo(Integer videoApprovalId, Integer videoId, String title, String posterUrl, UserVo userVo, Date createdTime) {
+    public VideoApplyVo(Integer videoApprovalId, Integer videoId,
+                        String title, String posterUrl, UserVo userVo, Date createdTime,
+                        Integer categoryId,String introduce,List<Integer> tagIdList) {
         this.videoApprovalId = videoApprovalId;
         this.videoId = videoId;
         this.title = title;
         this.posterUrl = posterUrl;
         this.userVo = userVo;
         this.createdTime = createdTime;
+        this.categoryId=categoryId;
+        this.introduce=introduce;
+        this.tagIdList=tagIdList;
     }
 
     public Integer getVideoApprovalId() {
@@ -68,5 +77,29 @@ public class VideoApplyVo {
 
     public void setCreatedTime(Date createdTime) {
         this.createdTime = createdTime;
+    }
+
+    public Integer getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public List<Integer> getTagIdList() {
+        return tagIdList;
+    }
+
+    public void setTagIdList(List<Integer> tagIdList) {
+        this.tagIdList = tagIdList;
+    }
+
+    public String getIntroduce() {
+        return introduce;
+    }
+
+    public void setIntroduce(String introduce) {
+        this.introduce = introduce;
     }
 }

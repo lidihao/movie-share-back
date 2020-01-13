@@ -4,7 +4,7 @@ import com.hao.movieshareback.model.Chunk;
 import com.hao.movieshareback.model.VideoFile;
 import com.hao.movieshareback.service.VideoUploadService;
 import com.hao.movieshareback.vo.ResultBody;
-import com.hao.movieshareback.vo.VideoFileVo;
+import com.hao.movieshareback.vo.VideoMergeFileVo;
 import com.hao.movieshareback.vo.VideoMeta;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,11 +39,11 @@ public class VideoUploadController {
     }
 
     @PostMapping("/mergeFile")
-    public ResultBody mergeTempFile(@RequestBody VideoFileVo videoFileVo){
+    public ResultBody mergeTempFile(@RequestBody VideoMergeFileVo videoMergeFileVo){
         try {
-            VideoFile videoFile=videoUploadService.mergeFileChunk(videoFileVo);
+            VideoFile videoFile=videoUploadService.mergeFileChunk(videoMergeFileVo);
             return ResultBody.success(videoFile);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return ResultBody.error("融合文件出错");
         }

@@ -112,6 +112,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.jpg",
                         "/**/*.css",
                         "/**/*.js",
+                        "/**/*.jpeg",
                         "/**/*.mp4"
                 ).anonymous()
                 // swagger start
