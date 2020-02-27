@@ -2,11 +2,13 @@ package com.hao.movieshareback.service;
 
 import cn.hutool.core.util.IdUtil;
 import com.hao.movieshareback.config.auth.JwtTokenGenerator;
+import com.hao.movieshareback.dao.PictureMapper;
 import com.hao.movieshareback.dao.UserMapper;
 import com.hao.movieshareback.exception.ActiveUserException;
 import com.hao.movieshareback.exception.LoginException;
 import com.hao.movieshareback.exception.UserExistException;
 import com.hao.movieshareback.exception.ValidateCodeExpireException;
+import com.hao.movieshareback.model.Picture;
 import com.hao.movieshareback.model.User;
 import com.hao.movieshareback.service.auth.JwtUserDetailsService;
 import com.hao.movieshareback.service.mail.MailService;
@@ -59,6 +61,9 @@ public class UserService {
 
     @Autowired
     private MenuService menuService;
+
+    @Autowired
+    private PictureMapper pictureMapper;
 
     @Value("${email-validate.key}")
     private String emailKey;
@@ -196,10 +201,17 @@ public class UserService {
         // 保存在线信息
         onlineUserService.save(jwtUser, token, request);
         // 返回 token
-        return new AuthInfo(token,new UserVo(jwtUser.getUsername(),jwtUser.getAvatarUrl(),jwtUser.getEmail(),menuVoList));
+        return new AuthInfo(token,new UserVo(jwtUser.getUserId(),jwtUser.getUsername(),jwtUser.getAvatarUrl(),jwtUser.getEmail(),menuVoList));
     }
 
     public void logOut(HttpServletRequest request){
         onlineUserService.logout(jwtTokenGenerator.getToken(request));
+    }
+
+    public UserVo getUserVoByUserId(Integer userId){
+        User user = userMapper.getUserByUserId(userId);
+        Picture avatar = pictureMapper.selectPictureById(user.getAvatarPicId());
+        UserVo userVo = new UserVo(user.getUserId(),user.getUserName(),avatar.getUrl(),user.getIntroduce(),user.getEmail(),null);
+        return userVo;
     }
 }

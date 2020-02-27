@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hao.movieshareback.dao.VideoMapper">
+    <!--
+    `video_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `video_title` VARCHAR(100) NOT NULL COMMENT '视频题目',
+    `video_poster_id` int(11) COMMENT '视频海报url',
+    `video_play_count` BIGINT NOT NULL COMMENT '视频播放数',
+    `video_comment_person` BIGINT NOT NULL COMMENT '视频评论人数',
+    `video_desc` VARCHAR(400) NOT NULL COMMENT '视频简介',
+    `video_rate` double NOT NULL DEFAULT 0.0 COMMENT '视频的评分,用于视频的推荐',
+    `upload_user_id` int(11) NOT NULL COMMENT '视频上传user_id',
+    `category_id` int(11) NOT NULL COMMENT '视频的类别',
+    `created_time` DATETIME    COMMENT '创建时间' ,
+    `created_by` VARCHAR(32)    COMMENT '创建时间',
+    `updated_time` DATETIME    COMMENT '更新时间' ,
+    `updated_by` VARCHAR(32)    COMMENT '更新人' ,
+    `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
+    PRIMARY KEY (video_id),
+    INDEX (is_delete)
+    -->
+    <resultMap id="VideoResultMap" type="com.hao.movieshareback.model.Video">
+        <id property="videoId" column="video_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="videoTitle" column="video_title" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="videoPosterId" column="video_poster_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="videoPlayCount" column="video_play_count" javaType="java.lang.Long" jdbcType="BIGINT"/>
+        <result property="videoCommentPerson" column="video_comment_person" javaType="java.lang.Long" jdbcType="BIGINT"/>
+        <result property="videoDesc" column="video_desc" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="videoRate" column="video_rate" javaType="java.lang.Double" jdbcType="DOUBLE"/>
+        <result property="uploadUserId" column="upload_user_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="categoryId" column="category_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="createdTime" column="created_time" javaType="java.util.Date" jdbcType="DATE"/>
+        <result property="createdBy" column="created_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="updatedTime" column="updated_time" javaType="java.util.Date" jdbcType="DATE"/>
+        <result property="updatedBy" column="updated_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="isDelete" column="is_delete" javaType="java.lang.Boolean" jdbcType="BIT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        video.video_id,video.video_title,video.video_poster_id,video.video_play_count,
+        video.video_comment_person,video.video_desc,video.video_rate,video.upload_user_id,video.category_id,
+        video.created_time,video.created_by,video.updated_time,video.updated_by,video.is_delete
+    </sql>
+
+    <insert id="save" parameterType="com.hao.movieshareback.model.Video" useGeneratedKeys="true" keyProperty="videoId">
+        insert into video
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="videoTitle != null" >
+                video_title,
+            </if>
+            <if test="videoPosterId != null" >
+                video_poster_id,
+            </if>
+            <if test="videoPlayCount != null" >
+                video_play_count,
+            </if>
+            <if test="videoCommentPerson != null" >
+                video_comment_person,
+            </if>
+            <if test="videoDesc!=null">
+                video_desc,
+            </if>
+            <if test="videoRate!=null">
+                video_rate,
+            </if>
+            <if test="uploadUserId!=null">
+                upload_user_id,
+            </if>
+            <if test="categoryId!=null">
+                category_id,
+            </if>
+            <if test="createdTime != null" >
+                created_time,
+            </if>
+            <if test="createdBy!=null">
+                created_by,
+            </if>
+            <if test="updatedTime!=null">
+                updated_time,
+            </if>
+            <if test="updatedBy!=null">
+                updated_by,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="videoTitle != null" >
+                #{videoTitle},
+            </if>
+            <if test="videoPosterId != null" >
+                #{videoPosterId},
+            </if>
+            <if test="videoPlayCount != null" >
+                #{videoPlayCount},
+            </if>
+            <if test="videoCommentPerson != null" >
+                #{videoCommentPerson},
+            </if>
+            <if test="videoDesc!=null">
+                #{videoDesc},
+            </if>
+            <if test="videoRate!=null">
+                #{videoRate},
+            </if>
+            <if test="uploadUserId!=null">
+                #{uploadUserId},
+            </if>
+            <if test="categoryId!=null">
+                #{categoryId},
+            </if>
+            <if test="createdTime != null" >
+                #{createdTime},
+            </if>
+            <if test="createdBy!=null">
+                #{createdBy},
+            </if>
+            <if test="updatedTime!=null">
+                #{updatedTime},
+            </if>
+            <if test="updatedBy!=null">
+                #{updatedBy},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="getVideo" resultMap="VideoResultMap">
+        select <include refid="Base_Column_List"></include>
+        from video where video.video_id=#{videoId}
+    </select>
+</mapper>

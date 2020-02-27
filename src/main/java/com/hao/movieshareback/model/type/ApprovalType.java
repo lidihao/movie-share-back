@@ -3,7 +3,7 @@ package com.hao.movieshareback.model.type;
 import java.io.Serializable;
 
 public enum  ApprovalType implements Serializable {
-    PROCESSING("处理中",0),REJECT("拒绝",1),PASS("通过",2);
+    PROCESSING("处理中",0),PASS("通过",1),REJECT("拒绝",2);
     private String desc;
     private int tag;
 

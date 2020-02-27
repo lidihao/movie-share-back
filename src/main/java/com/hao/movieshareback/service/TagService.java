@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TagService {
@@ -23,5 +24,11 @@ public class TagService {
         for (Integer tagId:tagList){
             tagMapper.saveTagVideoApprovalRelation(tagId,videoApprovalId);
         }
+    }
+
+    public List<Tag> getTagListByVideoId(Integer videoId){
+        List<Integer> tagIdList=tagMapper.selectTagByVideoId(videoId);
+        return tagIdList.stream().map((tagId)-> tagMapper.selectTagByTagId(tagId))
+                .collect(Collectors.toList());
     }
 }

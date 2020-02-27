@@ -27,6 +27,7 @@
         <result property="categoryId" column="category_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result property="videoId" column="video_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result property="approvalType" column="approval_type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="remark" column="remark" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="createdTime" column="created_time" javaType="java.util.Date" jdbcType="DATE"/>
         <result property="createdBy" column="created_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="updatedTime" column="updated_time" javaType="java.util.Date" jdbcType="DATE"/>
@@ -36,7 +37,7 @@
 
     <sql id="Base_Column_List" >
         video_approval.video_approval_id,video_approval.upload_user_id,video_approval.poster_id,
-        video_approval.title,video_approval.introduce,video_approval.category_id,video_approval.video_id,video_approval.approval_type,
+        video_approval.title,video_approval.introduce,video_approval.category_id,video_approval.video_id,video_approval.approval_type,video_approval.remark,
         video_approval.created_time,video_approval.created_by,video_approval.updated_time,video_approval.updated_by,video_approval.is_delete
     </sql>
 
@@ -63,6 +64,9 @@
             </if>
             <if test="approvalType!=null">
                 approval_type,
+            </if>
+            <if test="remark!=null">
+                remark,
             </if>
             <if test="createdTime != null" >
                 created_time,
@@ -99,6 +103,9 @@
             <if test="approvalType!=null">
                 #{approvalType},
             </if>
+            <if test="remark!=null">
+                #{remark}
+            </if>
             <if test="createdTime != null" >
                 #{createdTime},
             </if>
@@ -117,9 +124,17 @@
     <select id="selectVideoApprovalPageList" resultMap="VideoApprovalResultMap">
         select <include refid="Base_Column_List"></include>
         from video_approval
-        <if test="categoryId!=null">
-            where video_approval.category_id=#{categoryId}
-        </if>
+        <where>
+            <if test="categoryId!=null">
+                and video_approval.category_id=#{categoryId}
+            </if>
+            <if test="approvalType!=null">
+                and video_approval.approval_type=#{approvalType.tag}
+            </if>
+            <if test="userId!=null">
+                and video_approval.upload_user_id=#{userId}
+            </if>
+        </where>
         order by video_approval.created_time
     </select>
 
@@ -127,4 +142,19 @@
         select <include refid="Base_Column_List"></include>
         from video_approval where video_approval.video_approval_id=#{videoApprovalId}
     </select>
+    <update id="updateApprovalStatus">
+        update video_approval set video_approval.approval_type =#{approvalType},video_approval.remark=#{remark} where
+        video_approval.video_approval_id = #{videoApprovalId}
+    </update>
+    <update id="updateVideoApprovalMeta" parameterType="com.hao.movieshareback.model.VideoApproval">
+        update video_approval set video_approval.title=#{title},video_approval.introduce=#{introduce}
+        <if test="posterId!=null">
+            ,video_approval.poster_id=#{posterId}
+        </if>
+        where video_approval.video_approval_id=#{videoApprovalId}
+    </update>
+    <update id="relateVideoId">
+        update video_approval set video_approval.video_id=#{videoId}
+        where video_approval.video_approval_id=#{videoApprovalId}
+    </update>
 </mapper>

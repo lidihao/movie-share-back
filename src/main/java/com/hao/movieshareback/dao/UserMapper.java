@@ -21,4 +21,6 @@ public interface UserMapper {
     int getCountByUserName(String userName);
 
     int activeUser(String userName);
+
+    User getUserByUserId(Integer userId);
 }

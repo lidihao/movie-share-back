@@ -111,6 +111,10 @@
         select count(*) from user
         where user.user_name=#{userName} and is_delete=0
     </select>
+    <select id="getUserByUserId" resultMap="UserResultMap">
+        SELECT <include refid="Base_Column_List"></include>
+        from user where user.user_id=#{userId} and is_delete=0
+    </select>
 
     <update id="activeUser">
         update user set user.has_active = true where user.user_name=#{userName} and is_delete=0

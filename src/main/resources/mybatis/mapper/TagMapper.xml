@@ -75,6 +75,10 @@
         select <include refid="Base_Column_List"></include>
         from tag
     </select>
+    <select id="selectTagByTagId" resultMap="TagResultMap">
+        select <include refid="Base_Column_List"></include>
+        from tag where tag.tag_id=#{tagId}
+    </select>
     <select id="selectTagByVideoApprovalId" resultType="java.lang.Integer">
         select tag_video_approval.tag_id
         from tag_video_approval where tag_video_approval.video_approval_id=#{videoApprovalId}
@@ -82,4 +86,12 @@
     <insert id="saveTagVideoApprovalRelation">
         insert into tag_video_approval(tag_id, video_approval_id) values (#{tagId},#{videoApprovalId})
     </insert>
+    <insert id="savaTagVideoRelation">
+        insert into video_tag(video_id,tag_id) values (#{videoId},#{tagId})
+    </insert>
+
+    <select id="selectTagByVideoId" resultType="java.lang.Integer">
+        select video_tag.tag_id
+        from video_tag where video_tag.video_id=#{videoId}
+    </select>
 </mapper>

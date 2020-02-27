@@ -1,11 +1,13 @@
 package com.hao.movieshareback.controller;
 
-import com.hao.movieshareback.annotation.auth.AnonymousAccess;
+import com.hao.movieshareback.exception.ApplyException;
+import com.hao.movieshareback.model.type.ApprovalType;
 import com.hao.movieshareback.service.VideoApplyService;
 import com.hao.movieshareback.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequestMapping("/videoApply")
@@ -50,6 +52,39 @@ public class VideoApplyController {
 
     @PostMapping("/doApplyVideo")
     public ResultBody doApplyVideo(@RequestBody VideoApplyActionReceiver videoApplyActionReceiver){
+        try {
+            applyService.doApplyVideo(videoApplyActionReceiver);
+        }catch (ApplyException e){
+            e.printStackTrace();
+            return ResultBody.error(e.getMessage());
+        }
+        return ResultBody.success();
+    }
 
+    @GetMapping("/listVideoApprovalTag")
+    public ResultBody getVideoApprovalTag(){
+        ApprovalType[] approvalTypes = ApprovalType.values();
+        List<ApprovalStatusVo> approvalStatusVoList = new ArrayList<>(approvalTypes.length);
+        for (int i=0;i<approvalTypes.length;i++){
+            approvalStatusVoList.add(new ApprovalStatusVo(approvalTypes[i].getTag(),approvalTypes[i].getDesc()));
+        }
+        return ResultBody.success(approvalStatusVoList);
+    }
+    @GetMapping("/listUploadVideo")
+    public ResultBody listUploadVideo(Integer approvalStatus,Integer pageNum,Integer pageSize){
+
+        XPage<VideoApplyVo> videoApplyVoXPage = applyService.listUploadVideo(approvalStatus,pageNum,pageSize);
+        return ResultBody.success(videoApplyVoXPage);
+    }
+
+    @PutMapping("/update")
+    public ResultBody updateVideoApply(@RequestBody VideoApplyUpdateVo videoApplyUpdateVo){
+        try {
+            applyService.doUpdateVideoApproval(videoApplyUpdateVo);
+        }catch (ApplyException e){
+            e.printStackTrace();
+            return ResultBody.error(e.getMessage());
+        }
+        return ResultBody.success();
     }
 }

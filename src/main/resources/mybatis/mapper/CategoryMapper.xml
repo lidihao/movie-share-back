@@ -77,4 +77,9 @@
         select <include refid="Base_Column_List"></include>
         from category
     </select>
+
+    <select id="selectCategoryById" resultMap="CategoryResultMap">
+        select <include refid="Base_Column_List"></include>
+        from category where category.category_id=#{categoryId}
+    </select>
 </mapper>

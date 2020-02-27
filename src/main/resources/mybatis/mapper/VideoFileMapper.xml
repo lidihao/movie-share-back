@@ -125,4 +125,19 @@
         from video_file where video_file.video_apply_id=#{videoApprovalId} and video_file.is_delete=0
         order by video_file.sort
     </select>
+    <select id="listAllVideoFileByApprovalId" resultMap="VideoFileResultMap">
+        select <include refid="Base_Column_List"></include>
+        from video_file where video_file.video_apply_id=#{videoApprovalId} and video_file.is_delete=0
+        order by video_file.sort
+    </select>
+    <select id="getMaxVideoFileIndex" resultType="java.lang.Integer">
+        select MAX(video_file.sort) from video_file where video_file.video_apply_id=#{videoApprovalId}
+    </select>
+    <update id="updateVideoFileApprovalStatus">
+        update video_file set video_file.approval_type = #{approvalType}
+        where video_file.video_apply_id=#{videoApprovalId}
+    </update>
+    <delete id="deleteByVideoFileId">
+        delete from video_file where video_file.video_file_id=#{videoFileId}
+    </delete>
 </mapper>

@@ -119,7 +119,7 @@ public class AuthController {
     public ResultBody getUserInfo(){
         JwtUser jwtUser = (JwtUser) jwtUserDetailsService.loadUserByUsername(SecurityUtils.getUsername());
         List<MenuVo> menuVoList = menuService.createMenuVoList(jwtUser.getUsername());
-        return ResultBody.success(new UserVo(jwtUser.getUsername(),jwtUser.getAvatarUrl(),jwtUser.getEmail(),menuVoList));
+        return ResultBody.success(new UserVo(jwtUser.getUserId(),jwtUser.getUsername(),jwtUser.getAvatarUrl(),jwtUser.getEmail(),menuVoList));
     }
 
     @AnonymousAccess

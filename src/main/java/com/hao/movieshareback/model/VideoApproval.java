@@ -26,8 +26,16 @@ public class VideoApproval extends BaseModel{
     private Integer categoryId;
     private Integer videoId;
     private Integer approvalType;
+    private String remark;
 
     public VideoApproval() {
+    }
+
+    public VideoApproval(Integer videoApprovalId, Integer posterId, String title, String introduce) {
+        this.videoApprovalId = videoApprovalId;
+        this.posterId = posterId;
+        this.title = title;
+        this.introduce = introduce;
     }
 
     public VideoApproval(Integer uploadUserId, Integer posterId, String title, String introduce, Integer categoryId, Integer approvalType) {
@@ -37,6 +45,14 @@ public class VideoApproval extends BaseModel{
         this.introduce = introduce;
         this.categoryId = categoryId;
         this.approvalType = approvalType;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 
     public Integer getVideoApprovalId() {

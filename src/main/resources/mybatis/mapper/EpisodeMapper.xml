@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hao.movieshareback.dao.EpisodeMapper">
+    <!--
+   `episode_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `episode_name` VARCHAR(100) NOT NULL COMMENT '剧集名称',
+    `episode_url` VARCHAR(100) NOT NULL COMMENT '视频url',
+    `poster_id` int(11) COMMENT '',
+    `episode_index` int NOT NULL COMMENT '剧集的索引',
+    `video_id` int(11) NOT NULL COMMENT '属于哪一个视频的剧集',
+    `created_time` DATETIME    COMMENT '创建时间' ,
+    `created_by` VARCHAR(32)    COMMENT '创建时间',
+    `updated_time` DATETIME    COMMENT '更新时间' ,
+    `updated_by` VARCHAR(32)    COMMENT '更新人' ,
+    `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
+    PRIMARY KEY (episode_id),
+    INDEX (is_delete)
+    -->
+    <resultMap id="EpisodeResultMap" type="com.hao.movieshareback.model.Episode">
+        <id property="episodeId" column="episode_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="episodeName" column="episode_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="episodeUrl" column="episode_url" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="posterId" column="poster_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="videoFileId" column="video_file_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="episodeIndex" column="episode_index" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="videoId" column="video_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="createdTime" column="created_time" javaType="java.util.Date" jdbcType="DATE"/>
+        <result property="createdBy" column="created_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="updatedTime" column="updated_time" javaType="java.util.Date" jdbcType="DATE"/>
+        <result property="updatedBy" column="updated_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="isDelete" column="is_delete" javaType="java.lang.Boolean" jdbcType="BIT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        episode.episode_id,episode.episode_name,episode.episode_url,episode.poster_id,episode.video_file_id,
+        episode.episode_index,episode.video_id,episode.created_time,episode.created_by,
+        episode.updated_time,episode.updated_by,episode.is_delete
+    </sql>
+
+    <insert id="save" parameterType="com.hao.movieshareback.model.Episode" useGeneratedKeys="true" keyProperty="episodeId" >
+        insert into episode
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="episodeName != null" >
+                episode_name,
+            </if>
+            <if test="episodeUrl != null" >
+                episode_url,
+            </if>
+            <if test="posterId != null" >
+                poster_id,
+            </if>
+            <if test="videoFileId!=null">
+                video_file_id,
+            </if>
+            <if test="episodeIndex != null" >
+                episode_index,
+            </if>
+            <if test="videoId!=null">
+                video_id,
+            </if>
+            <if test="createdTime != null" >
+                created_time,
+            </if>
+            <if test="createdBy!=null">
+                created_by,
+            </if>
+            <if test="updatedTime!=null">
+                updated_time,
+            </if>
+            <if test="updatedBy!=null">
+                updated_by,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="episodeName != null" >
+                #{episodeName},
+            </if>
+            <if test="episodeUrl != null" >
+                #{episodeUrl},
+            </if>
+            <if test="posterId != null" >
+                #{posterId},
+            </if>
+            <if test="videoFileId!=null">
+                #{videoFileId},
+            </if>
+            <if test="episodeIndex != null" >
+                #{episodeIndex},
+            </if>
+            <if test="videoId!=null">
+                #{videoId},
+            </if>
+            <if test="createdTime != null" >
+                #{createdTime},
+            </if>
+            <if test="createdBy!=null">
+                #{createdBy},
+            </if>
+            <if test="updatedTime!=null">
+                #{updatedTime},
+            </if>
+            <if test="updatedBy!=null">
+                #{updatedBy},
+            </if>
+        </trim>
+    </insert>
+    <delete id="deleteEpisodeByVideoFileId">
+        delete from episode where episode.video_file_id=#{videoFileId}
+    </delete>
+
+    <select id="getEpisodeByVideoId" resultMap="EpisodeResultMap">
+        select <include refid="Base_Column_List"></include>
+        from episode where episode.video_id=#{videoId} order by episode.episode_index
+    </select>
+    <select id="getEpisodeByEpisodeId" resultMap="EpisodeResultMap">
+        select <include refid="Base_Column_List"></include>
+        from episode where episode.episode_id=#{episodeId}
+    </select>
+</mapper>

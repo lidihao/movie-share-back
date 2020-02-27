@@ -1,5 +1,7 @@
 package com.hao.movieshareback.model;
 
+import com.hao.movieshareback.utils.SecurityUtils;
+
 import java.io.Serializable;
 import java.util.Date;
 

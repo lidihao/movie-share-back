@@ -10,24 +10,28 @@ public class VideoApplyVo {
     private Integer videoId;
     private String title;
     private String posterUrl;
+    private Integer approvalType;
     private UserVo userVo;
     private Date createdTime;
     private Integer categoryId;
     private String introduce;
+    private String remark;
     private List<Integer> tagIdList;
 
 
     public VideoApplyVo(Integer videoApprovalId, Integer videoId,
-                        String title, String posterUrl, UserVo userVo, Date createdTime,
-                        Integer categoryId,String introduce,List<Integer> tagIdList) {
+                        String title, String posterUrl,Integer approvalType, UserVo userVo, Date createdTime,
+                        Integer categoryId,String introduce,String remark,List<Integer> tagIdList) {
         this.videoApprovalId = videoApprovalId;
         this.videoId = videoId;
         this.title = title;
         this.posterUrl = posterUrl;
+        this.approvalType = approvalType;
         this.userVo = userVo;
         this.createdTime = createdTime;
         this.categoryId=categoryId;
         this.introduce=introduce;
+        this.remark=remark;
         this.tagIdList=tagIdList;
     }
 
@@ -101,5 +105,21 @@ public class VideoApplyVo {
 
     public void setIntroduce(String introduce) {
         this.introduce = introduce;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    public Integer getApprovalType() {
+        return approvalType;
+    }
+
+    public void setApprovalType(Integer approvalType) {
+        this.approvalType = approvalType;
     }
 }

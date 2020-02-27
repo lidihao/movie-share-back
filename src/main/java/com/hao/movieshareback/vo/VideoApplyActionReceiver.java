@@ -3,6 +3,7 @@ package com.hao.movieshareback.vo;
 public class VideoApplyActionReceiver {
     private Integer videoApprovalId;
     private Integer applystatus;
+    private String remark;
 
     public VideoApplyActionReceiver() {
     }
@@ -21,6 +22,14 @@ public class VideoApplyActionReceiver {
 
     public void setApplystatus(Integer applystatus) {
         this.applystatus = applystatus;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 
     @Override
