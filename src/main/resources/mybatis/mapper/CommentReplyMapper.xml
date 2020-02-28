@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hao.movieshareback.dao.CommentReplyMapper">
+    <!--
+    -->
+    <resultMap id="CommentReplyResultMap" type="com.hao.movieshareback.model.CommentReply">
+        <id property="replyId" column="reply_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="replyContent" column="reply_content" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="replyUp" column="reply_up" javaType="java.lang.Long" jdbcType="BIGINT"/>
+        <result property="replyDown" column="reply_down" javaType="java.lang.Long" jdbcType="BIGINT"/>
+        <result property="replyUserId" column="reply_user_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="videoCommentId" column="video_comment_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="replyToId" column="reply_to_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="createdTime" column="created_time" javaType="java.util.Date" jdbcType="DATE"/>
+        <result property="createdBy" column="created_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="updatedTime" column="updated_time" javaType="java.util.Date" jdbcType="DATE"/>
+        <result property="updatedBy" column="updated_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="isDelete" column="is_delete" javaType="java.lang.Boolean" jdbcType="BIT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        comment_reply.reply_id,comment_reply.reply_content,comment_reply.reply_up,comment_reply.reply_down,
+        comment_reply.reply_user_id,comment_reply.video_comment_id,comment_reply.reply_to_id,comment_reply.created_time,comment_reply.created_by,
+        comment_reply.updated_time,comment_reply.updated_by,comment_reply.is_delete
+    </sql>
+
+    <insert id="save" parameterType="com.hao.movieshareback.model.CommentReply" useGeneratedKeys="true" keyProperty="replyId">
+        insert into comment_reply
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="replyContent != null" >
+                reply_content,
+            </if>
+            <if test="replyUp != null" >
+                reply_up,
+            </if>
+            <if test="replyDown != null" >
+                reply_down,
+            </if>
+            <if test="replyUserId != null">
+                reply_user_id,
+            </if>
+            <if test="videoCommentId!=null">
+                video_comment_id,
+            </if>
+            <if test="replyToId!=null">
+                reply_to_id,
+            </if>
+            <if test="createdTime != null" >
+                created_time,
+            </if>
+            <if test="createdBy!=null">
+                created_by,
+            </if>
+            <if test="updatedTime!=null">
+                updated_time,
+            </if>
+            <if test="updatedBy!=null">
+                updated_by,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="replyContent != null" >
+                #{replyContent},
+            </if>
+            <if test="replyUp != null" >
+                #{replyUp},
+            </if>
+            <if test="replyDown != null" >
+                #{replyDown},
+            </if>
+            <if test="replyUserId != null" >
+                #{replyUserId},
+            </if>
+            <if test="videoCommentId != null" >
+                #{videoCommentId},
+            </if>
+            <if test="replyToId!=null">
+                #{replyToId},
+            </if>
+            <if test="createdTime != null" >
+                #{createdTime},
+            </if>
+            <if test="createdBy!=null">
+                #{createdBy},
+            </if>
+            <if test="updatedTime!=null">
+                #{updatedTime},
+            </if>
+            <if test="updatedBy!=null">
+                #{updatedBy},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="selectCommentReplyByReplyId" resultMap="CommentReplyResultMap">
+        select <include refid="Base_Column_List"></include> from comment_reply
+        where comment_reply.reply_id=#{replyId}
+    </select>
+
+    <select id="selectCommentReplyListByCommentId" resultMap="CommentReplyResultMap">
+        select <include refid="Base_Column_List"></include> from comment_reply
+        where comment_reply.video_comment_id=#{videoCommentId} order by comment_reply.created_time
+    </select>
+</mapper>

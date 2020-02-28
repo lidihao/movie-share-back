@@ -228,16 +228,31 @@ create table `video_comment`(
     `comment_down` int NOT NULL DEFAULT 0 COMMENT '踩的人数',
     `comment_user_id` int(11) NOT NULL COMMENT '评论人',
     `rate` DOUBLE NOT NULL DEFAULT 0.0 COMMENT '评分',
-    `comment_type` int NOT NULL COMMENT '评论类型',
-    `root_comment_id` int(11) NOT NULL COMMENT '顶级评论',
-    `reply_comment_id` int(11) NOT NULL COMMENT '回复评论的id',
-    `ref_id` int(11) NOT NULL COMMENT '视频id',
+    `video_id` int(11) NOT NULL COMMENT '视频id',
     `created_time` DATETIME    COMMENT '创建时间' ,
     `created_by` VARCHAR(32)    COMMENT '创建时间',
     `updated_time` DATETIME    COMMENT '更新时间' ,
     `updated_by` VARCHAR(32)    COMMENT '更新人' ,
     `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
     PRIMARY KEY (comment_id),
+    INDEX (is_delete)
+)COMMENT '视频评论' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;
+
+
+create table `comment_reply`(
+    `reply_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `reply_content` TEXT NOT NULL COMMENT '评论内容',
+    `reply_up` int NOT NULL DEFAULT 0 COMMENT '点赞人数',
+    `reply_down` int NOT NULL DEFAULT 0 COMMENT '踩的人数',
+    `reply_user_id` int(11) NOT NULL COMMENT '评论人',
+    `video_comment_id` int(11) NOT NULL COMMENT '视频id',
+    `reply_to_id` int(11) NOT NULL DEFAULT -1,
+    `created_time` DATETIME    COMMENT '创建时间' ,
+    `created_by` VARCHAR(32)    COMMENT '创建时间',
+    `updated_time` DATETIME    COMMENT '更新时间' ,
+    `updated_by` VARCHAR(32)    COMMENT '更新人' ,
+    `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
+    PRIMARY KEY (reply_id),
     INDEX (is_delete)
 )COMMENT '视频评论' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;
 

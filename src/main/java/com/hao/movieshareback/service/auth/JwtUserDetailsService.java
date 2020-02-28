@@ -1,6 +1,5 @@
 package com.hao.movieshareback.service.auth;
 
-import com.hao.movieshareback.dao.PictureMapper;
 import com.hao.movieshareback.model.Permission;
 import com.hao.movieshareback.model.Picture;
 import com.hao.movieshareback.model.User;
@@ -45,7 +44,7 @@ public class JwtUserDetailsService implements UserDetailsService {
         List<GrantedAuthority> grantedAuthorityList = permissionList.stream().
                 map(permission -> new SimpleGrantedAuthority(permission.getPermissionAction()))
                 .collect(Collectors.toList());
-        Picture avatarPic = pictureService.getPicById(user.getUserId());
+        Picture avatarPic = pictureService.getPicById(user.getAvatarPicId());
         return new JwtUser(user.getUserId(),user.getUserName(),user.getSalt(),user.getPassword(),
                 Optional.ofNullable(avatarPic).map(Picture::getUrl).orElse(""),user.getEmail()
                 ,grantedAuthorityList,user.isHasActive(),user.getLastPasswordResetDate(),user.getCreatedTime()

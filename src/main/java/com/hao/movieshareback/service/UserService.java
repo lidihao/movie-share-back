@@ -211,7 +211,7 @@ public class UserService {
     public UserVo getUserVoByUserId(Integer userId){
         User user = userMapper.getUserByUserId(userId);
         Picture avatar = pictureMapper.selectPictureById(user.getAvatarPicId());
-        UserVo userVo = new UserVo(user.getUserId(),user.getUserName(),avatar.getUrl(),user.getIntroduce(),user.getEmail(),null);
+        UserVo userVo = new UserVo(user.getUserId(),user.getUserName(),avatar.getUrl(),user.getIntroduce(),null,null);
         return userVo;
     }
 }
