@@ -10,6 +10,7 @@ public class User extends BaseModel {
     private String email;
     private String introduce;
     private Integer avatarPicId;
+    private Integer userSkinId;
     private boolean hasActive;
     private Date lastPasswordResetDate;
 
@@ -93,6 +94,14 @@ public class User extends BaseModel {
 
     public void setLastPasswordResetDate(Date lastPasswordResetDate) {
         this.lastPasswordResetDate = lastPasswordResetDate;
+    }
+
+    public Integer getUserSkinId() {
+        return userSkinId;
+    }
+
+    public void setUserSkinId(Integer userSkinId) {
+        this.userSkinId = userSkinId;
     }
 
     @Override

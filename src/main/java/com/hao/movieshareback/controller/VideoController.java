@@ -21,4 +21,5 @@ public class VideoController {
     public ResultBody getVideoDetail(Integer videoId){
         return ResultBody.success(videoService.getVideoDetail(videoId));
     }
+
 }

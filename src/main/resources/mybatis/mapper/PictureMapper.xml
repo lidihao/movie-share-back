@@ -100,4 +100,21 @@
         select <include refid="Base_Column_List"></include>
         from picture where picture.picture_id=#{pictureId}
     </select>
+
+    <insert id="saveUserSkin" parameterType="com.hao.movieshareback.model.UserSkin">
+        insert into user_skin(user_id, picture_id) values (#{userId},#{pictureId})
+    </insert>
+
+    <select id="selectSkinListById" resultType="com.hao.movieshareback.model.UserSkin">
+        select user_skin.user_skin_id,user_skin.user_id,user_skin.picture_id
+        from user_skin where user_skin.user_id=#{userId}
+    </select>
+
+    <delete id="deletePicById">
+        delete from picture where picture.picture_id=#{pictureId}
+    </delete>
+
+    <delete id="deleteUserSkin" parameterType="com.hao.movieshareback.model.UserSkin">
+        delete from user_skin where user_id=#{userId} and picture_id=#{pictureId}
+    </delete>
 </mapper>

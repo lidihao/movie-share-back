@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hao.movieshareback.dao.PrivateMessageMapper">
+    <!--
+    -->
+    <resultMap id="PrivateMessageResultMap" type="com.hao.movieshareback.model.PrivateMessage">
+        <id property="messageId" column="message_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="senderId" column="sender_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="receiverId" column="receiver_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="messageContent" column="message_content" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="sendTime" column="send_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result property="readTime" column="read_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result property="deleteTime" column="delete_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result property="unRead" column="un_read" javaType="java.lang.Boolean" jdbcType="BIT"/>
+        <result property="isDelete" column="is_delete" javaType="java.lang.Boolean" jdbcType="BIT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        private_message.message_id,private_message.sender_id,
+        private_message.receiver_id,private_message.message_content,private_message.send_time,private_message.read_time,
+        private_message.delete_time,private_message.un_read,private_message.is_delete
+    </sql>
+
+    <insert id="save" parameterType="com.hao.movieshareback.model.PrivateMessage" useGeneratedKeys="true" keyProperty="messageId">
+        insert into private_message
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="senderId != null" >
+                sender_id,
+            </if>
+            <if test="receiverId != null">
+                receiver_id,
+            </if>
+            <if test="messageContent!=null">
+                message_content,
+            </if>
+            <if test="sendTime!=null">
+                send_time,
+            </if>
+            <if test="readTime != null" >
+                read_time,
+            </if>
+            <if test="deleteTime!=null">
+                delete_time,
+            </if>
+            <if test="unRead!=null">
+                un_read,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="senderId != null" >
+                #{senderId},
+            </if>
+            <if test="receiverId != null" >
+                #{receiverId},
+            </if>
+            <if test="messageContent != null" >
+                #{messageContent},
+            </if>
+            <if test="sendTime!=null">
+                #{sendTime},
+            </if>
+            <if test="readTime != null" >
+                #{readTime},
+            </if>
+            <if test="deleteTime!=null">
+                #{deleteTime},
+            </if>
+            <if test="unRead!=null">
+                #{unRead}
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="saveUserMapping" parameterType="com.hao.movieshareback.model.UserMsgMapping" useGeneratedKeys="true" keyProperty="mappingId">
+        insert into user_msg_mapping
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="userId != null" >
+                user_id,
+            </if>
+            <if test="friendId != null">
+                friend_id,
+            </if>
+            <if test="messageId!=null">
+                message_id,
+            </if>
+            <if test="createdTime!=null">
+                created_time,
+            </if>
+            <if test="unRead != null" >
+                un_read,
+            </if>
+            <if test="isDelete!=null">
+                is_delete,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="userId != null" >
+                #{userId},
+            </if>
+            <if test="friendId != null" >
+                #{friendId},
+            </if>
+            <if test="messageId != null" >
+                #{messageId},
+            </if>
+            <if test="createdTime!=null">
+                #{createdTime},
+            </if>
+            <if test="unRead != null" >
+                #{unRead},
+            </if>
+            <if test="isDelete!=null">
+                #{isDelete},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="getPrivateMsgUserList" resultType="com.hao.movieshareback.model.bo.PrivateMsgUserItem">
+        select user_msg_mapping.friend_id AS friendId,MAX(user_msg_mapping.message_id) AS messageId
+        from user_msg_mapping where user_msg_mapping.user_id=#{userId} group by user_msg_mapping.friend_id
+        order by MAX(user_msg_mapping.message_id) DESC
+    </select>
+    <select id="getPrivateMsgByMsgId" resultMap="PrivateMessageResultMap">
+        select <include refid="Base_Column_List"></include>
+        from private_message where private_message.message_id=#{messageId}
+    </select>
+    <select id="getUnReadPrivateMsg" resultType="java.lang.Integer">
+        select SUM(user_msg_mapping.un_read)AS unReadCount from
+        user_msg_mapping where user_msg_mapping.user_id=#{userId} and user_msg_mapping.friend_id=#{friendId}
+    </select>
+    <select id="getMessageList" resultMap="PrivateMessageResultMap">
+        select <include refid="Base_Column_List"></include>
+        from user_msg_mapping join private_message on user_msg_mapping.user_id=#{userId}
+        and user_msg_mapping.friend_id=#{friendId} and user_msg_mapping.message_id=private_message.message_id order by private_message.send_time
+    </select>
+    <select id="getUserItemDetail" resultType="com.hao.movieshareback.model.bo.PrivateMsgUserItem">
+        select user_msg_mapping.friend_id AS friendId,MAX(user_msg_mapping.message_id) AS messageId
+        from user_msg_mapping where user_msg_mapping.user_id=#{userId} and user_msg_mapping.friend_id=#{friendId}
+    </select>
+</mapper>

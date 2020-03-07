@@ -12,6 +12,7 @@ import com.hao.movieshareback.utils.FileUtil;
 import com.hao.movieshareback.utils.SecurityUtils;
 import com.hao.movieshareback.utils.VideoUtils;
 import com.hao.movieshareback.vo.ScreenPicture;
+import com.hao.movieshareback.vo.VideoFileRawInfo;
 import com.hao.movieshareback.vo.VideoMergeFileVo;
 import com.hao.movieshareback.vo.VideoMeta;
 import com.hao.movieshareback.vo.auth.JwtUser;
@@ -101,8 +102,9 @@ public class VideoUploadService {
         User user=userMapper.getUserByUserName(uploaderName);
         String fileUrl=urlRoot+target.getName();
         //poster_picture
-        ScreenPicture screenPicture = VideoUtils.getScreenshot(target.getAbsolutePath());
+        VideoFileRawInfo rawInfo = VideoUtils.getScreenshot(target.getAbsolutePath());
 
+        ScreenPicture screenPicture=rawInfo.getScreenPicture();
         String imgPath = screenPicture.getPath();
         File posterSrc = new File(imgPath);
         File posterDes = new File(imgRoot,IdUtil.simpleUUID()+"."+VideoUtils.SCREEN_SHOT_FORMAT);

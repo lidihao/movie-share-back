@@ -35,6 +35,7 @@ public class CommentReplyService {
         Page page = new Page(pageNum,pageSize);
         PageList<CommentReply> commentReplyList = commentReplyMapper.selectCommentReplyListByCommentId(page,videoCommentId);
         PageList<CommentReplyVo> commentReplyVoPageList = new PageList<>();
+        commentReplyVoPageList.setPageInfo(commentReplyList.getPageInfo());
 
         commentReplyList.forEach(commentReply -> {
             CommentReplyVo replyTo = null;

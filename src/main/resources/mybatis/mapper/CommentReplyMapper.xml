@@ -99,6 +99,6 @@
 
     <select id="selectCommentReplyListByCommentId" resultMap="CommentReplyResultMap">
         select <include refid="Base_Column_List"></include> from comment_reply
-        where comment_reply.video_comment_id=#{videoCommentId} order by comment_reply.created_time
+        where comment_reply.video_comment_id=#{videoCommentId} order by comment_reply.created_time DESC
     </select>
 </mapper>

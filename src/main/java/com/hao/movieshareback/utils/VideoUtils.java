@@ -1,6 +1,7 @@
 package com.hao.movieshareback.utils;
 
 import com.hao.movieshareback.vo.ScreenPicture;
+import com.hao.movieshareback.vo.VideoFileRawInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
@@ -24,7 +25,7 @@ public class VideoUtils {
      * @Description: 获取视频截图
      * @throws IOException  void
      */
-    public static ScreenPicture getScreenshot(String filePath) throws Exception{
+    public static VideoFileRawInfo getScreenshot(String filePath) throws Exception{
 
         LOG.info("截取视频截图开始："+ System.currentTimeMillis());
         FFmpegFrameGrabber grabber = FFmpegFrameGrabber.createDefault(filePath);
@@ -35,9 +36,6 @@ public class VideoUtils {
         String fileName = filePath.substring(filePath.lastIndexOf(File.separator) + 1);
         // 图片名称
         String targetFileName = fileName.substring(0, fileName.lastIndexOf("."));
-        System.out.println("视频路径是：" + targerFilePath);
-        System.out.println("视频文件名：" + fileName);
-        System.out.println("图片名称是：" + targetFileName);
 
         grabber.start();
         //设置视频截取帧（默认取第一帧）
@@ -57,9 +55,10 @@ public class VideoUtils {
         File output = new File(imagePath);
         ImageIO.write(bi, SCREEN_SHOT_FORMAT, output);
 
+        long duration = grabber.getLengthInTime() / (1000 * 1000);
+
         ScreenPicture screenPicture = new ScreenPicture(bi.getHeight(),bi.getWidth(),output.length(),
                 output.getAbsolutePath(),grabber.getFormat(),StringUtils.isBlank(rotate)? "0" : rotate);
-        long duration = grabber.getLengthInTime() / (1000 * 1000);
         LOG.info("视频的宽:" + bi.getWidth());
         LOG.info("视频的高:" + bi.getHeight());
         LOG.info("视频的旋转度：" + rotate);
@@ -67,7 +66,7 @@ public class VideoUtils {
         LOG.info("此视频时长（s/秒）：" + duration);
         grabber.stop();
         LOG.info("截取视频截图结束："+ System.currentTimeMillis());
-        return screenPicture;
+        return new VideoFileRawInfo(duration,screenPicture);
     }
 
     /**

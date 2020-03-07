@@ -6,6 +6,7 @@ create table `user`(
     `email` VARCHAR(100) NOT NULL UNIQUE COMMENT '邮箱',
     `introduce` VARCHAR(200) NOT NULL DEFAULT '' COMMENT '简介',
     `avatar_pic_id` int(11) NOT NULL DEFAULT 1000 COMMENT '头像',
+    `user_skin_id` int(11),
     `has_active` BIT NOT NULL DEFAULT 0 COMMENT '是否激活账号',
     `last_password_reset_date` DATETIME COMMENT '密码修改时间',
     `created_time` DATETIME    COMMENT '创建时间' ,
@@ -44,7 +45,7 @@ create table `user_role`(
     `created_by` VARCHAR(32)    COMMENT '创建时间',
     `updated_time` DATETIME    COMMENT '更新时间' ,
     `updated_by` VARCHAR(32)    COMMENT '更新人' ,
-    `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
+    `is_delete` BIT NOT NULL  DEFAULT 0 COMMENT '是否删除',
     PRIMARY KEY (user_role_id),
     INDEX (is_delete)
 )COMMENT '用户-角色关联表' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;
@@ -82,7 +83,7 @@ CREATE TABLE `picture`  (
     `created_by` VARCHAR(32)    COMMENT '创建时间',
     `updated_time` DATETIME    COMMENT '更新时间' ,
     `updated_by` VARCHAR(32)    COMMENT '更新人' ,
-    `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
+    `is_delete` BIT NOT NULL  DEFAULT 0 COMMENT '是否删除',
     PRIMARY KEY (`picture_id`),
     INDEX (is_delete)
 )COMMENT '图片' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;
@@ -95,7 +96,7 @@ create table `role_menu`(
     `created_by` VARCHAR(32)    COMMENT '创建时间',
     `updated_time` DATETIME    COMMENT '更新时间' ,
     `updated_by` VARCHAR(32)    COMMENT '更新人' ,
-    `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
+    `is_delete` BIT NOT NULL  DEFAULT 0 COMMENT '是否删除',
     PRIMARY KEY (role_menu_id),
     INDEX (is_delete)
 )COMMENT '角色-菜单表' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;
@@ -111,7 +112,7 @@ create table `permission`(
     `created_by` VARCHAR(32)    COMMENT '创建时间',
     `updated_time` DATETIME    COMMENT '更新时间' ,
     `updated_by` VARCHAR(32)    COMMENT '更新人' ,
-    `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
+    `is_delete` BIT NOT NULL  DEFAULT 0 COMMENT '是否删除',
     PRIMARY KEY (permission_id),
     INDEX (is_delete)
 )COMMENT '需要权限校验的url表' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;
@@ -124,7 +125,7 @@ create table `role_permission`(
     `created_by` VARCHAR(32)    COMMENT '创建时间',
     `updated_time` DATETIME    COMMENT '更新时间' ,
     `updated_by` VARCHAR(32)    COMMENT '更新人' ,
-    `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
+    `is_delete` BIT NOT NULL  DEFAULT 0 COMMENT '是否删除',
     PRIMARY KEY (role_permission_id),
     INDEX (is_delete)
 )COMMENT 'role-url表' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;
@@ -137,7 +138,7 @@ create table `follow`(
     `created_by` VARCHAR(32)    COMMENT '创建时间',
     `updated_time` DATETIME    COMMENT '更新时间' ,
     `updated_by` VARCHAR(32)    COMMENT '更新人' ,
-    `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
+    `is_delete` BIT NOT NULL  DEFAULT 0 COMMENT '是否删除',
     PRIMARY KEY (follow_id),
     INDEX (user_id),
     INDEX (follow_id),
@@ -152,7 +153,7 @@ create table `category`(
     `created_by` VARCHAR(32)    COMMENT '创建时间',
     `updated_time` DATETIME    COMMENT '更新时间' ,
     `updated_by` VARCHAR(32)    COMMENT '更新人' ,
-    `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
+    `is_delete` BIT NOT NULL  DEFAULT 0 COMMENT '是否删除',
     PRIMARY KEY (category_id),
     INDEX (is_delete)
 )COMMENT '视频类别表' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;
@@ -165,7 +166,7 @@ create table `tag`(
     `created_by` VARCHAR(32)    COMMENT '创建时间',
     `updated_time` DATETIME    COMMENT '更新时间' ,
     `updated_by` VARCHAR(32)    COMMENT '更新人' ,
-    `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
+    `is_delete` BIT NOT NULL  DEFAULT 0 COMMENT '是否删除',
     PRIMARY KEY (tag_id),
     INDEX (is_delete)
 )COMMENT '视频标签表' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;
@@ -184,7 +185,7 @@ create table `video`(
     `created_by` VARCHAR(32)    COMMENT '创建时间',
     `updated_time` DATETIME    COMMENT '更新时间' ,
     `updated_by` VARCHAR(32)    COMMENT '更新人' ,
-    `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
+    `is_delete` BIT NOT NULL  DEFAULT 0 COMMENT '是否删除',
     PRIMARY KEY (video_id),
     INDEX (is_delete)
 )COMMENT '视频详情表' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;
@@ -201,7 +202,7 @@ create table `episode`(
     `created_by` VARCHAR(32)    COMMENT '创建时间',
     `updated_time` DATETIME    COMMENT '更新时间' ,
     `updated_by` VARCHAR(32)    COMMENT '更新人' ,
-    `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
+    `is_delete` BIT NOT NULL  DEFAULT 0 COMMENT '是否删除',
     PRIMARY KEY (episode_id),
     INDEX (is_delete)
 )COMMENT '视频剧集详情表' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;
@@ -215,7 +216,7 @@ create table `video_tag`(
     `created_by` VARCHAR(32)    COMMENT '创建时间',
     `updated_time` DATETIME    COMMENT '更新时间' ,
     `updated_by` VARCHAR(32)    COMMENT '更新人' ,
-    `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
+    `is_delete` BIT NOT NULL  DEFAULT 0 COMMENT '是否删除',
     PRIMARY KEY (video_tag_id),
     INDEX (is_delete)
 )COMMENT '视频标签关系表' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;
@@ -233,7 +234,7 @@ create table `video_comment`(
     `created_by` VARCHAR(32)    COMMENT '创建时间',
     `updated_time` DATETIME    COMMENT '更新时间' ,
     `updated_by` VARCHAR(32)    COMMENT '更新人' ,
-    `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
+    `is_delete` BIT NOT NULL  DEFAULT 0 COMMENT '是否删除',
     PRIMARY KEY (comment_id),
     INDEX (is_delete)
 )COMMENT '视频评论' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;
@@ -251,7 +252,7 @@ create table `comment_reply`(
     `created_by` VARCHAR(32)    COMMENT '创建时间',
     `updated_time` DATETIME    COMMENT '更新时间' ,
     `updated_by` VARCHAR(32)    COMMENT '更新人' ,
-    `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
+    `is_delete` BIT NOT NULL  DEFAULT 0 COMMENT '是否删除',
     PRIMARY KEY (reply_id),
     INDEX (is_delete)
 )COMMENT '视频评论' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;
@@ -265,7 +266,7 @@ create table `report_reason`(
     `created_by` VARCHAR(32)    COMMENT '创建时间',
     `updated_time` DATETIME    COMMENT '更新时间' ,
     `updated_by` VARCHAR(32)    COMMENT '更新人' ,
-    `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
+    `is_delete` BIT NOT NULL  DEFAULT 0 COMMENT '是否删除',
     PRIMARY KEY (reason_id),
     INDEX (is_delete)
 )COMMENT '举报原因' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;
@@ -278,7 +279,7 @@ create table `report_comment`(
     `created_by` VARCHAR(32)    COMMENT '创建时间',
     `updated_time` DATETIME    COMMENT '更新时间' ,
     `updated_by` VARCHAR(32)    COMMENT '更新人' ,
-    `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
+    `is_delete` BIT NOT NULL  DEFAULT 0 COMMENT '是否删除',
     PRIMARY KEY (report_comment_id),
     INDEX (is_delete)
 )COMMENT '举报的评论' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;
@@ -291,7 +292,7 @@ create table `favorite_video`(
     `created_by` VARCHAR(32)    COMMENT '创建时间',
     `updated_time` DATETIME    COMMENT '更新时间' ,
     `updated_by` VARCHAR(32)    COMMENT '更新人' ,
-    `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
+    `is_delete` BIT NOT NULL  DEFAULT 0 COMMENT '是否删除',
     PRIMARY KEY (favorite_video_id),
     INDEX (is_delete)
 )COMMENT '收藏视频' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;
@@ -304,7 +305,7 @@ create table `history_video`(
     `created_by` VARCHAR(32)    COMMENT '创建时间',
     `updated_time` DATETIME    COMMENT '更新时间' ,
     `updated_by` VARCHAR(32)    COMMENT '更新人' ,
-    `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
+    `is_delete` BIT NOT NULL  DEFAULT 0 COMMENT '是否删除',
     PRIMARY KEY (history_video_id),
     INDEX (is_delete)
 )COMMENT '历史观看' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;
@@ -319,14 +320,14 @@ create table `person_space_right`(
     `created_by` VARCHAR(32)    COMMENT '创建时间',
     `updated_time` DATETIME    COMMENT '更新时间' ,
     `updated_by` VARCHAR(32)    COMMENT '更新人' ,
-    `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
+    `is_delete` BIT NOT NULL  DEFAULT 0 COMMENT '是否删除',
     PRIMARY KEY (person_space_right_id),
     INDEX (is_delete)
 )COMMENT '个人空间权限表' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;
 
 create table `reply_notify`(
     `reply_notify_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
-    `comment_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '评论id',
+    `comment_id` int(11) NOT NULL  COMMENT '评论id',
     `user_id` int(11) NOT NULL COMMENT '回复user_id',
     `notify_user_id` int(11) NOT NULL COMMENT '提醒user_id',
     `has_read` BIT NOT NULL DEFAULT 0 COMMENT '是否消息已读',
@@ -334,7 +335,7 @@ create table `reply_notify`(
     `created_by` VARCHAR(32)    COMMENT '创建时间',
     `updated_time` DATETIME    COMMENT '更新时间' ,
     `updated_by` VARCHAR(32)    COMMENT '更新人' ,
-    `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
+    `is_delete` BIT NOT NULL  DEFAULT 0 COMMENT '是否删除',
     PRIMARY KEY (reply_notify_id),
     INDEX (is_delete)
 )COMMENT '回复评论提醒' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;
@@ -348,25 +349,36 @@ create table `system_message`(
     `created_by` VARCHAR(32)    COMMENT '创建时间',
     `updated_time` DATETIME    COMMENT '更新时间' ,
     `updated_by` VARCHAR(32)    COMMENT '更新人' ,
-    `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
+    `is_delete` BIT NOT NULL  DEFAULT 0 COMMENT '是否删除',
     PRIMARY KEY (system_message_id),
     INDEX (is_delete)
 )COMMENT '系统消息提醒' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;
 
-create table `im_message`(
-    `im_message_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
-    `send_user_id` int NOT NULL COMMENT '发送人',
-    `receive_user_id` int NOT NULL COMMENT '接受人',
-    `has_read` BIT NOT NULL DEFAULT 0 COMMENT '是否已读',
-    `message_content` TEXT NOT NULL COMMENT '评论内容',
-    `created_time` DATETIME    COMMENT '创建时间' ,
-    `created_by` VARCHAR(32)    COMMENT '创建时间',
-    `updated_time` DATETIME    COMMENT '更新时间' ,
-    `updated_by` VARCHAR(32)    COMMENT '更新人' ,
-    `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
-    PRIMARY KEY (im_message_id),
+CREATE TABLE `private_message` (
+   `message_id` int(11) NOT NULL auto_increment COMMENT '主键id',
+   `sender_id` int(11) NOT NULL COMMENT '发送者id',
+   `receiver_id` int(11) NOT NULL COMMENT '接受者id',
+   `message_content` varchar(500) NOT NULL COMMENT '消息内容',
+   `send_time` datetime NOT NULL COMMENT '消息发送时间',
+   `read_time` datetime NOT NULL COMMENT '消息阅读时间',
+   `delete_time` datetime NOT NULL COMMENT '消息删除时间',
+   `un_read` BIT NOT NULL default 0 COMMENT '是否已读 (0：未读 1：已读) ',
+   `is_delete` BIT NOT NULL  DEFAULT 0 COMMENT '是否删除',
+   PRIMARY KEY (`message_id`),
+   INDEX (is_delete)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='私信消息表' AUTO_INCREMENT=1000;
+
+CREATE TABLE `user_msg_mapping`(
+    `mapping_id` int(11) NOT NULL AUTO_INCREMENT,
+    `user_id` int(11) NOT NULL ,
+    `friend_id` int(11) NOT NULL ,
+    `message_id` int(11) NOT NULL ,
+    `created_time` DATETIME ,
+    `un_read` BIT NOT NULL default 0 COMMENT '是否已读 (0：未读 1：已读)',
+    `is_delete` BIT NOT NULL DEFAULT 0,
+    PRIMARY KEY (mapping_id),
     INDEX (is_delete)
-)COMMENT '私信' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;
+)ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='私信消息表' AUTO_INCREMENT=1000;
 
 create table `message_right`(
     `message_right_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -378,7 +390,7 @@ create table `message_right`(
     `created_by` VARCHAR(32)    COMMENT '创建时间',
     `updated_time` DATETIME    COMMENT '更新时间' ,
     `updated_by` VARCHAR(32)    COMMENT '更新人' ,
-    `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
+    `is_delete` BIT NOT NULL  DEFAULT 0 COMMENT '是否删除',
     PRIMARY KEY (message_right_id),
     INDEX (is_delete)
 )COMMENT '消息设置' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;
@@ -396,7 +408,7 @@ create table `video_approval`(
     `created_by` VARCHAR(32)    COMMENT '创建时间',
     `updated_time` DATETIME    COMMENT '更新时间' ,
     `updated_by` VARCHAR(32)    COMMENT '更新人' ,
-    `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
+    `is_delete` BIT NOT NULL  DEFAULT 0 COMMENT '是否删除',
     PRIMARY KEY (video_approval_id),
     INDEX (is_delete)
 )COMMENT '视频审批' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;
@@ -423,7 +435,14 @@ create table `video_file`(
     `created_by` VARCHAR(32)    COMMENT '创建时间',
     `updated_time` DATETIME    COMMENT '更新时间' ,
     `updated_by` VARCHAR(32)    COMMENT '更新人' ,
-    `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
+    `is_delete` BIT NOT NULL  DEFAULT 0 COMMENT '是否删除',
     PRIMARY KEY (video_file_id),
     INDEX (is_delete)
+)COMMENT '上传的文件' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;
+
+create table `user_skin`(
+    `user_skin_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `user_id` int(11) NOT NULL COMMENT '主键',
+    `picture_id` int(11) not null DEFAULT 0 COMMENT '排序字段',
+    PRIMARY KEY (user_skin_id)
 )COMMENT '上传的文件' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;

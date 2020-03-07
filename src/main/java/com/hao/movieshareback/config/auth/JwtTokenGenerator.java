@@ -106,8 +106,11 @@ public class JwtTokenGenerator implements Serializable {
     }
 
     public String getToken(HttpServletRequest request){
-        final String requestHeader = request.getHeader(tokenHeader);
-        return requestHeader;
+        String token = request.getHeader(tokenHeader);
+        if(token==null){
+            token = request.getParameter(tokenHeader);
+        }
+        return token;
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {

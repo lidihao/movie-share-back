@@ -3,12 +3,14 @@ package com.hao.movieshareback.service;
 import cn.hutool.core.util.IdUtil;
 import com.hao.movieshareback.config.auth.JwtTokenGenerator;
 import com.hao.movieshareback.dao.PictureMapper;
+import com.hao.movieshareback.dao.RoleMapper;
 import com.hao.movieshareback.dao.UserMapper;
 import com.hao.movieshareback.exception.ActiveUserException;
 import com.hao.movieshareback.exception.LoginException;
 import com.hao.movieshareback.exception.UserExistException;
 import com.hao.movieshareback.exception.ValidateCodeExpireException;
 import com.hao.movieshareback.model.Picture;
+import com.hao.movieshareback.model.Role;
 import com.hao.movieshareback.model.User;
 import com.hao.movieshareback.service.auth.JwtUserDetailsService;
 import com.hao.movieshareback.service.mail.MailService;
@@ -64,6 +66,9 @@ public class UserService {
 
     @Autowired
     private PictureMapper pictureMapper;
+
+    @Autowired
+    private RoleMapper roleMapper;
 
     @Value("${email-validate.key}")
     private String emailKey;
@@ -149,6 +154,7 @@ public class UserService {
         User user = new User(registerVo.getUserName(),passwordWithSalt,salt,registerVo.getEmail());
         return user;
     }
+    @Transactional(propagation = Propagation.REQUIRED ,rollbackFor = Exception.class)
     public void activeUser(String userName,String token) throws ActiveUserException {
         User user = userMapper.getUserByUserName(userName);
         if (user!=null){
@@ -158,10 +164,12 @@ public class UserService {
                 String tokenValue = redisService.getMailVadateToken(token);
                 if (StringUtils.isBlank(tokenValue)){
                     throw new ActiveUserException("激活超期");
-                }else if (StringUtils.equals(userName,tokenValue)){
+                }else if (!StringUtils.equals(userName,tokenValue)){
                     throw new ActiveUserException("token可能被冒用");
                 }else {
                     userMapper.activeUser(userName);
+                    Role role = roleMapper.selectRoleByRoleName("user");
+                    roleMapper.addUserRole(user.getUserId(),role.getRoleId());
                 }
             }
         }else {
@@ -211,7 +219,8 @@ public class UserService {
     public UserVo getUserVoByUserId(Integer userId){
         User user = userMapper.getUserByUserId(userId);
         Picture avatar = pictureMapper.selectPictureById(user.getAvatarPicId());
-        UserVo userVo = new UserVo(user.getUserId(),user.getUserName(),avatar.getUrl(),user.getIntroduce(),null,null);
+        Picture skin = pictureMapper.selectPictureById(user.getUserSkinId());
+        UserVo userVo = new UserVo(user.getUserId(),user.getUserName(),avatar.getUrl(),skin.getUrl(),user.getIntroduce(),null,null);
         return userVo;
     }
 }

@@ -75,7 +75,7 @@ public class AuthController {
     }
 
     @AnonymousAccess
-    @GetMapping("/user/active")
+    @PostMapping("/user/active")
     public ResultBody userActive(String userName,String token){
         try {
             userService.activeUser(userName,token);
@@ -121,6 +121,12 @@ public class AuthController {
         List<MenuVo> menuVoList = menuService.createMenuVoList(jwtUser.getUsername());
         return ResultBody.success(new UserVo(jwtUser.getUserId(),jwtUser.getUsername(),jwtUser.getAvatarUrl(),jwtUser.getEmail(),menuVoList));
     }
+
+    @GetMapping("/getUserInfoById")
+    public ResultBody getUserInfo(Integer userId){
+        return ResultBody.success(userService.getUserVoByUserId(userId));
+    }
+
 
     @AnonymousAccess
     @GetMapping("/menuTree")

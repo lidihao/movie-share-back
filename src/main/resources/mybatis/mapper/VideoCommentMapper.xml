@@ -107,6 +107,6 @@
     <select id="selectCommentListByVideoId" resultMap="VideoCommentResultMap">
         select <include refid="Base_Column_List"></include>
         from video_comment where video_comment.video_id=#{videoId}
-        order by video_comment.created_time
+        order by video_comment.created_time DESC
     </select>
 </mapper>

@@ -1,6 +1,7 @@
 package com.hao.movieshareback.dao;
 
 import com.hao.movieshareback.model.User;
+import com.hao.movieshareback.model.UserSkin;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
@@ -23,4 +24,6 @@ public interface UserMapper {
     int activeUser(String userName);
 
     User getUserByUserId(Integer userId);
+
+    void updateSkin(UserSkin userSkin);
 }

@@ -9,6 +9,7 @@ public class UserVo implements Serializable {
     private Integer userId;
     private String userName;
     private String avatarUrl;
+    private String skinUrl;
     private String introduce;
     private String email;
     private List<MenuVo> menus;
@@ -24,10 +25,11 @@ public class UserVo implements Serializable {
         this.menus = menus;
     }
 
-    public UserVo(Integer userId, String userName, String avatarUrl, String introduce, String email, List<MenuVo> menus) {
+    public UserVo(Integer userId, String userName, String avatarUrl, String skinUrl ,String introduce, String email, List<MenuVo> menus) {
         this.userId = userId;
         this.userName = userName;
         this.avatarUrl = avatarUrl;
+        this.skinUrl=skinUrl;
         this.introduce = introduce;
         this.email = email;
         this.menus = menus;
@@ -79,5 +81,13 @@ public class UserVo implements Serializable {
 
     public void setMenus(List<MenuVo> menus) {
         this.menus = menus;
+    }
+
+    public String getSkinUrl() {
+        return skinUrl;
+    }
+
+    public void setSkinUrl(String skinUrl) {
+        this.skinUrl = skinUrl;
     }
 }
