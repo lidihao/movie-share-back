@@ -147,4 +147,10 @@ public class AuthController {
         userService.logOut(request);
         return new ResponseEntity(HttpStatus.OK);
     }
+
+    @PostMapping("/updateUserAvatarUrl")
+    public ResultBody updateUserAvatarUrl(Integer userId,Integer pictureId){
+        userService.updateUserAvatar(userId,pictureId);
+        return ResultBody.success();
+    }
 }

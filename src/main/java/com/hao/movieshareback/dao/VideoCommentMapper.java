@@ -13,4 +13,5 @@ import java.util.List;
 public interface VideoCommentMapper {
     void save(VideoComment videoComment);
     PageList<VideoComment> selectCommentListByVideoId(Page page, Integer videoId);
+    Integer getCommentCountByVideoId(Integer videoId);
 }

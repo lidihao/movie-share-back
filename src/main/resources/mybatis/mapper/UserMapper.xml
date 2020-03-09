@@ -11,10 +11,10 @@
         <result property="avatarPicId" column="avatar_pic_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result property="userSkinId" column="user_skin_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result property="hasActive" column="has_active" javaType="java.lang.Boolean" jdbcType="BIT"/>
-        <result property="lastPasswordResetDate" column="last_password_reset_date" javaType="java.util.Date" jdbcType="DATE"/>
-        <result property="createdTime" column="created_time" javaType="java.util.Date" jdbcType="DATE"/>
+        <result property="lastPasswordResetDate" column="last_password_reset_date" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result property="createdTime" column="created_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <result property="createdBy" column="created_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
-        <result property="updatedTime" column="updated_time" javaType="java.util.Date" jdbcType="DATE"/>
+        <result property="updatedTime" column="updated_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <result property="updatedBy" column="updated_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="isDelete" column="is_delete" javaType="java.lang.Boolean" jdbcType="BIT"/>
     </resultMap>
@@ -129,5 +129,9 @@
 
     <update id="updateSkin" parameterType="com.hao.movieshareback.model.UserSkin">
         update user set user.user_skin_id=#{pictureId} where user.user_id=#{userId} and is_delete=0
+    </update>
+
+    <update id="updateUserAvatarUrl">
+        update user set user.avatar_pic_id=#{pictureId} where user.user_id=#{userId}
     </update>
 </mapper>

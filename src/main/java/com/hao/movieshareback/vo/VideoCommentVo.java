@@ -1,5 +1,6 @@
 package com.hao.movieshareback.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.hao.movieshareback.vo.auth.UserVo;
 
 import java.util.Date;
@@ -84,6 +85,7 @@ public class VideoCommentVo {
         this.commentUser = commentUser;
     }
 
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     public Date getCreateTime() {
         return createTime;
     }

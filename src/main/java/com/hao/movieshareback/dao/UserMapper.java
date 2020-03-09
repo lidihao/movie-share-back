@@ -26,4 +26,6 @@ public interface UserMapper {
     User getUserByUserId(Integer userId);
 
     void updateSkin(UserSkin userSkin);
+
+    void updateUserAvatarUrl(Integer userId,Integer pictureId);
 }

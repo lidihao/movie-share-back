@@ -32,6 +32,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.List;
 
 @Service
@@ -222,5 +224,9 @@ public class UserService {
         Picture skin = pictureMapper.selectPictureById(user.getUserSkinId());
         UserVo userVo = new UserVo(user.getUserId(),user.getUserName(),avatar.getUrl(),skin.getUrl(),user.getIntroduce(),null,null);
         return userVo;
+    }
+
+    public void updateUserAvatar(Integer userId,Integer pictureId){
+        userMapper.updateUserAvatarUrl(userId,pictureId);
     }
 }

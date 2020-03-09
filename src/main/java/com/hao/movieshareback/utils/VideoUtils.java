@@ -3,9 +3,9 @@ package com.hao.movieshareback.utils;
 import com.hao.movieshareback.vo.ScreenPicture;
 import com.hao.movieshareback.vo.VideoFileRawInfo;
 import org.apache.commons.lang3.StringUtils;
-import org.bytedeco.javacv.FFmpegFrameGrabber;
+import org.bytedeco.javacpp.avcodec;
+import org.bytedeco.javacv.*;
 import org.bytedeco.javacv.Frame;
-import org.bytedeco.javacv.Java2DFrameConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,5 +115,37 @@ public class VideoUtils {
         int des_width = src.width + len_dalta_width * 2;
         int des_height = src.height + len_dalta_height * 2;
         return new java.awt.Rectangle(new Dimension(des_width, des_height));
+    }
+
+    public static String convertToMp4(File file) throws FrameRecorder.Exception, FrameGrabber.Exception {
+
+        FFmpegFrameGrabber frameGrabber = new FFmpegFrameGrabber(file);
+        String fileName = null;
+
+        Frame captured_frame = null;
+
+        FFmpegFrameRecorder recorder = null;
+
+
+
+        frameGrabber.start();
+        fileName = file.getAbsolutePath() + "__.mp4";
+        recorder = new FFmpegFrameRecorder(fileName, frameGrabber.getImageWidth(), frameGrabber.getImageHeight(), frameGrabber.getAudioChannels());
+        recorder.setVideoCodec(avcodec.AV_CODEC_ID_H264); //avcodec.AV_CODEC_ID_H264  //AV_CODEC_ID_MPEG4
+        recorder.setFormat("mp4");
+        recorder.setFrameRate(frameGrabber.getFrameRate());
+        recorder.setSampleRate(frameGrabber.getSampleRate());
+
+        recorder.setAudioChannels(frameGrabber.getAudioChannels());
+        recorder.setFrameRate(frameGrabber.getFrameRate());
+        recorder.start();
+        while ((captured_frame = frameGrabber.grabFrame()) != null) {
+            recorder.setTimestamp(frameGrabber.getTimestamp());
+            recorder.record(captured_frame);
+        }
+        recorder.stop();
+        recorder.release();
+        frameGrabber.stop();
+        return fileName;
     }
 }

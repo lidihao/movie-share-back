@@ -1,14 +1,18 @@
 package com.hao.movieshareback;
 
 
+import com.hao.movieshareback.utils.NetworkInterfaceUtil;
 import com.hao.movieshareback.utils.VideoUtils;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 public class BaseMailTest {
     @Test
     public void testVideo(){
         try {
-            VideoUtils.getScreenshot("/home/lidihao/upload/video/root/VID_20190207_125532.mp4");
+            List<String> list= NetworkInterfaceUtil.getIp4Addresses();
+            System.out.println(list);
         } catch (Exception e) {
             e.printStackTrace();
         }

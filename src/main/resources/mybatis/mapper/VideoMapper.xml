@@ -29,9 +29,9 @@
         <result property="videoRate" column="video_rate" javaType="java.lang.Double" jdbcType="DOUBLE"/>
         <result property="uploadUserId" column="upload_user_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result property="categoryId" column="category_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-        <result property="createdTime" column="created_time" javaType="java.util.Date" jdbcType="DATE"/>
+        <result property="createdTime" column="created_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <result property="createdBy" column="created_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
-        <result property="updatedTime" column="updated_time" javaType="java.util.Date" jdbcType="DATE"/>
+        <result property="updatedTime" column="updated_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <result property="updatedBy" column="updated_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="isDelete" column="is_delete" javaType="java.lang.Boolean" jdbcType="BIT"/>
     </resultMap>
@@ -126,4 +126,32 @@
         select <include refid="Base_Column_List"></include>
         from video where video.video_id=#{videoId}
     </select>
+
+    <select id="getVideoDetailListLikeName" resultMap="VideoResultMap">
+        select <include refid="Base_Column_List"></include>
+        from video
+        <where>
+            <if test="video.videoId!=null">
+                AND video.video_id=#{video.videoId}
+            </if>
+            <if test="video.videoTitle!=null">
+                AND video.video_title like CONCAT('%',#{video.videoTitle},'%')
+            </if>
+            <if test="video.uploadUserId!=null">
+                AND video.upload_user_id=#{video.uploadUserId}
+            </if>
+            <if test="video.categoryId!=null">
+                AND video.category_id=#{video.categoryId}
+            </if>
+        </where>
+    </select>
+
+    <update id="updateRate">
+        update video set video.video_rate=#{rate} where video.video_id=#{videoId}
+    </update>
+
+    <update id="incrementVideoPlayCount">
+        update video set video.video_play_count=video.video_play_count+1 where
+        video.video_id=#{videoId}
+    </update>
 </mapper>

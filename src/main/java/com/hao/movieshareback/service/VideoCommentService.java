@@ -2,7 +2,9 @@ package com.hao.movieshareback.service;
 
 import com.fasterxml.jackson.databind.ser.Serializers;
 import com.hao.movieshareback.dao.VideoCommentMapper;
+import com.hao.movieshareback.dao.VideoMapper;
 import com.hao.movieshareback.model.BaseModel;
+import com.hao.movieshareback.model.Video;
 import com.hao.movieshareback.model.VideoComment;
 import com.hao.movieshareback.utils.SecurityUtils;
 import com.hao.movieshareback.vo.Page;
@@ -12,6 +14,8 @@ import com.hao.movieshareback.vo.XPage;
 import com.hao.movieshareback.vo.auth.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -24,13 +28,23 @@ public class VideoCommentService {
     private VideoCommentMapper videoCommentMapper;
 
     @Autowired
+    private VideoMapper videoMapper;
+
+    @Autowired
     private UserService userService;
 
+
+    @Transactional(rollbackFor = Exception.class,propagation = Propagation.REQUIRED)
     public void commentVideo(VideoComment videoComment){
         videoComment.setCommentDown(0L);
         videoComment.setCommentUp(0L);
         BaseModel.setUpdated(videoComment, SecurityUtils.getUsername(),new Date());
         BaseModel.setNewCreate(videoComment,SecurityUtils.getUsername(),new Date());
+
+        Integer commentCount=videoCommentMapper.getCommentCountByVideoId(videoComment.getVideoId());
+        Video video = videoMapper.getVideo(videoComment.getVideoId());
+        Double rate = (video.getVideoRate()*commentCount+videoComment.getRate())/(commentCount+1);
+        videoMapper.updateRate(rate,videoComment.getVideoId());
         videoCommentMapper.save(videoComment);
     }
 

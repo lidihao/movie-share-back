@@ -24,9 +24,9 @@
         <result property="commentUserId" column="comment_user_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result property="rate" column="rate" javaType="java.lang.Double" jdbcType="DOUBLE"/>
         <result property="videoId" column="video_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-        <result property="createdTime" column="created_time" javaType="java.util.Date" jdbcType="DATE"/>
+        <result property="createdTime" column="created_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <result property="createdBy" column="created_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
-        <result property="updatedTime" column="updated_time" javaType="java.util.Date" jdbcType="DATE"/>
+        <result property="updatedTime" column="updated_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <result property="updatedBy" column="updated_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="isDelete" column="is_delete" javaType="java.lang.Boolean" jdbcType="BIT"/>
     </resultMap>
@@ -108,5 +108,9 @@
         select <include refid="Base_Column_List"></include>
         from video_comment where video_comment.video_id=#{videoId}
         order by video_comment.created_time DESC
+    </select>
+
+    <select id="getCommentCountByVideoId"  resultType="java.lang.Integer">
+        select count(*) from video_comment where video_comment.video_id=#{videoId}
     </select>
 </mapper>

@@ -28,9 +28,9 @@
         <result property="videoId" column="video_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result property="approvalType" column="approval_type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result property="remark" column="remark" javaType="java.lang.String" jdbcType="VARCHAR"/>
-        <result property="createdTime" column="created_time" javaType="java.util.Date" jdbcType="DATE"/>
+        <result property="createdTime" column="created_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <result property="createdBy" column="created_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
-        <result property="updatedTime" column="updated_time" javaType="java.util.Date" jdbcType="DATE"/>
+        <result property="updatedTime" column="updated_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <result property="updatedBy" column="updated_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="isDelete" column="is_delete" javaType="java.lang.Boolean" jdbcType="BIT"/>
     </resultMap>
