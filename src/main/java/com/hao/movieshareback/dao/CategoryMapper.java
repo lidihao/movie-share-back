@@ -11,4 +11,5 @@ import java.util.List;
 public interface CategoryMapper {
     List<Category> selectAllCategory();
     Category selectCategoryById(Integer categoryId);
+    Category selectCategoryByName(String categoryName);
 }

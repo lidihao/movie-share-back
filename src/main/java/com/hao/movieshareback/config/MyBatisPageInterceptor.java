@@ -131,7 +131,7 @@ public class MyBatisPageInterceptor implements Interceptor {
      */
     private String getPageSql(Page page, StringBuffer sqlBuffer) {
         if (page.getOrderColumn() != null && !page.getOrderColumn().isEmpty()) {
-            sqlBuffer.append("order by ");
+            sqlBuffer.append(" order by ");
             sqlBuffer.append(Joiner.on(",").join(page.getOrderColumn()));
             sqlBuffer.append(" " + page.getOrderType());
         }
@@ -170,12 +170,8 @@ public class MyBatisPageInterceptor implements Interceptor {
      * @return
      */
     private String getCountSql(String sql) {
-        int indexLo = sql.toLowerCase().indexOf("from");
-        int index = 0;
-        if (indexLo != -1) {
-            index = indexLo;
-        }
-        return "select count(1) " + sql.substring(index);
+
+        return "select count(1) from (" + sql+") as tmp";
     }
 
     public String getDatabaseType() {

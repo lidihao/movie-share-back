@@ -131,7 +131,7 @@
     <select id="getMessageList" resultMap="PrivateMessageResultMap">
         select <include refid="Base_Column_List"></include>
         from user_msg_mapping join private_message on user_msg_mapping.user_id=#{userId}
-        and user_msg_mapping.friend_id=#{friendId} and user_msg_mapping.message_id=private_message.message_id order by private_message.send_time
+        and user_msg_mapping.friend_id=#{friendId} and user_msg_mapping.message_id=private_message.message_id order by private_message.send_time DESC
     </select>
     <select id="getUserItemDetail" resultType="com.hao.movieshareback.model.bo.PrivateMsgUserItem">
         select user_msg_mapping.friend_id AS friendId,MAX(user_msg_mapping.message_id) AS messageId

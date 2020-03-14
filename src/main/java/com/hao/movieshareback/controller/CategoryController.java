@@ -1,5 +1,6 @@
 package com.hao.movieshareback.controller;
 
+import com.hao.movieshareback.annotation.auth.AnonymousAccess;
 import com.hao.movieshareback.model.Category;
 import com.hao.movieshareback.service.CategoryService;
 import com.hao.movieshareback.vo.ResultBody;
@@ -16,6 +17,7 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
+    @AnonymousAccess
     @GetMapping("/list")
     public ResultBody getAllCategory(){
         return ResultBody.success(categoryService.listCategory());

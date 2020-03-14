@@ -134,4 +134,37 @@
     <update id="updateUserAvatarUrl">
         update user set user.avatar_pic_id=#{pictureId} where user.user_id=#{userId}
     </update>
+
+    <select id="getFollowingUserList" resultMap="UserResultMap">
+        select <include refid="Base_Column_List"></include>
+        from user join follow
+        on user.user_id=follow.followed_user_id and follow.user_id=#{user.userId}
+        and user.has_active=1 and user.is_delete=0
+        <if test="user.userName!=null">
+            and user.user_name like CONCAT('%',#{user.userName},'%')
+        </if>
+        order by follow.created_time DESC
+    </select>
+
+    <select id="getFollowedUserList" resultMap="UserResultMap">
+        select <include refid="Base_Column_List"></include>
+        from user join follow
+        on user.user_id=follow.user_id and follow.followed_user_id=#{user.userId}
+        and user.has_active=1 and user.is_delete=0
+        <if test="user.userName!=null">
+            and user.user_name like CONCAT('%',#{user.userName},'%')
+        </if>
+        order by follow.created_time DESC
+    </select>
+
+    <select id="searchUser" resultMap="UserResultMap">
+        select <include refid="Base_Column_List"></include>,
+        (select count(1) from follow where follow.followed_user_id=user.user_id) as followCount
+        from user
+        where user.has_active=1 and user.is_delete=0
+        <if test="userName!=null">
+            and user.user_name like CONCAT('%',#{userName},'%')
+        </if>
+        order by  followCount DESC
+    </select>
 </mapper>

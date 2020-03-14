@@ -14,6 +14,7 @@ import com.hao.movieshareback.vo.ResultBody;
 import com.hao.movieshareback.vo.auth.*;
 import com.wf.captcha.ArithmeticCaptcha;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -152,5 +153,14 @@ public class AuthController {
     public ResultBody updateUserAvatarUrl(Integer userId,Integer pictureId){
         userService.updateUserAvatar(userId,pictureId);
         return ResultBody.success();
+    }
+
+    @AnonymousAccess
+    @GetMapping("/searchUser")
+    public ResultBody searchUser(String searchKey,Integer pageNum,Integer pageSize){
+        if (Strings.isBlank(searchKey)){
+            return ResultBody.success();
+        }
+        return ResultBody.success(userService.searchUser(searchKey,pageNum,pageSize));
     }
 }

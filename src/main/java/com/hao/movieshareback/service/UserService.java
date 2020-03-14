@@ -17,6 +17,9 @@ import com.hao.movieshareback.service.mail.MailService;
 import com.hao.movieshareback.service.redis.IRedisService;
 import com.hao.movieshareback.utils.EncryptUtils;
 import com.hao.movieshareback.vo.MenuVo;
+import com.hao.movieshareback.vo.Page;
+import com.hao.movieshareback.vo.PageList;
+import com.hao.movieshareback.vo.XPage;
 import com.hao.movieshareback.vo.auth.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -228,5 +231,17 @@ public class UserService {
 
     public void updateUserAvatar(Integer userId,Integer pictureId){
         userMapper.updateUserAvatarUrl(userId,pictureId);
+    }
+
+    public XPage<UserVo> searchUser(String searchKey,Integer pageNum,Integer pageSize){
+        Page page = new Page(pageNum,pageSize);
+        PageList<User> userPageList = userMapper.searchUser(page,searchKey);
+        PageList<UserVo> userVos = new PageList<>();
+        userVos.setPageInfo(userPageList.getPageInfo());
+        userPageList.forEach(user -> {
+            Picture avatar = pictureMapper.selectPictureById(user.getAvatarPicId());
+            userVos.add(new UserVo(user.getUserId(),user.getUserName(),avatar.getUrl(),null,user.getIntroduce(),null,null));
+        });
+        return XPage.wrap(userVos);
     }
 }

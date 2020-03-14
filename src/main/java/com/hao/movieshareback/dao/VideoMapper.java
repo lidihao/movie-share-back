@@ -14,4 +14,5 @@ public interface VideoMapper {
     PageList<Video> getVideoDetailListLikeName(Page page,Video video);
     void updateRate(Double rate,Integer videoId);
     void incrementVideoPlayCount(Integer videoId);
+    PageList<Video> getFavoriteVideoDetailList(Page page,Video video,Integer userId);
 }

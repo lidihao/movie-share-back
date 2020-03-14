@@ -146,6 +146,27 @@
         </where>
     </select>
 
+    <select id="getFavoriteVideoDetailList" resultMap="VideoResultMap">
+        select <include refid="Base_Column_List"></include>
+        from favorite_video join video on favorite_video.video_id=video.video_id
+        <if test="userId!=null">
+            AND favorite_video.user_id=#{userId}
+        </if>
+        <if test="video.videoId!=null">
+            AND video.video_id=#{video.videoId}
+        </if>
+        <if test="video.videoTitle!=null">
+            AND video.video_title like CONCAT('%',#{video.videoTitle},'%')
+        </if>
+        <if test="video.uploadUserId!=null">
+            AND video.upload_user_id=#{video.uploadUserId}
+        </if>
+        <if test="video.categoryId!=null">
+            AND video.category_id=#{video.categoryId}
+        </if>
+        order by video.created_time DESC
+    </select>
+
     <update id="updateRate">
         update video set video.video_rate=#{rate} where video.video_id=#{videoId}
     </update>

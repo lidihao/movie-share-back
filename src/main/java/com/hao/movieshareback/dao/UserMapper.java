@@ -2,8 +2,11 @@ package com.hao.movieshareback.dao;
 
 import com.hao.movieshareback.model.User;
 import com.hao.movieshareback.model.UserSkin;
+import com.hao.movieshareback.vo.Page;
+import com.hao.movieshareback.vo.PageList;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
+
 
 @Mapper
 @Repository
@@ -28,4 +31,10 @@ public interface UserMapper {
     void updateSkin(UserSkin userSkin);
 
     void updateUserAvatarUrl(Integer userId,Integer pictureId);
+
+    PageList<User> getFollowingUserList(Page page,User user);
+
+    PageList<User> getFollowedUserList(Page page,User user);
+
+    PageList<User> searchUser(Page page,String userName);
 }
