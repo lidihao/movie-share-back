@@ -2,9 +2,11 @@ package com.hao.movieshareback.service.auth;
 
 import com.hao.movieshareback.model.Permission;
 import com.hao.movieshareback.model.Picture;
+import com.hao.movieshareback.model.Role;
 import com.hao.movieshareback.model.User;
 import com.hao.movieshareback.service.PermissionService;
 import com.hao.movieshareback.service.PictureService;
+import com.hao.movieshareback.service.RoleService;
 import com.hao.movieshareback.service.UserService;
 import com.hao.movieshareback.vo.auth.JwtUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +31,7 @@ public class JwtUserDetailsService implements UserDetailsService {
     private UserService userService;
 
     @Autowired
-    private PermissionService permissionService;
+    private RoleService roleService;
 
     @Autowired
     private PictureService pictureService;
@@ -40,9 +42,9 @@ public class JwtUserDetailsService implements UserDetailsService {
         if (user==null||user.isDelete()){
             throw new UsernameNotFoundException("用户不存在或者已经被删除");
         }
-        List<Permission> permissionList = permissionService.getPermissionByUserName(user.getUserName());
-        List<GrantedAuthority> grantedAuthorityList = permissionList.stream().
-                map(permission -> new SimpleGrantedAuthority(permission.getPermissionAction()))
+        List<Role> roleList = roleService.getRolesByUserName(username);
+        List<GrantedAuthority> grantedAuthorityList = roleList.stream().
+                map(role -> new SimpleGrantedAuthority(role.getRoleName()))
                 .collect(Collectors.toList());
         Picture avatarPic = pictureService.getPicById(user.getAvatarPicId());
         return new JwtUser(user.getUserId(),user.getUserName(),user.getSalt(),user.getPassword(),

@@ -10,7 +10,7 @@ public class MenuVo {
     private String menuDes;
     private String menuUrl;
     private boolean hasChild;
-    private List<MenuVo> menuVoList;
+    private List<MenuVo> children;
 
     public MenuVo(Integer menuId,String menuName, String menuEng, String menuDes, String menuUrl,boolean hasChild) {
         this.menuId = menuId;
@@ -69,23 +69,13 @@ public class MenuVo {
         this.menuUrl = menuUrl;
     }
 
-    public List<MenuVo> getMenuVoList() {
-        return menuVoList;
+
+    public List<MenuVo> getChildren() {
+        return children;
     }
 
-    public void setMenuVoList(List<MenuVo> menuVoList) {
-        this.menuVoList = menuVoList;
+    public void setChildren(List<MenuVo> children) {
+        this.children = children;
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("MenuVo{");
-        sb.append("menuName='").append(menuName).append('\'');
-        sb.append(", menuEng='").append(menuEng).append('\'');
-        sb.append(", menuDes='").append(menuDes).append('\'');
-        sb.append(", menuUrl='").append(menuUrl).append('\'');
-        sb.append(", menuVoList=").append(menuVoList);
-        sb.append('}');
-        return sb.toString();
-    }
 }

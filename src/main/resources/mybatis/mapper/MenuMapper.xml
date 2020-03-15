@@ -86,10 +86,10 @@
                 #{menuUrl},
             </if>
             <if test="hasChild!=null">
-                #{hasChild}
+                #{hasChild},
             </if>
             <if test="parentMenuId!=null">
-                #{parentMenuId}
+                #{parentMenuId},
             </if>
             <if test="sort!=null">
                 #{sort},
@@ -115,4 +115,71 @@
         on role.role_id = #{roleId} and role.role_id=role_menu.role_id and menu.menu_id = role_menu.menu_id
             and role.is_delete=0 and role_menu.is_delete=0 and menu.is_delete=0;
     </select>
+
+    <select id="selectAllMenu" resultMap="MenuResultMap">
+        select <include refid="Base_Column_List"></include>
+        from menu where menu.is_delete=0
+    </select>
+
+    <select id="selectMenuByMenuId" resultMap="MenuResultMap">
+        select <include refid="Base_Column_List"></include>
+        from menu where menu.menu_id=#{menuId} and menu.is_delete=0
+    </select>
+
+    <update id="updateHasChild">
+        update menu set menu.has_child=#{tag} where menu.menu_id=#{menuId}
+    </update>
+
+    <select id="selectCountByMenuEngName" resultType="java.lang.Integer">
+        select count(1) from menu where menu.menu_eng=#{menuEng}
+    </select>
+
+    <select id="selectMenuByEngName" resultMap="MenuResultMap">
+        select <include refid="Base_Column_List"></include>
+        from menu where menu.menu_eng=#{menuEng} and menu.is_delete=0
+    </select>
+
+    <select id="selectMenuChildCount" resultType="java.lang.Integer">
+        select count(1) from menu where menu.parent_menu_id=#{menuId} and menu.is_delete = 0
+    </select>
+
+    <delete id="deleteMenuById">
+        delete from menu where menu.menu_id=#{menuId}
+    </delete>
+
+    <select id="selectChildMenu" resultMap="MenuResultMap">
+        select <include refid="Base_Column_List"></include> from menu
+        where menu.parent_menu_id=#{menuId}
+    </select>
+
+    <update id="updateMenu">
+        update menu
+        <trim prefix="set" suffixOverrides=",">
+            <if test="menuName!=null">
+                menu.menu_name=#{menuName},
+            </if>
+            <if test="menuEng!=null">
+                menu.menu_eng=#{menuEng},
+            </if>
+            <if test="menuDes!=null">
+                menu.menu_des=#{menuDes},
+            </if>
+            <if test="sort!=null">
+                menu.sort=#{sort},
+            </if>
+            <if test="menuUrl!=null">
+                menu.menu_url=#{menuUrl},
+            </if>
+            <if test="parentMenuId!=null">
+                menu.parent_menu_id=#{parentMenuId},
+            </if>
+            <if test="updatedTime!=null">
+                menu.updated_time=#{updatedTime},
+            </if>
+            <if test="updatedBy!=null">
+                menu.updated_by=#{updatedBy}
+            </if>
+        </trim>
+        where menu.menu_id=#{menuId}
+    </update>
 </mapper>

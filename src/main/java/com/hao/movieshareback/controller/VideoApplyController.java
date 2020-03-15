@@ -5,6 +5,7 @@ import com.hao.movieshareback.model.type.ApprovalType;
 import com.hao.movieshareback.service.VideoApplyService;
 import com.hao.movieshareback.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ public class VideoApplyController {
     /**
      * @TODO管理员权限
      */
+    @PreAuthorize("@el.check('admin')")
     @GetMapping("/list")
     public ResultBody getVideoApply(Integer categoryId,Integer pageNum,Integer pageSize){
         if (pageNum==null){
@@ -32,11 +34,13 @@ public class VideoApplyController {
         return ResultBody.success(videoApplyVoXPage);
     }
 
+
     @GetMapping("/applyDetail/{videoApprovalId}")
     public ResultBody getVideoApplyDetail(@PathVariable("videoApprovalId")Integer videoApprovalId){
         VideoApplyVo videoApplyVo = applyService.getVideoApprovalDetail(videoApprovalId);
         return ResultBody.success(videoApplyVo);
     }
+
 
     @GetMapping("/applyDetail/videoFileList")
     public ResultBody listVideoFile(Integer videoApprovalId,Integer pageSize,Integer pageNum){
@@ -50,6 +54,8 @@ public class VideoApplyController {
         return ResultBody.success(videoFileVoList);
     }
 
+
+    @PreAuthorize("@el.check('admin')")
     @PostMapping("/doApplyVideo")
     public ResultBody doApplyVideo(@RequestBody VideoApplyActionReceiver videoApplyActionReceiver){
         try {

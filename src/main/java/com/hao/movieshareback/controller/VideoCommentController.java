@@ -7,6 +7,7 @@ import com.hao.movieshareback.service.CommentReplyService;
 import com.hao.movieshareback.service.VideoCommentService;
 import com.hao.movieshareback.vo.ResultBody;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/video/comment")
@@ -30,6 +31,7 @@ public class VideoCommentController {
     public ResultBody listVideoComment(Integer videoId,Integer pageNum,Integer pageSize){
         return ResultBody.success(videoCommentService.listVideoCommentByVideoId(videoId,pageNum,pageSize));
     }
+
 
     @PostMapping("/replyComment")
     public ResultBody replyComment(@RequestBody CommentReply commentReply){
