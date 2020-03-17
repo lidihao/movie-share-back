@@ -89,27 +89,11 @@ public class VideoService {
         return XPage.wrap(videoDetailVos);
     }
 
-    public XPage<VideoDetailVo> getVideoByCategory(String orderField,String categoryName,Integer pageNum,Integer pageSize){
+    public XPage<VideoDetailVo> getVideoByCategory(String orderField,String categoryName,Integer pageNum,Integer pageSize) throws IOException {
         Category category = categoryMapper.selectCategoryByName(categoryName);
-        String order="created_time";
-        switch (orderField){
-            case "rate":order="video_rate";break;
-            case "playCount":order="video_play_count";break;
-            case "time":order="created_time";break;
-            default:throw new RuntimeException("UnKown orderType");
-        }
-        Page page = new Page(pageNum,pageSize);
-        page.setOrderColumn(Collections.singletonList(order));
-        page.setOrderType("DESC");
-        Video codition = new Video();
-        codition.setCategoryId(category.getCategoryId());
-        PageList<Video> videos = videoMapper.getVideoDetailListLikeName(page,codition);
-        PageList<VideoDetailVo> videoDetailVos = new PageList<>();
-        videoDetailVos.setPageInfo(videos.getPageInfo());
-        videos.forEach(video ->{
-            videoDetailVos.add(toVideoDetailVo(video));
-        });
-        return XPage.wrap(videoDetailVos);
+        Map<String,Object> resultMap = searchVideo(orderField,null,null,
+                category.getCategoryId(),null,null,pageNum,pageSize);
+        return (XPage<VideoDetailVo>) resultMap.get("videoList");
     }
 
     public Map<String,Object> searchVideo(String orderField, String searchKey, String tagName,
@@ -166,10 +150,13 @@ public class VideoService {
 
     private SearchSourceBuilder createSearchRequest(String orderField, String searchKey, String tagName,
                                               Integer categoryId, String startDate,String endDate,Integer from, Integer size){
-        MultiMatchQueryBuilder multiMatchQueryBuilder= QueryBuilders.multiMatchQuery(searchKey).
-                field("video_title",3).field("upload_user_name",2).field("video_desc",1);
-        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery().must(multiMatchQueryBuilder);
+        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+        if (searchKey!=null){
+            MultiMatchQueryBuilder multiMatchQueryBuilder= QueryBuilders.multiMatchQuery(searchKey).
+                    field("video_title",3).field("upload_user_name",2).field("video_desc",1);
+            boolQueryBuilder.must(multiMatchQueryBuilder);
 
+        }
         if (tagName!=null){
             TermQueryBuilder termQueryBuilder = QueryBuilders.termQuery("tags",tagName);
             boolQueryBuilder.must(termQueryBuilder);

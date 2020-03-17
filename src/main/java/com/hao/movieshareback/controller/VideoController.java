@@ -43,7 +43,12 @@ public class VideoController {
     @AnonymousAccess
     @GetMapping("/getVideoByCategory")
     public ResultBody getVideoByCategory(String orderField,String categoryName,Integer pageNum,Integer pageSize){
-        return ResultBody.success(videoService.getVideoByCategory(orderField,categoryName,pageNum,pageSize));
+        try {
+            return ResultBody.success(videoService.getVideoByCategory(orderField,categoryName,pageNum,pageSize));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResultBody.error("");
+        }
     }
 
     @AnonymousAccess
