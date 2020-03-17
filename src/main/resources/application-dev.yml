@@ -23,6 +23,7 @@ spring:
     multipart:
       max-file-size: 2MB
 
+
   redis:
     #数据库索引
     database: 0
@@ -87,4 +88,9 @@ logging:
       hao:
         movieshareback:
           dao: debug
+
+es:
+  host: localhost
+  port: 9200
+  scheme: http
 

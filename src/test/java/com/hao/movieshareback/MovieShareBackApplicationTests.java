@@ -2,12 +2,26 @@ package com.hao.movieshareback;
 
 import com.hao.movieshareback.dao.UserMapper;
 import com.hao.movieshareback.model.User;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.lucene.search.function.FieldValueFactorFunction;
+import org.elasticsearch.index.query.MultiMatchQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.functionscore.FieldValueFactorFunctionBuilder;
+import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
+import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.sort.SortBuilders;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 
+import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.Date;
 
 @SpringBootTest
