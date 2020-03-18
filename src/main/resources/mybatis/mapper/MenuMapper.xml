@@ -116,6 +116,13 @@
             and role.is_delete=0 and role_menu.is_delete=0 and menu.is_delete=0;
     </select>
 
+    <select id="getMenuTreeLeafByRoleId" resultMap="MenuResultMap">
+        select <include refid="Base_Column_List"></include>
+        from menu join role_menu join role
+        on role.role_id = #{roleId} and role.role_id=role_menu.role_id and menu.menu_id = role_menu.menu_id
+        and menu.has_child=false and role.is_delete=0 and role_menu.is_delete=0 and menu.is_delete=0;
+    </select>
+
     <select id="selectAllMenu" resultMap="MenuResultMap">
         select <include refid="Base_Column_List"></include>
         from menu where menu.is_delete=0
@@ -182,4 +189,11 @@
         </trim>
         where menu.menu_id=#{menuId}
     </update>
+
+    <delete id="deleteRoleMenuMap">
+        delete from role_menu where role_menu.role_id=#{roleId} and role_menu.menu_id=#{menuId}
+    </delete>
+    <insert id="addRoleMenuMap">
+        insert into role_menu(role_id,menu_id) values (#{roleId},#{menuId})
+    </insert>
 </mapper>

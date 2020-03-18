@@ -12,4 +12,5 @@ public interface RoleMapper {
     public List<Role> selectRolesByUserName(String userName);
     public Role selectRoleByRoleName(String roleName);
     public void addUserRole(Integer userId,Integer roleId);
+    public List<Role> selectAllRole();
 }

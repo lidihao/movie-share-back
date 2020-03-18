@@ -10,6 +10,7 @@ import java.util.List;
 @Repository
 public interface MenuMapper {
     List<Menu> getMenuListByRoleId(Integer roleID);
+    List<Menu> getMenuTreeLeafByRoleId(Integer roleId);
     List<Menu> selectAllMenu();
     Menu selectMenuByMenuId(Integer menuId);
     void updateHasChild(boolean tag,Integer menuId);
@@ -20,4 +21,6 @@ public interface MenuMapper {
     void deleteMenuById(Integer menuId);
     Integer selectMenuChildCount(Integer menuId);
     List<Menu> selectChildMenu(Integer menuId);
+    void deleteRoleMenuMap(Integer roleId,Integer menuId);
+    void addRoleMenuMap(Integer roleId,Integer menuId);
 }

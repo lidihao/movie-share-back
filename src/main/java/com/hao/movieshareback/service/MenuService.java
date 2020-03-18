@@ -1,5 +1,6 @@
 package com.hao.movieshareback.service;
 
+import com.google.common.collect.Sets;
 import com.hao.movieshareback.dao.MenuMapper;
 import com.hao.movieshareback.model.BaseModel;
 import com.hao.movieshareback.model.Menu;
@@ -11,9 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,6 +35,10 @@ public class MenuService {
                 .collect(Collectors.toList());
     }
 
+    public List<Menu> getMenuTreeLeafByRoleIdNotRescurse(Integer roleId){
+        return menuMapper.getMenuTreeLeafByRoleId(roleId);
+    }
+
     public Menu getMenuByMenuId(Integer menuId){
         return menuMapper.selectMenuByMenuId(menuId);
     }
@@ -54,6 +57,29 @@ public class MenuService {
         }
     }
 
+    @Transactional(rollbackFor = Exception.class,propagation = Propagation.REQUIRED)
+    public void updateMenuTreeByRoleId(Integer roleId, Set<Integer> menuTreeId){
+        List<Menu> menuList = menuMapper.getMenuListByRoleId(roleId);
+        Set<Integer> menuSet = new HashSet<>();
+        if (menuList!=null&&!menuList.isEmpty()){
+            menuList.forEach(menu -> {
+                menuSet.add(menu.getMenuId());
+            });
+        }
+
+        Set<Integer> intersetionSet= Sets.intersection(menuSet,menuTreeId);
+
+        Set<Integer> deleteSet = Sets.difference(menuSet,intersetionSet);
+        Set<Integer> addSet = Sets.difference(menuTreeId,intersetionSet);
+
+        deleteSet.forEach(menuId->{
+            menuMapper.deleteRoleMenuMap(roleId,menuId);
+        });
+
+        addSet.forEach(menuId->{
+            menuMapper.addRoleMenuMap(roleId,menuId);
+        });
+    }
 
     public List<MenuVo> getAllMenu(){
         List<Menu> menuList = menuMapper.selectAllMenu();
@@ -129,4 +155,5 @@ public class MenuService {
             }
         }
     }
+
 }

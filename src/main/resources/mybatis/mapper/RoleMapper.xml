@@ -83,6 +83,11 @@
         from role where role.role_name=#{roleName} and role.is_delete=0
     </select>
 
+    <select id="selectAllRole" resultMap="RoleResultMap">
+        select <include refid="Base_Column_List"></include>
+        from role where role.is_delete=0
+    </select>
+
     <insert id="addUserRole">
         insert into user_role(user_id,role_id) values (#{userId},#{roleId})
     </insert>
