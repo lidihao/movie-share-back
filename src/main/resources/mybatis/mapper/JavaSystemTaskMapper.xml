@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hao.movieshareback.dao.JavaSystemTaskMapper">
+    <resultMap id="JavaSystemTaskResultMap" type="com.hao.movieshareback.model.task.JavaSystemTask">
+        <id property="systemTaskId" column="system_task_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="systemTaskName" column="system_task_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="systemTaskType" column="system_task_type" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="jobName" column="job_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="jobGroupName" column="job_group_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="triggerName" column="trigger_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="triggerGroupName" column="trigger_group_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="systemTaskDesc" column="system_task_desc" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="parmas" column="parmas" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="cron" column="cron" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="jobStatus" column="job_status" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="className" column="class_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="createdTime" column="created_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result property="createdBy" column="created_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="updatedTime" column="updated_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result property="updatedBy" column="updated_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="isDelete" column="is_delete" javaType="java.lang.Boolean" jdbcType="BIT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        java_system_task.system_task_id,java_system_task.system_task_name,java_system_task.system_task_type,
+        java_system_task.job_name,java_system_task.job_group_name,java_system_task.trigger_name,java_system_task.trigger_group_name,java_system_task.system_task_desc,
+        java_system_task.params,java_system_task.cron,java_system_task.job_status,java_system_task.class_name,
+        java_system_task.created_time,java_system_task.created_by,java_system_task.updated_time,
+        java_system_task.updated_by,java_system_task.is_delete
+    </sql>
+
+    <insert id="save" parameterType="com.hao.movieshareback.model.task.JavaSystemTask" useGeneratedKeys="true" keyProperty="systemTaskId">
+        insert into java_system_task
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="systemTaskName != null" >
+                system_task_name,
+            </if>
+            <if test="systemTaskType != null" >
+                system_task_type,
+            </if>
+            <if test="params != null" >
+                params,
+            </if>
+            <if test="cron">
+                cron,
+            </if>
+            <if test="jobStatus">
+                job_status,
+            </if>
+            <if test="className">
+                class_name,
+            </if>
+            <if test="jobName">
+                job_name,
+            </if>
+            <if test="jobGroupName">
+                job_group_name,
+            </if>
+            <if test="triggerName">
+                trigger_name,
+            </if>
+            <if test="triggerGroupName">
+                trigger_group_name,
+            </if>
+            <if test="systemTaskDesc">
+                system_task_desc,
+            </if>
+            <if test="createdTime != null" >
+                created_time,
+            </if>
+            <if test="createdBy!=null">
+                created_by,
+            </if>
+            <if test="updatedTime!=null">
+                updated_time,
+            </if>
+            <if test="updatedBy!=null">
+                updated_by,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="systemTaskName != null" >
+                #{systemTaskName},
+            </if>
+            <if test="systemTaskType != null" >
+                #{systemTaskType},
+            </if>
+            <if test="params != null" >
+                #{params},
+            </if>
+            <if test="cron">
+                #{cron},
+            </if>
+            <if test="jobStatus">
+                #{jobStatus},
+            </if>
+            <if test="className">
+                #{className},
+            </if>
+            <if test="jobName">
+                #{jobName},
+            </if>
+            <if test="jobGroupName">
+                #{jobGroupName},
+            </if>
+            <if test="triggerName">
+                #{triggerName},
+            </if>
+            <if test="triggerGroupName">
+                #{triggerGroupName},
+            </if>
+            <if test="systemTaskDesc">
+                #{systemTaskDesc},
+            </if>
+            <if test="createdTime != null" >
+                #{createdTime},
+            </if>
+            <if test="createdBy!=null">
+                #{createdBy},
+            </if>
+            <if test="updatedTime!=null">
+                #{updatedTime},
+            </if>
+            <if test="updatedBy!=null">
+                #{updatedBy},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="selectTask" resultMap="JavaSystemTaskResultMap">
+        select <include refid="Base_Column_List"></include>
+        from java_system_task
+    </select>
+
+    <select id="selectTaskByTaskId" resultMap="JavaSystemTaskResultMap">
+        select <include refid="Base_Column_List"></include>
+        from java_system_task where java_system_task.system_task_id=#{systemTaskId}
+    </select>
+
+    <update id="updateTask">
+        update java_system_task set cron = #{cron},params=#{params},system_task_desc=#{systemTaskDesc}
+        where java_system_task.system_task_id=#{systemTaskId}
+    </update>
+
+    <update id="updateTaskStatus">
+        update java_system_task set job_status=#{jobStatus} where java_system_task.system_task_id=#{systemTaskId}
+    </update>
+
+    <delete id="deleteTaskByTaskId">
+        delete from java_system_task where java_system_task.system_task_id=#{systemId}
+    </delete>
+</mapper>

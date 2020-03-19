@@ -446,3 +446,27 @@ create table `user_skin`(
     `picture_id` int(11) not null DEFAULT 0 COMMENT '排序字段',
     PRIMARY KEY (user_skin_id)
 )COMMENT '上传的文件' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;
+
+
+
+create table `java_system_taks`(
+    `system_task_id` int(11) not null AUTO_INCREMENT,
+    `system_task_name` varchar(200) not null ,
+    `system_task_type` varchar(50) not null ,
+    `job_name` varchar(200) not null ,
+    `job_group_name` varchar(200) not null,
+    `trigger_name` varchar(200) not null ,
+    `trigger_group_name` varchar(200) not null,
+    `system_task_desc` varchar(200) not null ,
+    `params` varchar(400) not null ,
+    `cron` char(20) not null ,
+    `job_status` varchar(100) not null ,
+    `class_name` varchar(200) not null ,
+    `created_time` DATETIME    COMMENT '创建时间' ,
+    `created_by` VARCHAR(32)    COMMENT '创建时间',
+    `updated_time` DATETIME    COMMENT '更新时间' ,
+    `updated_by` VARCHAR(32)    COMMENT '更新人' ,
+    `is_delete` BIT NOT NULL  DEFAULT 0 COMMENT '是否删除',
+    PRIMARY KEY (system_task_id),
+    INDEX (is_delete)
+)COMMENT 'systemtask' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;

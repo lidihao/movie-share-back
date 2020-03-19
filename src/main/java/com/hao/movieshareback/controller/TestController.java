@@ -2,6 +2,7 @@ package com.hao.movieshareback.controller;
 
 import com.hao.movieshareback.annotation.auth.AnonymousAccess;
 import com.hao.movieshareback.service.VideoService;
+import com.hao.movieshareback.service.task.TaskManager;
 import com.hao.movieshareback.vo.ResultBody;
 import com.hao.movieshareback.vo.VideoDetailVo;
 import com.hao.movieshareback.vo.XPage;
@@ -35,6 +36,10 @@ public class TestController {
 
     @Autowired
     VideoService videoService;
+
+
+    @Autowired
+    private TaskManager taskManager;
 
     @AnonymousAccess
     @GetMapping("/test")
@@ -72,5 +77,13 @@ public class TestController {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @AnonymousAccess()
+    @GetMapping("testjob")
+    public ResultBody createTask(){
+        taskManager.removeJob("test","test","test",
+                "tste");
+        return ResultBody.success();
     }
 }
