@@ -3,6 +3,7 @@ package com.hao.movieshareback.dao;
 import com.hao.movieshareback.model.Video;
 import com.hao.movieshareback.vo.Page;
 import com.hao.movieshareback.vo.PageList;
+import com.hao.movieshareback.vo.VideoIndexVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
@@ -15,4 +16,5 @@ public interface VideoMapper {
     void updateRate(Double rate,Integer videoId);
     void incrementVideoPlayCount(Integer videoId);
     PageList<Video> getFavoriteVideoDetailList(Page page,Video video,Integer userId);
+    PageList<VideoIndexVo> selectVideoIndexVo(Page page, String curDateTime);
 }

@@ -9,7 +9,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
-@Component
 public class SecondJob extends QuartzJobBean {
     @Override
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {

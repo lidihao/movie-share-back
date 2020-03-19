@@ -5,6 +5,7 @@ import com.hao.movieshareback.service.VideoService;
 import com.hao.movieshareback.service.task.TaskManager;
 import com.hao.movieshareback.vo.ResultBody;
 import com.hao.movieshareback.vo.VideoDetailVo;
+import com.hao.movieshareback.vo.VideoIndexVo;
 import com.hao.movieshareback.vo.XPage;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
@@ -26,6 +27,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 
 @RestController
@@ -80,10 +83,14 @@ public class TestController {
     }
 
     @AnonymousAccess()
-    @GetMapping("testjob")
+    @GetMapping("/testjob")
     public ResultBody createTask(){
-        taskManager.removeJob("test","test","test",
-                "tste");
+        VideoIndexVo videoIndexVo = new VideoIndexVo(10001,"test","test",10000L,8.0,100L,10123,"testlidhao",10011,"test","test dret df",new Date(),0);
+        try {
+            videoService.indexVideo(Arrays.asList(videoIndexVo));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return ResultBody.success();
     }
 }

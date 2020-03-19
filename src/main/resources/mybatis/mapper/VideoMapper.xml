@@ -175,4 +175,30 @@
         update video set video.video_play_count=video.video_play_count+1 where
         video.video_id=#{videoId}
     </update>
+
+    <select id="selectVideoIndexVo" resultType="com.hao.movieshareback.vo.VideoIndexVo">
+    select distinct video.video_id,
+       video.video_title,
+       video.video_play_count,
+       video.video_comment_person,
+       video.video_desc,
+       video.video_rate,
+       video.upload_user_id,
+       user.user_name as upload_user_name,
+       video.category_id,
+       category.category_name,
+       video.created_time,
+       (
+           select group_concat(tag.tag_name separator ' ')
+           from tag join video_tag where tag.tag_id=video_tag.tag_id and
+                   video_tag.video_id=video.video_id group by video_tag.video_id
+       ) as tags,
+        video.is_delete
+        from video join user join category
+        on video.upload_user_id=user.user_id and video.category_id=category.category_id
+        <if test="curDateTime!=null">
+            and (video.updated_time>#{curDateTime} or user.updated_time>#{curDateTime}
+            or category.updated_time>#{curDateTime})
+        </if>
+    </select>
 </mapper>

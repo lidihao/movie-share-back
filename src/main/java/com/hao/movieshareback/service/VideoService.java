@@ -1,16 +1,25 @@
 package com.hao.movieshareback.service;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
 import com.hao.movieshareback.dao.*;
 import com.hao.movieshareback.model.*;
 import com.hao.movieshareback.vo.*;
 import com.hao.movieshareback.vo.auth.UserVo;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.ml.job.results.Bucket;
 import org.elasticsearch.common.lucene.search.function.FieldValueFactorFunction;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.index.query.functionscore.FieldValueFactorFunctionBuilder;
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
@@ -121,7 +130,7 @@ public class VideoService {
             for (SearchHit searchHit : searchHits) {
                 VideoDetailVo videoDetailVo = getVideoDetail(Integer.parseInt(searchHit.getId()));
                 if (searchHit.getHighlightFields() != null) {
-                    HighlightField highlightField = searchHit.getHighlightFields().get("video_title");
+                    HighlightField highlightField = searchHit.getHighlightFields().get("videoTitle");
                     if (highlightField != null && highlightField.getFragments().length > 0) {
                         String highLightTitle = highlightField.getFragments()[0].string();
                         videoDetailVo.setTitle(highLightTitle);
@@ -153,7 +162,7 @@ public class VideoService {
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         if (searchKey!=null){
             MultiMatchQueryBuilder multiMatchQueryBuilder= QueryBuilders.multiMatchQuery(searchKey).
-                    field("video_title",3).field("upload_user_name",2).field("video_desc",1);
+                    field("video_title",3).field("uploadUserName",2).field("videoDesc",1);
             boolQueryBuilder.must(multiMatchQueryBuilder);
 
         }
@@ -163,20 +172,20 @@ public class VideoService {
         }
 
         if (categoryId!=null){
-            TermQueryBuilder categoryTerm = QueryBuilders.termQuery("category_id",categoryId);
+            TermQueryBuilder categoryTerm = QueryBuilders.termQuery("categoryId",categoryId);
             boolQueryBuilder.must(categoryTerm);
         }
 
         if (startDate!=null&&endDate!=null){
-            RangeQueryBuilder dateRange=QueryBuilders.rangeQuery("created_time").lte(startDate).gte(endDate);
+            RangeQueryBuilder dateRange=QueryBuilders.rangeQuery("createdTime").lte(startDate).gte(endDate);
             boolQueryBuilder.must(dateRange);
         }
 
-        FieldValueFactorFunctionBuilder videoPlayCount= ScoreFunctionBuilders.fieldValueFactorFunction("video_play_count")
+        FieldValueFactorFunctionBuilder videoPlayCount= ScoreFunctionBuilders.fieldValueFactorFunction("videoPlayCount")
                 .factor(3).modifier(FieldValueFactorFunction.Modifier.LOG2P);
-        FieldValueFactorFunctionBuilder videoRate=ScoreFunctionBuilders.fieldValueFactorFunction("video_rate").factor(5)
+        FieldValueFactorFunctionBuilder videoRate=ScoreFunctionBuilders.fieldValueFactorFunction("videoRate").factor(5)
                 .modifier(FieldValueFactorFunction.Modifier.LOG2P);
-        FieldValueFactorFunctionBuilder videoCommentCount=ScoreFunctionBuilders.fieldValueFactorFunction("video_comment_person").factor(2)
+        FieldValueFactorFunctionBuilder videoCommentCount=ScoreFunctionBuilders.fieldValueFactorFunction("videoCommentPerson").factor(2)
                 .modifier(FieldValueFactorFunction.Modifier.LOG2P);
 
 
@@ -189,7 +198,7 @@ public class VideoService {
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder().query(functionScoreQuery).
                 sort(SortBuilders.fieldSort(orderField).order(SortOrder.DESC)).from(from).size(size);
         searchSourceBuilder.aggregation(AggregationBuilders.terms("group_by_tags").field("tags"))
-                .highlighter(new HighlightBuilder().field("video_title"));
+                .highlighter(new HighlightBuilder().field("videoTitle"));
         return searchSourceBuilder;
     }
 
@@ -200,5 +209,23 @@ public class VideoService {
         List<Tag> tagList = tagService.getTagListByVideoId(video.getVideoId());
         return new VideoDetailVo(video.getVideoId(),video.getVideoTitle(),category,video.getCreatedTime(),video.getVideoDesc(),tagList,userVo,video.getVideoPlayCount(),
                 video.getVideoCommentPerson(),picture,video.getVideoRate());
+    }
+
+    public void indexVideo(List<VideoIndexVo> videoIndexVoList) throws IOException {
+        if (videoIndexVoList==null||videoIndexVoList.size()==0){
+            return;
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        BulkRequest bulkRequest = new BulkRequest();
+        for (VideoIndexVo videoIndexVo:videoIndexVoList){
+            String videoIndexJson = mapper.writeValueAsString(videoIndexVo);
+            IndexRequest indexRequest = new IndexRequest("video");
+            indexRequest.id(videoIndexVo.getVideoId().toString());
+            System.out.println(videoIndexJson);
+            indexRequest.source(videoIndexJson,XContentType.JSON);
+            bulkRequest.add(indexRequest);
+        }
+        BulkResponse bulkItemResponses = highLevelClient.bulk(bulkRequest,RequestOptions.DEFAULT);
+        System.out.println(mapper.writeValueAsString(bulkItemResponses));
     }
 }
