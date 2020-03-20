@@ -1,6 +1,7 @@
 package com.hao.movieshareback.controller;
 
 import com.hao.movieshareback.annotation.auth.AnonymousAccess;
+import com.hao.movieshareback.annotation.log.Log;
 import com.hao.movieshareback.model.CommentReply;
 import com.hao.movieshareback.model.VideoComment;
 import com.hao.movieshareback.service.CommentReplyService;
@@ -20,6 +21,7 @@ public class VideoCommentController {
     @Autowired
     private CommentReplyService commentReplyService;
 
+    @Log(value = "comment_video",businessType = "comment_video")
     @PostMapping("/doComment")
     public ResultBody doComment(@RequestBody VideoComment videoComment){
         videoCommentService.commentVideo(videoComment);

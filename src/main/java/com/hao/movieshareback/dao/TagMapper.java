@@ -4,7 +4,6 @@ import com.hao.movieshareback.model.Tag;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
-import sun.security.krb5.internal.TGSRep;
 
 import java.util.List;
 

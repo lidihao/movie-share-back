@@ -1,5 +1,6 @@
 package com.hao.movieshareback.controller;
 
+import com.hao.movieshareback.annotation.log.Log;
 import com.hao.movieshareback.model.FavoriteVideo;
 import com.hao.movieshareback.model.Video;
 import com.hao.movieshareback.service.FavoriteVideoService;
@@ -19,6 +20,7 @@ public class FavoriteVideoController {
     @Autowired
     private VideoService videoService;
 
+    @Log(value = "favorite_video",businessType = "favorite_video")
     @PostMapping("/favoriteVideo")
     public ResultBody favoriteVideo(@RequestBody FavoriteVideo favoriteVideo){
         favoriteVideoService.favoriteVideo(favoriteVideo);

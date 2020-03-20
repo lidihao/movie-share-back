@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hao.movieshareback.dao.LogMapper">
+    <!--
+    private Long id;
+
+    private Integer userId;
+
+    /** 操作用户 */
+    private String username;
+
+    /** 描述 */
+    private String description;
+
+    /** 方法名 */
+    private String method;
+
+    /** 参数 */
+    private String params;
+
+    /** 日志类型 */
+    private String logType;
+
+    private String businessType;
+
+    /** 请求ip */
+    private String requestIp;
+
+    /** 浏览器  */
+    private String browser;
+
+    /** 请求耗时 */
+    private Long time;
+
+    /** 异常详细  */
+    private byte[] exceptionDetail;
+
+    /** 创建日期 */
+    private Date createTime;
+    -->
+    <resultMap id="LogResultMap" type="com.hao.movieshareback.model.Log">
+        <id property="id" column="id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <id property="userId" column="user_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="username" column="username" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="description" column="description" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="method" column="method" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="params" column="params" javaType="java.lang.String" jdbcType="LONGVARCHAR"/>
+        <result property="logType" column="log_type" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="businessType" column="business_type" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="requestIp" column="request_ip" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="browser" column="browser" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="time" column="time" javaType="java.lang.Long" jdbcType="BIGINT"/>
+        <result property="exceptionDetail" column="exception_detail" javaType="java.lang.String" jdbcType="LONGVARCHAR"/>
+        <result property="createTime" column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        log.id,log.user_id,log.username,log.description,log.method,log.params,log.log_type,log.business_type,
+        log.request_ip,log.browser,log.time,log.exception_detail,log.create_time
+    </sql>
+
+    <insert id="save" parameterType="com.hao.movieshareback.model.Log" useGeneratedKeys="true" keyProperty="id">
+        insert into log
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="userId != null" >
+                user_id,
+            </if>
+            <if test="username != null" >
+                username,
+            </if>
+            <if test="description!=null">
+                description,
+            </if>
+            <if test="method != null" >
+                method,
+            </if>
+            <if test="params != null">
+                params,
+            </if>
+            <if test="logType!=null">
+                log_type,
+            </if>
+            <if test="businessType!=null">
+                business_type,
+            </if>
+            <if test="requestIp != null" >
+                request_ip,
+            </if>
+            <if test="browser!=null">
+                browser,
+            </if>
+            <if test="time!=null">
+                time,
+            </if>
+            <if test="exceptionDetail!=null">
+                exception_detail,
+            </if>
+            <if test="createTime">
+                create_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="userId != null" >
+                #{userId},
+            </if>
+            <if test="username != null" >
+                #{username},
+            </if>
+            <if test="description!=null">
+                #{description},
+            </if>
+            <if test="method != null" >
+                #{method},
+            </if>
+            <if test="params != null">
+                #{params},
+            </if>
+            <if test="logType!=null">
+                #{logType},
+            </if>
+            <if test="businessType!=null">
+                #{businessType},
+            </if>
+            <if test="requestIp != null" >
+                #{requestIp},
+            </if>
+            <if test="browser!=null">
+                #{browser},
+            </if>
+            <if test="time!=null">
+                #{time},
+            </if>
+            <if test="exceptionDetail!=null">
+                #{exceptionDetail},
+            </if>
+            <if test="createTime">
+                #{createTime},
+            </if>
+        </trim>
+    </insert>
+</mapper>

@@ -2,6 +2,7 @@ package com.hao.movieshareback.controller;
 
 import cn.hutool.db.sql.Order;
 import com.hao.movieshareback.annotation.auth.AnonymousAccess;
+import com.hao.movieshareback.annotation.log.Log;
 import com.hao.movieshareback.model.Video;
 import com.hao.movieshareback.service.UserService;
 import com.hao.movieshareback.service.VideoService;
@@ -23,6 +24,7 @@ public class VideoController {
     @Autowired
     private VideoService videoService;
 
+    @Log(value = "play_video",businessType = "play_video")
     @AnonymousAccess
     @GetMapping("/videoDetail")
     public ResultBody getVideoDetail(Integer videoId){
@@ -51,6 +53,7 @@ public class VideoController {
         }
     }
 
+    @Log(value = "search_video",businessType = "search_video")
     @AnonymousAccess
     @GetMapping("/searchVideo")
     public ResultBody getVideoBySearchKey(String orderField, String searchKey, String tagName,
