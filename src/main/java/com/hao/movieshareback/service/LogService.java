@@ -38,7 +38,7 @@ public class LogService {
         ObjectMapper objectMapper = new ObjectMapper();
         if(argValues != null){
             for (int i = 0; i < argValues.length; i++) {
-                params.append(" ").append(argNames[i]).append(": ").append(objectMapper.writeValueAsString(argValues[i]));
+                params.append(" \"").append(argNames[i]).append("\": ").append(objectMapper.writeValueAsString(argValues[i]));
             }
         }
         // 描述

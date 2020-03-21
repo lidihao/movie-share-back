@@ -40,7 +40,7 @@
     -->
     <resultMap id="LogResultMap" type="com.hao.movieshareback.model.Log">
         <id property="id" column="id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-        <id property="userId" column="user_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result property="username" column="username" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="description" column="description" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="method" column="method" javaType="java.lang.String" jdbcType="VARCHAR"/>
@@ -138,4 +138,10 @@
             </if>
         </trim>
     </insert>
+
+    <select id="selectLogForRecommend" resultMap="LogResultMap">
+    select <include refid="Base_Column_List"></include> from log
+    where create_time between #{startDate} and #{endDate}
+    and log_type='INFO' and business_type in ('play_video','favorite_video','comment_video')
+    </select>
 </mapper>

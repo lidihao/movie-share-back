@@ -34,7 +34,7 @@ public class TaskManagerController {
     }
 
     @PreAuthorize("@el.check('admin')")
-    @GetMapping("/updateTask")
+    @PostMapping("/updateTask")
     public ResultBody updateTaskByTaskId(@RequestBody JavaSystemTask javaSystemTask){
         taskService.updateTask(javaSystemTask);
         return ResultBody.success();

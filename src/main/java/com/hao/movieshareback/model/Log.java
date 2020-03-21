@@ -5,7 +5,7 @@ import java.util.Date;
 
 public class Log implements Serializable {
 
-    private Long id;
+    private Integer id;
 
     private Integer userId;
 
@@ -41,16 +41,20 @@ public class Log implements Serializable {
     /** 创建日期 */
     private Date createTime;
 
+
+    public Log() {
+    }
+
     public Log(String logType, Long time) {
         this.logType = logType;
         this.time = time;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -102,6 +106,14 @@ public class Log implements Serializable {
         this.logType = logType;
     }
 
+    public String getBusinessType() {
+        return businessType;
+    }
+
+    public void setBusinessType(String businessType) {
+        this.businessType = businessType;
+    }
+
     public String getRequestIp() {
         return requestIp;
     }
@@ -140,14 +152,6 @@ public class Log implements Serializable {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
-    }
-
-    public String getBusinessType() {
-        return businessType;
-    }
-
-    public void setBusinessType(String businessType) {
-        this.businessType = businessType;
     }
 }
 
