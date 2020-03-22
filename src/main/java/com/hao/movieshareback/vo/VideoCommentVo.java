@@ -10,7 +10,6 @@ public class VideoCommentVo {
     private String commentContent;
     private Long commentUp;
     private Long commentDown;
-    private Double rate;
     private Integer videoId;
     private UserVo commentUser;
     private Date createTime;
@@ -18,12 +17,11 @@ public class VideoCommentVo {
     public VideoCommentVo() {
     }
 
-    public VideoCommentVo(Integer commentId, String commentContent, Long commentUp, Long commentDown, Double rate, Integer videoId, UserVo commentUser, Date createTime) {
+    public VideoCommentVo(Integer commentId, String commentContent, Long commentUp, Long commentDown, Integer videoId, UserVo commentUser, Date createTime) {
         this.commentId = commentId;
         this.commentContent = commentContent;
         this.commentUp = commentUp;
         this.commentDown = commentDown;
-        this.rate = rate;
         this.videoId = videoId;
         this.commentUser = commentUser;
         this.createTime = createTime;
@@ -59,14 +57,6 @@ public class VideoCommentVo {
 
     public void setCommentDown(Long commentDown) {
         this.commentDown = commentDown;
-    }
-
-    public Double getRate() {
-        return rate;
-    }
-
-    public void setRate(Double rate) {
-        this.rate = rate;
     }
 
     public Integer getVideoId() {

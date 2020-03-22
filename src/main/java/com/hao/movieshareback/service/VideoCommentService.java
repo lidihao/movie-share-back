@@ -1,16 +1,15 @@
 package com.hao.movieshareback.service;
 
 import com.fasterxml.jackson.databind.ser.Serializers;
+import com.hao.movieshareback.dao.RateVideoCommentMapper;
 import com.hao.movieshareback.dao.VideoCommentMapper;
 import com.hao.movieshareback.dao.VideoMapper;
 import com.hao.movieshareback.model.BaseModel;
+import com.hao.movieshareback.model.RateVideoComment;
 import com.hao.movieshareback.model.Video;
 import com.hao.movieshareback.model.VideoComment;
 import com.hao.movieshareback.utils.SecurityUtils;
-import com.hao.movieshareback.vo.Page;
-import com.hao.movieshareback.vo.PageList;
-import com.hao.movieshareback.vo.VideoCommentVo;
-import com.hao.movieshareback.vo.XPage;
+import com.hao.movieshareback.vo.*;
 import com.hao.movieshareback.vo.auth.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +27,9 @@ public class VideoCommentService {
     private VideoCommentMapper videoCommentMapper;
 
     @Autowired
+    private RateVideoCommentMapper rateVideoCommentMapper;
+
+    @Autowired
     private VideoMapper videoMapper;
 
     @Autowired
@@ -40,12 +42,23 @@ public class VideoCommentService {
         videoComment.setCommentUp(0L);
         BaseModel.setUpdated(videoComment, SecurityUtils.getUsername(),new Date());
         BaseModel.setNewCreate(videoComment,SecurityUtils.getUsername(),new Date());
-
-        Integer commentCount=videoCommentMapper.getCommentCountByVideoId(videoComment.getVideoId());
-        Video video = videoMapper.getVideo(videoComment.getVideoId());
-        Double rate = (video.getVideoRate()*commentCount+videoComment.getRate())/(commentCount+1);
-        videoMapper.updateRate(rate,videoComment.getVideoId());
         videoCommentMapper.save(videoComment);
+    }
+
+    @Transactional(rollbackFor = Exception.class,propagation = Propagation.REQUIRED)
+    public void rateVideo(RateVideoComment rateVideoComment){
+        if (hasRateComment(rateVideoComment.getVideoId(),rateVideoComment.getCommentUserId())){
+            throw new RuntimeException("已经给视频评分");
+        }
+        rateVideoComment.setCommentDown(0L);
+        rateVideoComment.setCommentUp(0L);
+        BaseModel.setUpdated(rateVideoComment, SecurityUtils.getUsername(),new Date());
+        BaseModel.setNewCreate(rateVideoComment,SecurityUtils.getUsername(),new Date());
+        Integer rateCount=rateVideoCommentMapper.getCommentCountByVideoId(rateVideoComment.getVideoId());
+        Double oldRate=videoMapper.getVideo(rateVideoComment.getVideoId()).getVideoRate();
+        Double newRate= (oldRate*rateCount+rateVideoComment.getRate())/(rateCount+1);
+        videoMapper.updateRate(newRate,rateVideoComment.getVideoId());
+        rateVideoCommentMapper.save(rateVideoComment);
     }
 
     public XPage<VideoCommentVo> listVideoCommentByVideoId(Integer videoId,Integer pageNum,Integer pageSize){
@@ -57,9 +70,32 @@ public class VideoCommentService {
             UserVo userVo = userService.getUserVoByUserId(videoComment.getCommentUserId());
             videoCommentVoPageList.add(
                     new VideoCommentVo(videoComment.getCommentId(),videoComment.getCommentContent(),videoComment.getCommentUp(),
-                            videoComment.getCommentDown(),videoComment.getRate(),videoComment.getVideoId(),userVo,videoComment.getCreatedTime())
+                            videoComment.getCommentDown(),videoComment.getVideoId(),userVo,videoComment.getCreatedTime())
             );
         });
         return XPage.wrap(videoCommentVoPageList);
     }
+
+    public XPage<RateCommentVo> listRateVideoComment(Integer videoId,Integer pageNum,Integer pageSize){
+        Page page = new Page(pageNum,pageSize);
+        PageList<RateVideoComment> rateVideoComments = rateVideoCommentMapper.selectCommentListByVideoId(page,videoId);
+        PageList<RateCommentVo> rateCommentVoPage = new PageList<>();
+        rateCommentVoPage.setPageInfo(rateVideoComments.getPageInfo());
+        rateVideoComments.forEach(rateVideoComment -> {
+            UserVo userVo = userService.getUserVoByUserId(rateVideoComment.getCommentUserId());
+            rateCommentVoPage.add(
+                    new RateCommentVo(rateVideoComment.getCommentId(),rateVideoComment.getCommentContent(),
+                            rateVideoComment.getCommentUp(),rateVideoComment.getCommentDown(),rateVideoComment.getVideoId(),
+                            userVo,rateVideoComment.getCreatedTime(),rateVideoComment.getRate()
+                            )
+            );
+        });
+        return XPage.wrap(rateCommentVoPage);
+    }
+
+
+    public boolean hasRateComment(Integer videoId,Integer userId){
+        return rateVideoCommentMapper.getCommentCountByUserIdAndVideoId(videoId,userId)!=0;
+    }
+
 }

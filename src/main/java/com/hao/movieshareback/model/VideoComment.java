@@ -6,7 +6,6 @@ public class VideoComment extends BaseModel{
     private Long commentUp;
     private Long commentDown;
     private Integer commentUserId;
-    private Double rate;
     private Integer videoId;
 
     public VideoComment() {
@@ -18,7 +17,6 @@ public class VideoComment extends BaseModel{
         this.commentUp = commentUp;
         this.commentDown = commentDown;
         this.commentUserId = commentUserId;
-        this.rate = rate;
         this.videoId = videoId;
     }
 
@@ -62,13 +60,6 @@ public class VideoComment extends BaseModel{
         this.commentUserId = commentUserId;
     }
 
-    public Double getRate() {
-        return rate;
-    }
-
-    public void setRate(Double rate) {
-        this.rate = rate;
-    }
 
     public Integer getVideoId() {
         return videoId;

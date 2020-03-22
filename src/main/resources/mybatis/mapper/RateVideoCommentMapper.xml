@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.hao.movieshareback.dao.VideoCommentMapper">
+<mapper namespace="com.hao.movieshareback.dao.RateVideoCommentMapper">
 
-    <resultMap id="VideoCommentResultMap" type="com.hao.movieshareback.model.VideoComment">
+    <resultMap id="rateVideoCommentResultMap" type="com.hao.movieshareback.model.RateVideoComment">
         <id property="commentId" column="comment_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result property="commentContent" column="comment_content" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="commentUp" column="comment_up" javaType="java.lang.Long" jdbcType="BIGINT"/>
         <result property="commentDown" column="comment_down" javaType="java.lang.Long" jdbcType="BIGINT"/>
         <result property="commentUserId" column="comment_user_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="rate" column="rate" javaType="java.lang.Double" jdbcType="DOUBLE"/>
         <result property="videoId" column="video_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result property="createdTime" column="created_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <result property="createdBy" column="created_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
@@ -17,12 +18,12 @@
     </resultMap>
 
     <sql id="Base_Column_List" >
-        video_comment.comment_id,video_comment.comment_content,video_comment.comment_up,video_comment.comment_down,video_comment.comment_user_id,
-        video_comment.video_id,video_comment.created_time,video_comment.created_by,video_comment.updated_time,video_comment.updated_by,video_comment.is_delete
+        rate_video_comment.comment_id,rate_video_comment.comment_content,rate_video_comment.comment_up,rate_video_comment.comment_down,rate_video_comment.comment_user_id,rate_video_comment.rate,
+        rate_video_comment.video_id,rate_video_comment.created_time,rate_video_comment.created_by,rate_video_comment.updated_time,rate_video_comment.updated_by,rate_video_comment.is_delete
     </sql>
 
-    <insert id="save" parameterType="com.hao.movieshareback.model.VideoComment" useGeneratedKeys="true" keyProperty="commentId">
-        insert into video_comment
+    <insert id="save" parameterType="com.hao.movieshareback.model.RateVideoComment" useGeneratedKeys="true" keyProperty="commentId">
+        insert into rate_video_comment
         <trim prefix="(" suffix=")" suffixOverrides="," >
             <if test="commentContent != null" >
                 comment_content,
@@ -35,6 +36,9 @@
             </if>
             <if test="commentUserId != null">
                 comment_user_id,
+            </if>
+            <if test="rate!=null">
+                rate,
             </if>
             <if test="videoId!=null">
                 video_id,
@@ -65,6 +69,9 @@
             <if test="commentUserId != null" >
                 #{commentUserId},
             </if>
+            <if test="rate!= null" >
+                #{rate},
+            </if>
             <if test="videoId!=null">
                 #{videoId},
             </if>
@@ -83,13 +90,18 @@
         </trim>
     </insert>
 
-    <select id="selectCommentListByVideoId" resultMap="VideoCommentResultMap">
+    <select id="selectCommentListByVideoId" resultMap="rateVideoCommentResultMap">
         select <include refid="Base_Column_List"></include>
-        from video_comment where video_comment.video_id=#{videoId}
-        order by video_comment.created_time DESC
+        from rate_video_comment where rate_video_comment.video_id=#{videoId}
+        order by rate_video_comment.created_time DESC
     </select>
 
     <select id="getCommentCountByVideoId"  resultType="java.lang.Integer">
-        select count(*) from video_comment where video_comment.video_id=#{videoId}
+        select count(*) from rate_video_comment where rate_video_comment.video_id=#{videoId}
+    </select>
+
+    <select id="getCommentCountByUserIdAndVideoId" resultType="java.lang.Integer">
+        select count(*) from rate_video_comment where rate_video_comment.video_id=#{videoId} and
+        rate_video_comment.comment_user_id=#{userId}
     </select>
 </mapper>

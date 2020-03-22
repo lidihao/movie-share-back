@@ -3,6 +3,7 @@ package com.hao.movieshareback.controller;
 import com.hao.movieshareback.annotation.auth.AnonymousAccess;
 import com.hao.movieshareback.annotation.log.Log;
 import com.hao.movieshareback.model.CommentReply;
+import com.hao.movieshareback.model.RateVideoComment;
 import com.hao.movieshareback.model.VideoComment;
 import com.hao.movieshareback.service.CommentReplyService;
 import com.hao.movieshareback.service.VideoCommentService;
@@ -28,10 +29,27 @@ public class VideoCommentController {
         return ResultBody.success("success");
     }
 
+    @PostMapping("/doRateComment")
+    public ResultBody doRateComment(@RequestBody RateVideoComment rateVideoComment){
+        try {
+            videoCommentService.rateVideo(rateVideoComment);
+            return ResultBody.success("success");
+        }catch (Exception e){
+            return ResultBody.error(e.getMessage());
+        }
+    }
+
+
     @AnonymousAccess
     @GetMapping("/listComment")
     public ResultBody listVideoComment(Integer videoId,Integer pageNum,Integer pageSize){
         return ResultBody.success(videoCommentService.listVideoCommentByVideoId(videoId,pageNum,pageSize));
+    }
+
+    @AnonymousAccess
+    @GetMapping("/listRateComment")
+    public ResultBody listRateComment(Integer videoId,Integer pageNum,Integer pageSize){
+        return ResultBody.success(videoCommentService.listRateVideoComment(videoId,pageNum,pageSize));
     }
 
 
