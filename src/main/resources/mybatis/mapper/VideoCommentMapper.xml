@@ -92,4 +92,9 @@
     <select id="getCommentCountByVideoId"  resultType="java.lang.Integer">
         select count(*) from video_comment where video_comment.video_id=#{videoId}
     </select>
+
+    <select id="getCommentById" resultMap="VideoCommentResultMap">
+        select <include refid="Base_Column_List"></include> from video_comment
+        where video_comment.comment_id=#{commentId}
+    </select>
 </mapper>

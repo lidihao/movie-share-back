@@ -104,4 +104,8 @@
         select count(*) from rate_video_comment where rate_video_comment.video_id=#{videoId} and
         rate_video_comment.comment_user_id=#{userId}
     </select>
+
+    <select id="selectAllRateComment" resultMap="rateVideoCommentResultMap">
+        select <include refid="Base_Column_List"></include> from rate_video_comment
+    </select>
 </mapper>

@@ -42,11 +42,12 @@ public class VideoCommentService {
         videoComment.setCommentUp(0L);
         BaseModel.setUpdated(videoComment, SecurityUtils.getUsername(),new Date());
         BaseModel.setNewCreate(videoComment,SecurityUtils.getUsername(),new Date());
+        videoMapper.incrementVideoCommentPerson(videoComment.getVideoId());
         videoCommentMapper.save(videoComment);
     }
 
     @Transactional(rollbackFor = Exception.class,propagation = Propagation.REQUIRED)
-    public void rateVideo(RateVideoComment rateVideoComment){
+    public synchronized void rateVideo(RateVideoComment rateVideoComment){
         if (hasRateComment(rateVideoComment.getVideoId(),rateVideoComment.getCommentUserId())){
             throw new RuntimeException("已经给视频评分");
         }
@@ -57,7 +58,8 @@ public class VideoCommentService {
         Integer rateCount=rateVideoCommentMapper.getCommentCountByVideoId(rateVideoComment.getVideoId());
         Double oldRate=videoMapper.getVideo(rateVideoComment.getVideoId()).getVideoRate();
         Double newRate= (oldRate*rateCount+rateVideoComment.getRate())/(rateCount+1);
-        videoMapper.updateRate(newRate,rateVideoComment.getVideoId());
+        videoMapper.incrementVideoCommentPerson(rateVideoComment.getVideoId());
+        videoMapper.updateRate(newRate,rateVideoComment.getVideoId(),new Date(),SecurityUtils.getUsername());
         rateVideoCommentMapper.save(rateVideoComment);
     }
 

@@ -6,6 +6,8 @@ import com.hao.movieshareback.vo.PageList;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Mapper
 @Repository
 public interface RateVideoCommentMapper {
@@ -13,4 +15,5 @@ public interface RateVideoCommentMapper {
     PageList<RateVideoComment> selectCommentListByVideoId(Page page, Integer videoId);
     Integer getCommentCountByVideoId(Integer videoId);
     Integer getCommentCountByUserIdAndVideoId(Integer videoId,Integer userId);
+    List<RateVideoComment> selectAllRateComment();
 }

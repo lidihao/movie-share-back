@@ -90,7 +90,7 @@ logging:
           dao: debug
 
 es:
-  host: 8.129.32.102
+  host: localhost
   port: 9200
   scheme: http
 

@@ -110,9 +110,9 @@ public class VideoService {
         String order="default";
         switch (orderField){
             case "default":order="_score";break;
-            case "rate":order="video_rate";break;
-            case "playCount":order="video_play_count";break;
-            case "time":order="created_time";break;
+            case "rate":order="videoRate";break;
+            case "playCount":order="videoPlayCount";break;
+            case "time":order="createdTime";break;
             default:throw new RuntimeException("UnKown orderType");
         }
         Integer from=(pageNum-1)*pageSize,to=pageSize;

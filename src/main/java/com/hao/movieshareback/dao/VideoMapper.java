@@ -7,14 +7,17 @@ import com.hao.movieshareback.vo.VideoIndexVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
+
 @Mapper
 @Repository
 public interface VideoMapper {
     int save(Video video);
     Video getVideo(Integer videoId);
     PageList<Video> getVideoDetailListLikeName(Page page,Video video);
-    void updateRate(Double rate,Integer videoId);
+    void updateRate(Double rate, Integer videoId, Date updateTime,String userName);
     void incrementVideoPlayCount(Integer videoId);
+    void incrementVideoCommentPerson(Integer videoId);
     PageList<Video> getFavoriteVideoDetailList(Page page,Video video,Integer userId);
     PageList<VideoIndexVo> selectVideoIndexVo(Page page, String curDateTime);
 }

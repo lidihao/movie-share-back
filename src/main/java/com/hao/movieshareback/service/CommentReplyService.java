@@ -1,8 +1,11 @@
 package com.hao.movieshareback.service;
 
 import com.hao.movieshareback.dao.CommentReplyMapper;
+import com.hao.movieshareback.dao.VideoCommentMapper;
+import com.hao.movieshareback.dao.VideoMapper;
 import com.hao.movieshareback.model.BaseModel;
 import com.hao.movieshareback.model.CommentReply;
+import com.hao.movieshareback.model.VideoComment;
 import com.hao.movieshareback.utils.SecurityUtils;
 import com.hao.movieshareback.vo.CommentReplyVo;
 import com.hao.movieshareback.vo.Page;
@@ -11,6 +14,7 @@ import com.hao.movieshareback.vo.XPage;
 import com.hao.movieshareback.vo.auth.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -23,11 +27,20 @@ public class CommentReplyService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private VideoMapper videoMapper;
+
+    @Autowired
+    private VideoCommentMapper videoCommentMapper;
+
+    @Transactional
     public void replyComment(CommentReply commentReply){
         commentReply.setReplyDown(0L);
         commentReply.setReplyUp(0L);
         BaseModel.setUpdated(commentReply, SecurityUtils.getUsername(),new Date());
         BaseModel.setNewCreate(commentReply,SecurityUtils.getUsername(),new Date());
+        VideoComment videoComment = videoCommentMapper.getCommentById(commentReply.getVideoCommentId());
+        videoMapper.incrementVideoCommentPerson(videoComment.getVideoId());
         commentReplyMapper.save(commentReply);
     }
 

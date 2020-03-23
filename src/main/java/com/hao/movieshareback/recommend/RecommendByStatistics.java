@@ -54,9 +54,9 @@ public class RecommendByStatistics {
             });
         }
 
+        videoScoreMap.remove(-1);
         String cacheKey="RECOMMEND_BY_STATISTICS";
         String categoryCacheKey="CATEGORY_RECOMMEND";
-        redisTemplate.delete(cacheKey);
         for (Integer videoId:videoScoreMap.keySet()){
             Video video = videoMapper.getVideo(videoId);
             double totalScore=weights.get("log_weight")*videoScoreMap.get(videoId)+

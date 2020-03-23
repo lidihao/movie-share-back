@@ -168,12 +168,19 @@
     </select>
 
     <update id="updateRate">
-        update video set video.video_rate=#{rate} where video.video_id=#{videoId}
+        update video set video.video_rate=#{rate} ,video.updated_time=#{updateTime} ,
+        video.updated_by=#{userName}
+        where video.video_id=#{videoId}
     </update>
 
     <update id="incrementVideoPlayCount">
-        update video set video.video_play_count=video.video_play_count+1 where
-        video.video_id=#{videoId}
+        update video set video.video_play_count=video.video_play_count+1,
+         video.updated_time=now() where video.video_id=#{videoId}
+    </update>
+
+    <update id="incrementVideoCommentPerson">
+        update video set video.video_comment_person=video.video_comment_person+1,
+        video.updated_time=now() where video.video_id=#{videoId}
     </update>
 
     <select id="selectVideoIndexVo" resultType="com.hao.movieshareback.vo.VideoIndexVo">
