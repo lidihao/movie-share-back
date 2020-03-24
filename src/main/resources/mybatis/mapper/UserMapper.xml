@@ -114,6 +114,12 @@
         where user.email=#{email} and is_delete=0
     </select>
 
+
+    <select id="getUserByEmail" resultMap="UserResultMap">
+        select <include refid="Base_Column_List"></include> from user
+        where user.email=#{email} and is_delete=0
+    </select>
+
     <select id="getCountByUserName" resultType="java.lang.Integer">
         select count(*) from user
         where user.user_name=#{userName} and is_delete=0
@@ -167,5 +173,10 @@
         </if>
         order by  followCount DESC
     </select>
+
+    <update id="resetUserPassword">
+        update user set user.password=#{password},user.salt=#{salt},user.last_password_reset_date=now()
+        where user.user_id=#{userId}
+    </update>
     
 </mapper>

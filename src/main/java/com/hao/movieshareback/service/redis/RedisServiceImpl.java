@@ -38,6 +38,12 @@ public class RedisServiceImpl implements IRedisService {
     @Value("${email-validate.key}")
     private String emailKey;
 
+    @Value("${reset-password.expiration}")
+    private Integer resetPasswordExpiration;
+
+    @Value("${reset-password.key}")
+    private String resetPasswordKey;
+
     public RedisServiceImpl(RedisTemplate redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
@@ -105,7 +111,26 @@ public class RedisServiceImpl implements IRedisService {
     @Override
     public String getMailVadateToken(String key) {
         try {
-            return Objects.requireNonNull(redisTemplate.opsForValue().get(key)).toString();
+            String res= Objects.requireNonNull(redisTemplate.opsForValue().get(key)).toString();
+            this.delete(key);
+            return res;
+        }catch (Exception e){
+            return "";
+        }
+    }
+
+    @Override
+    public void saveResetPasswordToken(String key, Object val) {
+        redisTemplate.opsForValue().set(key,val);
+        redisTemplate.expire(key,resetPasswordExpiration, TimeUnit.HOURS);
+    }
+
+    @Override
+    public String getResetPasswordToken(String key) {
+        try {
+            String res= Objects.requireNonNull(redisTemplate.opsForValue().get(key)).toString();
+            this.delete(key);
+            return res;
         }catch (Exception e){
             return "";
         }

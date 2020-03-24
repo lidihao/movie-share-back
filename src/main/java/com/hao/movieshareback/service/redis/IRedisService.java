@@ -51,4 +51,8 @@ public interface IRedisService {
     String getMailVadateToken(String key);
 
     void validateCode(String value,String uuid);
+
+    void saveResetPasswordToken(String key,Object val);
+
+    String getResetPasswordToken(String key);
 }

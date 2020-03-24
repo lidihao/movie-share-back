@@ -163,4 +163,31 @@ public class AuthController {
         }
         return ResultBody.success(userService.searchUser(searchKey,pageNum,pageSize));
     }
+
+    @AnonymousAccess
+    @PostMapping("/sendResetPasswordEmail")
+    public ResultBody sendResetPasswordEmail(String email){
+        if (Strings.isBlank(email)){
+            return ResultBody.error("邮箱为空");
+        }
+        try {
+            userService.sendResetEmail(email);
+            return ResultBody.success();
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResultBody.error(e.getMessage());
+        }
+    }
+
+    @AnonymousAccess
+    @PostMapping("/resetPassword")
+    public ResultBody sendResetPasswordEmail(String password,String token,
+                                             String uuid,String code,HttpServletRequest request){
+        try {
+            userService.resetPassword(password, token,uuid,code,request);
+            return ResultBody.success();
+        }catch (Exception e){
+            return ResultBody.error(e.getMessage());
+        }
+    }
 }

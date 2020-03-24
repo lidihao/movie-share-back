@@ -22,6 +22,7 @@ import com.hao.movieshareback.vo.PageList;
 import com.hao.movieshareback.vo.XPage;
 import com.hao.movieshareback.vo.auth.*;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,6 +79,24 @@ public class UserService {
     @Value("${email-validate.key}")
     private String emailKey;
 
+
+    @Value("${reset-password.key}")
+    private String resetPasswordKey;
+
+
+    @Value("${server.address}")
+    private String address;
+
+    @Value("${server.port}")
+    private Integer port;
+
+    @Value("${client.port}")
+    private Integer clientPort;
+
+    @Value("${client.address}")
+    private String clientAddress;
+
+
     public User getUserByUserName(String userName){
         return userMapper.getUserByUserName(userName);
     }
@@ -112,8 +131,40 @@ public class UserService {
         userMapper.save(user);
     }
 
+
+    public void sendResetEmail(String email){
+        User user = userMapper.getUserByEmail(email);
+        if (user == null){
+            throw new RuntimeException("用户不存在");
+        }
+        String resetPasswordToken=IdUtil.simpleUUID();
+        String key = resetPasswordKey+"_"+resetPasswordToken;
+        redisService.saveMailVadateToken(key,email);
+        String content = createResetEmailContent(resetPasswordToken);
+        threadPoolTaskExecutor.execute(()->{
+            try {
+                mailService.sendHtmlMail(email,"重置密码",content);
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public void resetPassword(String password,String token,String uuid,String value,HttpServletRequest request){
+        redisService.validateCode(value,uuid);
+        String email =redisService.getResetPasswordToken(resetPasswordKey+"_"+token);
+        if (Strings.isBlank(email)) {
+            throw new RuntimeException("重置密码失败");
+        }
+        User user = userMapper.getUserByEmail(email);
+        String salt = EncryptUtils.md5(IdUtil.simpleUUID());
+        String passwordWithSalt = EncryptUtils.md5(password+salt);
+        userMapper.resetUserPassword(passwordWithSalt,salt,user.getUserId());
+        logOut(request);
+    }
+
     private void sendActiveEmail(String userName,String email) throws MessagingException {
-        String activeToken = emailKey+IdUtil.simpleUUID();
+        String activeToken = emailKey+"_"+IdUtil.simpleUUID();
         redisService.saveMailVadateToken(activeToken,userName);
 
         String content = createActiveContent(userName,activeToken);
@@ -139,13 +190,34 @@ public class UserService {
                 "</head>\n" +
                 "<body>\n" +
                 "    <div>\n" +
-                "        <img src=\"http://localhost:8089/logo.png\">\n" +
+                "        <img src=\"http://"+address+":"+port+"/logo.png\">\n" +
                 "    </div>\n" +
                 "    <div>\n" +
                 "        <p>\n" +
                 "            亲爱的用户请点击以下链接，激活用户：\n" +
                 "        </p>\n" +
-                "        <a href=\"http://localhost:8080/#/user/active?userName="+userName+"&token="+activeToken+"\">激活账户</a>\n" +
+                "        <a href=\"http://"+clientAddress+":"+clientPort+"/#/user/active?userName="+userName+"&token="+activeToken+"\">激活账户</a>\n" +
+                "    </div>\n" +
+                "</body>\n" +
+                "</html>";
+        return html;
+    }
+
+    public String createResetEmailContent(String resetToken){
+        String html="<html lang=\"en\">\n" +
+                "<head>\n" +
+                "    <meta charset=\"UTF-8\">\n" +
+                "    <title>用户激活重置密码邮件</title>\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "    <div>\n" +
+                "        <img src=\"http://"+address+":"+port+"/logo.png\">\n" +
+                "    </div>\n" +
+                "    <div>\n" +
+                "        <p>\n" +
+                "            亲爱的用户请点击以下链接，重置密码：\n" +
+                "        </p>\n" +
+                "        <a href=\"http://"+clientAddress+":"+clientPort+"/#/user/resetPassword?token="+resetToken+"\">重置密码</a>\n" +
                 "    </div>\n" +
                 "</body>\n" +
                 "</html>";

@@ -1,5 +1,10 @@
 server:
   port: 8089
+  address: 192.168.0.112
+
+client:
+  port: 8080
+  address: 192.168.0.112
 
 spring:
   datasource:
@@ -57,6 +62,10 @@ loginCode:
 email-validate:
   key: email-validate
   expiration: 24 #小时
+
+reset-password:
+  key: reset-password
+  expiration: 1
 
 
 

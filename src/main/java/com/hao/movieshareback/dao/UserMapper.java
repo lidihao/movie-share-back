@@ -32,6 +32,10 @@ public interface UserMapper {
 
     void updateUserAvatarUrl(Integer userId,Integer pictureId);
 
+    User getUserByEmail(String email);
+
+    void resetUserPassword(String password,String salt,Integer userId);
+
     PageList<User> getFollowingUserList(Page page,User user);
 
     PageList<User> getFollowedUserList(Page page,User user);
