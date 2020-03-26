@@ -1,5 +1,6 @@
 package com.hao.movieshareback.controller;
 
+import com.hao.movieshareback.annotation.auth.AnonymousAccess;
 import com.hao.movieshareback.annotation.log.Log;
 import com.hao.movieshareback.model.FavoriteVideo;
 import com.hao.movieshareback.model.Video;
@@ -38,11 +39,13 @@ public class FavoriteVideoController {
         return ResultBody.success(favoriteVideoService.isFavorite(favoriteVideo));
     }
 
+    @AnonymousAccess
     @GetMapping("/getFavoriteCount")
     public ResultBody getFavoriteCount(Integer videoId){
         return ResultBody.success(favoriteVideoService.getFavoriteCount(videoId));
     }
 
+    @AnonymousAccess
     @GetMapping("/getFavoriteVideoList")
     public ResultBody getFavoriteVideoList(Video video, Integer userId, Integer pageNum, Integer pageSize){
         return ResultBody.success(videoService.getFavoriteVideo(video,userId,pageNum,pageSize));

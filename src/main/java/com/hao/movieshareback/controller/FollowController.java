@@ -38,16 +38,19 @@ public class FollowController {
         return ResultBody.success(followService.getFollowingCount(userId));
     }
 
+    @AnonymousAccess
     @GetMapping("/getFollowedCount")
     public ResultBody getFollowedCount(Integer userId){
         return ResultBody.success(followService.getFollowedCount(userId));
     }
 
+    @AnonymousAccess
     @GetMapping("/getFollowingUserList")
     public ResultBody getFollowingUserList(User condition, Integer pageNum, Integer pageSize){
         return ResultBody.success(followService.getFollowingUserList(condition,pageNum,pageSize));
     }
 
+    @AnonymousAccess
     @GetMapping("/getFollowedUserList")
     public ResultBody getFollowedUserList(User condition,Integer pageNum,Integer pageSize){
         return ResultBody.success(followService.getFollowedUserList(condition, pageNum, pageSize));

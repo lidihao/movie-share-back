@@ -295,9 +295,17 @@ public class UserService {
 
     public UserVo getUserVoByUserId(Integer userId){
         User user = userMapper.getUserByUserId(userId);
+        String avatarUrl="/image/default-avatar.jpeg";
+        String skinUrl="/image/default-skin.jpeg";
         Picture avatar = pictureMapper.selectPictureById(user.getAvatarPicId());
+        if (avatar!=null){
+            avatarUrl=avatar.getUrl();
+        }
         Picture skin = pictureMapper.selectPictureById(user.getUserSkinId());
-        UserVo userVo = new UserVo(user.getUserId(),user.getUserName(),avatar.getUrl(),skin.getUrl(),user.getIntroduce(),null,null);
+        if (skin!=null){
+            skinUrl=skin.getUrl();
+        }
+        UserVo userVo = new UserVo(user.getUserId(),user.getUserName(),avatarUrl,skinUrl,user.getIntroduce(),null,null);
         return userVo;
     }
 
@@ -311,9 +319,17 @@ public class UserService {
         PageList<UserVo> userVos = new PageList<>();
         userVos.setPageInfo(userPageList.getPageInfo());
         userPageList.forEach(user -> {
+            String avatarUrl=getDefaultAvatarUrl();
             Picture avatar = pictureMapper.selectPictureById(user.getAvatarPicId());
-            userVos.add(new UserVo(user.getUserId(),user.getUserName(),avatar.getUrl(),null,user.getIntroduce(),null,null));
+            if (avatar!=null){
+                avatarUrl=avatar.getUrl();
+            }
+            userVos.add(new UserVo(user.getUserId(),user.getUserName(),avatarUrl,null,user.getIntroduce(),null,null));
         });
         return XPage.wrap(userVos);
+    }
+
+    private String getDefaultAvatarUrl(){
+        return "/image/default-avatar.jpeg";
     }
 }

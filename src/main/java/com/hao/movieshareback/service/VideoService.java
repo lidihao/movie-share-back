@@ -162,7 +162,8 @@ public class VideoService {
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         if (searchKey!=null){
             MultiMatchQueryBuilder multiMatchQueryBuilder= QueryBuilders.multiMatchQuery(searchKey).
-                    field("video_title",3).field("uploadUserName",2).field("videoDesc",1);
+                    field("video_title",3).field("uploadUserName",2).field("videoDesc",1).
+                    field("tags",2).field("categoryName",2);
             boolQueryBuilder.must(multiMatchQueryBuilder);
 
         }

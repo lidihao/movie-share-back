@@ -31,11 +31,13 @@ public class VideoController {
         return ResultBody.success(videoService.getVideoDetail(videoId));
     }
 
+    @AnonymousAccess
     @GetMapping("/getUploadVideoByCondition")
     public ResultBody getUploadVideoByCondition(Video condition,Integer pageNum,Integer pageSize){
         return ResultBody.success(videoService.getVideoDetailByCondition(condition,pageNum,pageSize));
     }
 
+    @AnonymousAccess
     @PostMapping("/incrementPlayCount")
     public ResultBody incrementPlayCount(Integer videoId){
         videoService.incrementVideoPlayCount(videoId);

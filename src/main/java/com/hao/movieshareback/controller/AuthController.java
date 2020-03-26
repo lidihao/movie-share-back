@@ -123,6 +123,7 @@ public class AuthController {
         return ResultBody.success(new UserVo(jwtUser.getUserId(),jwtUser.getUsername(),jwtUser.getAvatarUrl(),jwtUser.getEmail(),menuVoList));
     }
 
+    @AnonymousAccess
     @GetMapping("/getUserInfoById")
     public ResultBody getUserInfo(Integer userId){
         return ResultBody.success(userService.getUserVoByUserId(userId));
