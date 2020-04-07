@@ -88,4 +88,21 @@ public class RecommendService {
         return XPage.newInstance(videoDetailVoList,pageInfo);
     }
 
+    public XPage<VideoDetailVo> getSimilarVideoList(Integer videoId,Integer pageNum,Integer pageSize){
+        Integer start = (pageNum-1)*pageSize;
+        Integer end = pageNum*pageSize-1;
+        String cacheKey="SIMILARITY_";
+        Set<Integer> videoSet = redisTemplate.opsForZSet().reverseRange(cacheKey+videoId,start,end);
+        if (videoSet==null){
+            return XPage.wrap(new PageList<>());
+        }
+        List<VideoDetailVo> videoDetailVoList = new LinkedList<>();
+
+        PageInfo pageInfo = new PageInfo();
+        pageInfo.setTotal((long)videoSet.size());
+        videoSet.forEach(video->{
+            videoDetailVoList.add(videoService.getVideoDetail(video));
+        });
+        return XPage.newInstance(videoDetailVoList,pageInfo);
+    }
 }

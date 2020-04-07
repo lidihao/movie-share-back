@@ -124,7 +124,12 @@
 
     <select id="getVideo" resultMap="VideoResultMap">
         select <include refid="Base_Column_List"></include>
-        from video where video.video_id=#{videoId}
+        from video where video.video_id=#{videoId} and video.is_delete=0
+    </select>
+
+    <select id="getAllVideo" resultMap="VideoResultMap">
+        select <include refid="Base_Column_List"></include>
+        from video where video.is_delete=0
     </select>
 
     <select id="getVideoDetailListLikeName" resultMap="VideoResultMap">

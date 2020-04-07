@@ -8,12 +8,14 @@ import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
+import java.util.List;
 
 @Mapper
 @Repository
 public interface VideoMapper {
     int save(Video video);
     Video getVideo(Integer videoId);
+    List<Video> getAllVideo();
     PageList<Video> getVideoDetailListLikeName(Page page,Video video);
     void updateRate(Double rate, Integer videoId, Date updateTime,String userName);
     void incrementVideoPlayCount(Integer videoId);

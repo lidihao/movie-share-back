@@ -9,6 +9,7 @@ import com.hao.movieshareback.vo.*;
 import com.hao.movieshareback.vo.auth.JwtUser;
 import com.hao.movieshareback.vo.auth.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +40,9 @@ public class VideoApplyService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     public XPage<VideoApplyVo> listVideoApply(Integer categoryId, Integer pageNum, Integer pageSize){
         Page page = new Page(pageNum,pageSize);
@@ -106,6 +110,10 @@ public class VideoApplyService {
             for (Integer tagId:tagIdList){
                 tagMapper.savaTagVideoRelation(tagId,video.getVideoId());
             }
+
+
+            String queueName="COMPUTE_VIDEO_SIMILARITY_QUEUE";
+            redisTemplate.opsForList().leftPush(queueName,video.getVideoId());
         }
     }
 

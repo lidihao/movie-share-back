@@ -26,12 +26,17 @@ public class RecommendController {
 
     @AnonymousAccess
     @RequestMapping("/getCategoryRecentlyHot")
-    public ResultBody getCategroyRecnetlyHot(Integer pageNum,Integer pageSize){
+    public ResultBody getCategoryRecentlyHot(Integer pageNum,Integer pageSize){
         return ResultBody.success(recommendService.getRecentlyHotVideoCategory(pageNum,pageSize));
     }
 
     @GetMapping("/getPesonalRecommend")
     public ResultBody getPersonalRecommend(Integer pageNum,Integer pageSize){
         return ResultBody.success(recommendService.getPersonalRecommendVideoList(pageNum,pageSize));
+    }
+    @AnonymousAccess
+    @GetMapping("/getSimilarVideo")
+    public ResultBody getSimilarVideoList(Integer videoId,Integer pageNum,Integer pageSize){
+        return ResultBody.success(recommendService.getSimilarVideoList(videoId, pageNum, pageSize));
     }
 }
