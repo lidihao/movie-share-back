@@ -71,7 +71,7 @@ public class UserService {
     private MenuService menuService;
 
     @Autowired
-    private PictureMapper pictureMapper;
+    private PictureService pictureService;
 
     @Autowired
     private RoleMapper roleMapper;
@@ -295,16 +295,8 @@ public class UserService {
 
     public UserVo getUserVoByUserId(Integer userId){
         User user = userMapper.getUserByUserId(userId);
-        String avatarUrl="/image/default-avatar.jpeg";
-        String skinUrl="/image/default-skin.jpeg";
-        Picture avatar = pictureMapper.selectPictureById(user.getAvatarPicId());
-        if (avatar!=null){
-            avatarUrl=avatar.getUrl();
-        }
-        Picture skin = pictureMapper.selectPictureById(user.getUserSkinId());
-        if (skin!=null){
-            skinUrl=skin.getUrl();
-        }
+        String avatarUrl = pictureService.getUserAvatar(user.getAvatarPicId());
+        String skinUrl = pictureService.getUserSkinUrl(user.getUserSkinId());
         UserVo userVo = new UserVo(user.getUserId(),user.getUserName(),avatarUrl,skinUrl,user.getIntroduce(),null,null);
         return userVo;
     }
@@ -319,17 +311,9 @@ public class UserService {
         PageList<UserVo> userVos = new PageList<>();
         userVos.setPageInfo(userPageList.getPageInfo());
         userPageList.forEach(user -> {
-            String avatarUrl=getDefaultAvatarUrl();
-            Picture avatar = pictureMapper.selectPictureById(user.getAvatarPicId());
-            if (avatar!=null){
-                avatarUrl=avatar.getUrl();
-            }
+            String avatarUrl = pictureService.getUserAvatar(user.getAvatarPicId());
             userVos.add(new UserVo(user.getUserId(),user.getUserName(),avatarUrl,null,user.getIntroduce(),null,null));
         });
         return XPage.wrap(userVos);
-    }
-
-    private String getDefaultAvatarUrl(){
-        return "/image/default-avatar.jpeg";
     }
 }

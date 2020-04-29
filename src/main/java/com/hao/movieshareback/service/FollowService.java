@@ -27,7 +27,7 @@ public class FollowService {
     private UserMapper userMapper;
 
     @Autowired
-    private PictureMapper pictureMapper;
+    private PictureService pictureService;
 
     public void followUser(Follow follow){
         String userName= SecurityUtils.getUsername();
@@ -58,8 +58,8 @@ public class FollowService {
         PageList<UserVo> userVoPageList = new PageList<>();
         userVoPageList.setPageInfo(userPageList.getPageInfo());
         userPageList.forEach(user -> {
-            Picture picture = pictureMapper.selectPictureById(user.getAvatarPicId());
-            userVoPageList.add(new UserVo(user.getUserId(),user.getUserName(),picture.getUrl(),user.getEmail(),null));
+            String avatarUrl = pictureService.getUserAvatar(user.getAvatarPicId());
+            userVoPageList.add(new UserVo(user.getUserId(),user.getUserName(),avatarUrl,user.getEmail(),null));
         });
         return XPage.wrap(userVoPageList);
     }
@@ -70,8 +70,8 @@ public class FollowService {
         PageList<UserVo> userVoPageList = new PageList<>();
         userVoPageList.setPageInfo(userPageList.getPageInfo());
         userPageList.forEach(user -> {
-            Picture picture = pictureMapper.selectPictureById(user.getAvatarPicId());
-            userVoPageList.add(new UserVo(user.getUserId(),user.getUserName(),picture.getUrl(),user.getEmail(),null));
+            String avatarUrl = pictureService.getUserAvatar(user.getAvatarPicId());
+            userVoPageList.add(new UserVo(user.getUserId(),user.getUserName(),avatarUrl,user.getEmail(),null));
         });
         return XPage.wrap(userVoPageList);
     }

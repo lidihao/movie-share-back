@@ -90,6 +90,7 @@ public class VideoApplyService {
         }
         approvalMapper.updateApprovalStatus(videoApplyActionReceiver.getVideoApprovalId(),approvalType.getTag(),videoApplyActionReceiver.getRemark());
         videoFileMapper.updateVideoFileApprovalStatus(videoApplyActionReceiver.getVideoApprovalId(),approvalType.getTag());
+        
         if (approvalType==ApprovalType.PASS){
             VideoApproval videoApproval = approvalMapper.getVideoApproval(videoApplyActionReceiver.getVideoApprovalId());
             List<VideoFile> videoFileList = videoFileMapper.listAllVideoFileByApprovalId(videoApplyActionReceiver.getVideoApprovalId());

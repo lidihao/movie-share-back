@@ -98,11 +98,11 @@ public class VideoService {
         return XPage.wrap(videoDetailVos);
     }
 
-    public XPage<VideoDetailVo> getVideoByCategory(String orderField,String categoryName,Integer pageNum,Integer pageSize) throws IOException {
+    public Map<String,Object> getVideoByCategory(String orderField,String categoryName,String tagName,Integer pageNum,Integer pageSize) throws IOException {
         Category category = categoryMapper.selectCategoryByName(categoryName);
-        Map<String,Object> resultMap = searchVideo(orderField,null,null,
+        Map<String,Object> resultMap = searchVideo(orderField,null,tagName,
                 category.getCategoryId(),null,null,pageNum,pageSize);
-        return (XPage<VideoDetailVo>) resultMap.get("videoList");
+        return resultMap;
     }
 
     public Map<String,Object> searchVideo(String orderField, String searchKey, String tagName,
@@ -121,7 +121,7 @@ public class VideoService {
         System.out.println(searchSourceBuilder);
         SearchRequest searchRequest = new SearchRequest("video").source(searchSourceBuilder);
         SearchResponse searchResponse= highLevelClient.search(searchRequest,RequestOptions.DEFAULT);
-        Map<Long,String> aggregMap= aggregToMap(searchResponse.getAggregations().getAsMap());
+        List<TagMap> aggregMap= aggregToMap(searchResponse.getAggregations().getAsMap());
         Long totalHit= searchResponse.getHits().getTotalHits().value;
         SearchHit[] searchHits= searchResponse.getHits().getHits();
 
@@ -147,14 +147,41 @@ public class VideoService {
         return stringObjectMap;
     }
 
-    private Map<Long,String> aggregToMap(Map<String,Aggregation> aggregationMap){
-        TreeMap<Long,String> aggMap=Maps.newTreeMap();
+    private List<TagMap> aggregToMap(Map<String,Aggregation> aggregationMap){
         ParsedStringTerms tagBucket = (ParsedStringTerms) aggregationMap.get("group_by_tags");
         List<ParsedStringTerms.ParsedBucket> bucketList = (List<ParsedStringTerms.ParsedBucket>) tagBucket.getBuckets();
+        ArrayList<TagMap> tagMaps = new ArrayList<>(bucketList.size());
         bucketList.forEach((item)->{
-            aggMap.put(item.getDocCount(),item.getKeyAsString());
+            tagMaps.add(new TagMap(item.getDocCount(),item.getKeyAsString()));
         });
-        return aggMap;
+        tagMaps.sort((o1, o2) -> o2.count.compareTo(o1.count));
+        return tagMaps;
+    }
+
+    static class TagMap{
+        private Long count;
+        private String tag;
+
+        public TagMap(Long count, String tag) {
+            this.count = count;
+            this.tag = tag;
+        }
+
+        public Long getCount() {
+            return count;
+        }
+
+        public void setCount(Long count) {
+            this.count = count;
+        }
+
+        public String getTag() {
+            return tag;
+        }
+
+        public void setTag(String tag) {
+            this.tag = tag;
+        }
     }
 
     private SearchSourceBuilder createSearchRequest(String orderField, String searchKey, String tagName,

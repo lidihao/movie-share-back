@@ -211,7 +211,6 @@ create table `video_tag`(
     `video_tag_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
     `video_id` int(11) NOT NULL COMMENT 'video_id',
     `tag_id` int(11) NOT NULL COMMENT 'tag_id',
-    `category_id` int(11) NOT NULL COMMENT '视频的类别',
     `created_time` DATETIME    COMMENT '创建时间' ,
     `created_by` VARCHAR(32)    COMMENT '创建时间',
     `updated_time` DATETIME    COMMENT '更新时间' ,

@@ -44,11 +44,7 @@ public class JwtUserDetailsService implements UserDetailsService {
         List<GrantedAuthority> grantedAuthorityList = roleList.stream().
                 map(role -> new SimpleGrantedAuthority(role.getRoleName()))
                 .collect(Collectors.toList());
-        Picture avatarPic = pictureService.getPicById(user.getAvatarPicId());
-        String avatarUrl="/image/default-avatar.jpeg";
-        if (avatarPic!=null){
-            avatarUrl=avatarPic.getUrl();
-        }
+        String avatarUrl = pictureService.getUserAvatar(user.getAvatarPicId());
         return new JwtUser(user.getUserId(),user.getUserName(),user.getSalt(),user.getPassword(),
                 avatarUrl,user.getEmail(),grantedAuthorityList,user.isHasActive(),user.getLastPasswordResetDate(),user.getCreatedTime()
         );

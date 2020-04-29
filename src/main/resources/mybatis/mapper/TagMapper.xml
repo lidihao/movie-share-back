@@ -94,4 +94,8 @@
         select video_tag.tag_id
         from video_tag where video_tag.video_id=#{videoId}
     </select>
+
+    <select id="selectTagCountList" resultType="com.hao.movieshareback.vo.TagIdCountMap">
+        select  tag_id as tagId,count(1) as tagCount from video_tag group by video_tag.tag_id
+    </select>
 </mapper>

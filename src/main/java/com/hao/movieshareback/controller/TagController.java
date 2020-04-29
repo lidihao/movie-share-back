@@ -1,5 +1,6 @@
 package com.hao.movieshareback.controller;
 
+import com.hao.movieshareback.annotation.auth.AnonymousAccess;
 import com.hao.movieshareback.service.TagService;
 import com.hao.movieshareback.vo.ResultBody;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +14,15 @@ public class TagController {
     @Autowired
     private TagService tagService;
 
+    @AnonymousAccess
     @GetMapping("/list")
     public ResultBody getAllTag(){
         return ResultBody.success(tagService.listTag());
+    }
+
+    @AnonymousAccess
+    @GetMapping("/tagCountList")
+    public ResultBody getTagCountList(){
+        return ResultBody.success(tagService.getTagNameCountList());
     }
 }
