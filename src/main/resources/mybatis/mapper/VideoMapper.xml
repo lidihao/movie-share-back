@@ -188,6 +188,16 @@
         video.updated_time=now() where video.video_id=#{videoId}
     </update>
 
+    <update id="updateVideoMeta">
+        update video set video.video_title=#{videoTitle},video.video_desc=#{videoDesc},
+        video.video_poster_id=#{videoPosterId},
+        video.updated_time=now() where video.video_id=#{videoId}
+    </update>
+
+    <delete id="deleteVideoByVideoId">
+        delete from video where video.video_id=#{videoId}
+    </delete>
+
     <select id="selectVideoIndexVo" resultType="com.hao.movieshareback.vo.VideoIndexVo">
     select distinct video.video_id,
        video.video_title,

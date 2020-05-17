@@ -2,12 +2,14 @@ package com.hao.movieshareback.service;
 
 import com.fasterxml.jackson.databind.ser.Serializers;
 import com.hao.movieshareback.dao.RateVideoCommentMapper;
+import com.hao.movieshareback.dao.SystemMessageMapper;
 import com.hao.movieshareback.dao.VideoCommentMapper;
 import com.hao.movieshareback.dao.VideoMapper;
-import com.hao.movieshareback.model.BaseModel;
-import com.hao.movieshareback.model.RateVideoComment;
-import com.hao.movieshareback.model.Video;
-import com.hao.movieshareback.model.VideoComment;
+import com.hao.movieshareback.model.*;
+import com.hao.movieshareback.model.bo.RateCommentMessage;
+import com.hao.movieshareback.model.bo.VideoCommentMessage;
+import com.hao.movieshareback.service.message.MessageConvert;
+import com.hao.movieshareback.service.message.MessageConvertRegistry;
 import com.hao.movieshareback.utils.SecurityUtils;
 import com.hao.movieshareback.vo.*;
 import com.hao.movieshareback.vo.auth.UserVo;
@@ -35,6 +37,11 @@ public class VideoCommentService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private MessageConvertRegistry messageConvertRegistry;
+
+    @Autowired
+    private SystemMessageMapper systemMessageMapper;
 
     @Transactional(rollbackFor = Exception.class,propagation = Propagation.REQUIRED)
     public void commentVideo(VideoComment videoComment){
@@ -44,6 +51,18 @@ public class VideoCommentService {
         BaseModel.setNewCreate(videoComment,SecurityUtils.getUsername(),new Date());
         videoMapper.incrementVideoCommentPerson(videoComment.getVideoId());
         videoCommentMapper.save(videoComment);
+
+        //发送消息提醒
+        MessageConvert messageConvert=messageConvertRegistry.getMessageConvert(VideoCommentMessage.class);
+        UserVo commentUser = userService.getUserVoByUserId(videoComment.getCommentUserId());
+        Video video = videoMapper.getVideo(videoComment.getVideoId());
+        VideoCommentMessage videoCommentMessage = new VideoCommentMessage(videoComment.getCommentContent(),video,commentUser);
+        if (messageConvert!=null){
+            SystemMessage systemMessage = messageConvert.convertMessage(videoCommentMessage);
+            BaseModel.setUpdated(systemMessage, SecurityUtils.getUsername(),new Date());
+            BaseModel.setNewCreate(systemMessage,SecurityUtils.getUsername(),new Date());
+            systemMessageMapper.save(systemMessage);
+        }
     }
 
     @Transactional(rollbackFor = Exception.class,propagation = Propagation.REQUIRED)
@@ -61,6 +80,17 @@ public class VideoCommentService {
         videoMapper.incrementVideoCommentPerson(rateVideoComment.getVideoId());
         videoMapper.updateRate(newRate,rateVideoComment.getVideoId(),new Date(),SecurityUtils.getUsername());
         rateVideoCommentMapper.save(rateVideoComment);
+
+        MessageConvert messageConvert=messageConvertRegistry.getMessageConvert(RateCommentMessage.class);
+        Video video = videoMapper.getVideo(rateVideoComment.getVideoId());
+        RateCommentMessage rateCommentMessage = new RateCommentMessage(rateVideoComment.getCommentUserId(),
+                video,rateVideoComment.getCommentContent(),rateVideoComment.getRate());
+        if (messageConvert!=null){
+            SystemMessage systemMessage = messageConvert.convertMessage(rateCommentMessage);
+            BaseModel.setUpdated(systemMessage, SecurityUtils.getUsername(),new Date());
+            BaseModel.setNewCreate(systemMessage,SecurityUtils.getUsername(),new Date());
+            systemMessageMapper.save(systemMessage);
+        }
     }
 
     public XPage<VideoCommentVo> listVideoCommentByVideoId(Integer videoId,Integer pageNum,Integer pageSize){
@@ -93,6 +123,14 @@ public class VideoCommentService {
             );
         });
         return XPage.wrap(rateCommentVoPage);
+    }
+
+    public void deleteVideoComment(Integer videoId){
+
+    }
+
+    public void deleteVideoRateComment(Integer videoId){
+
     }
 
 

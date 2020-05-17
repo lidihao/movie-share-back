@@ -113,7 +113,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.css",
                         "/**/*.js",
                         "/**/*.jpeg",
-                        "/**/*.mp4"
+                        "/**/*.mp4",
+                        "/**/*.flv"
                 ).anonymous()
                 // swagger start
                 .antMatchers("/swagger-ui.html").permitAll()

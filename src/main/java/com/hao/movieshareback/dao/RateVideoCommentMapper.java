@@ -16,4 +16,5 @@ public interface RateVideoCommentMapper {
     Integer getCommentCountByVideoId(Integer videoId);
     Integer getCommentCountByUserIdAndVideoId(Integer videoId,Integer userId);
     List<RateVideoComment> selectAllRateComment();
+    void deleteRateVideoComment(Integer videoId);
 }

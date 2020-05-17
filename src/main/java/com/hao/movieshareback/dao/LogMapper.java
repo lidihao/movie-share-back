@@ -11,4 +11,5 @@ import java.util.List;
 public interface LogMapper {
     void save(Log log);
     List<Log> selectLogForRecommend(String startDate,String endDate);
+    List<Log> selectLogForRecommendCF(String startDate,String endDate);
 }

@@ -135,7 +135,7 @@
                 and video_approval.upload_user_id=#{userId}
             </if>
         </where>
-        order by video_approval.created_time
+        order by video_approval.created_time DESC
     </select>
 
     <select id="getVideoApproval" resultMap="VideoApprovalResultMap">
@@ -157,4 +157,7 @@
         update video_approval set video_approval.video_id=#{videoId}
         where video_approval.video_approval_id=#{videoApprovalId}
     </update>
+    <delete id="deleteVideoApproval">
+        delete from video_approval where video_approval.video_approval_id=#{videoApprovalId}
+    </delete>
 </mapper>

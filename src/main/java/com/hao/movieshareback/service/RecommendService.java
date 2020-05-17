@@ -1,5 +1,6 @@
 package com.hao.movieshareback.service;
 
+import com.hao.movieshareback.config.SystemConst;
 import com.hao.movieshareback.model.Category;
 import com.hao.movieshareback.utils.SecurityUtils;
 import com.hao.movieshareback.vo.*;
@@ -40,7 +41,7 @@ public class RecommendService {
         }
 
         PageInfo pageInfo = new PageInfo();
-        pageInfo.setTotal((long)recommendList.size());
+        pageInfo.setTotal(redisTemplate.opsForZSet().size("RECOMMEND_BY_STATISTICS"));
 
         return XPage.newInstance(recommendList,pageInfo);
     }
@@ -57,10 +58,13 @@ public class RecommendService {
                 return;
             }
             PageInfo pageInfo = new PageInfo();
-            pageInfo.setTotal((long) recomendVideoSet.size());
+            pageInfo.setTotal(redisTemplate.opsForZSet().size(cacheKey));
             List<VideoDetailVo> videoDetailVos = new ArrayList<>(recomendVideoSet.size());
             recomendVideoSet.forEach(videoId->{
-                videoDetailVos.add(videoService.getVideoDetail(videoId));
+                VideoDetailVo videoDetailVo =videoService.getVideoDetail(videoId);
+                if (videoDetailVo!=null) {
+                    videoDetailVos.add(videoDetailVo);
+                }
             });
             categoryRecommendVoList.add(new CategoryRecommendVo(category,XPage.newInstance(videoDetailVos,pageInfo)));
         });
@@ -81,9 +85,12 @@ public class RecommendService {
         List<VideoDetailVo> videoDetailVoList = new LinkedList<>();
 
         PageInfo pageInfo = new PageInfo();
-        pageInfo.setTotal((long)videoSet.size());
+        pageInfo.setTotal(redisTemplate.opsForZSet().size(cacheKey+user.getUserId()));
         videoSet.forEach(videoId->{
-            videoDetailVoList.add(videoService.getVideoDetail(videoId));
+            VideoDetailVo videoDetailVo =videoService.getVideoDetail(videoId);
+            if (videoDetailVo!=null) {
+                videoDetailVoList.add(videoDetailVo);
+            }
         });
         return XPage.newInstance(videoDetailVoList,pageInfo);
     }
@@ -91,7 +98,7 @@ public class RecommendService {
     public XPage<VideoDetailVo> getSimilarVideoList(Integer videoId,Integer pageNum,Integer pageSize){
         Integer start = (pageNum-1)*pageSize;
         Integer end = pageNum*pageSize-1;
-        String cacheKey="SIMILARITY_";
+        String cacheKey= SystemConst.VIDEO_SIMILARITY_CACHE_PREFIX;
         Set<Integer> videoSet = redisTemplate.opsForZSet().reverseRange(cacheKey+videoId,start,end);
         if (videoSet==null){
             return XPage.wrap(new PageList<>());
@@ -101,7 +108,12 @@ public class RecommendService {
         PageInfo pageInfo = new PageInfo();
         pageInfo.setTotal((long)videoSet.size());
         videoSet.forEach(video->{
-            videoDetailVoList.add(videoService.getVideoDetail(video));
+            VideoDetailVo videoDetailVo =videoService.getVideoDetail(video);
+            if (videoDetailVo!=null) {
+                videoDetailVoList.add(videoDetailVo);
+            }else {
+                redisTemplate.opsForZSet().remove(cacheKey+videoId,video);
+            }
         });
         return XPage.newInstance(videoDetailVoList,pageInfo);
     }

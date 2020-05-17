@@ -144,4 +144,10 @@
     where create_time between #{startDate} and #{endDate}
     and log_type='INFO' and business_type in ('play_video','favorite_video','comment_video')
     </select>
+
+    <select id="selectLogForRecommendCF" resultMap="LogResultMap">
+        select <include refid="Base_Column_List"></include> from log
+        where create_time between #{startDate} and #{endDate}
+        and log_type='INFO' and business_type in ('play_video','comment_video')
+    </select>
 </mapper>

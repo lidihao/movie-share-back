@@ -140,4 +140,17 @@
     <delete id="deleteByVideoFileId">
         delete from video_file where video_file.video_file_id=#{videoFileId}
     </delete>
+    
+    <update id="setVideoFileInvisible">
+        update video_file set video_file.is_delete=1 where video_file.video_file_id=#{videoFileId}
+    </update>
+    <select id="getInvisibleVideoFile" resultMap="VideoFileResultMap">
+        select <include refid="Base_Column_List"></include>
+        from video_file where video_file.video_apply_id=#{videoApprovalId} and video_file.is_delete=1
+        order by video_file.sort
+    </select>
+    <select id="getVideoFileDetail" resultMap="VideoFileResultMap">
+        select <include refid="Base_Column_List"></include>
+        from video_file where video_file.video_file_id=#{videoFileId}
+    </select>
 </mapper>

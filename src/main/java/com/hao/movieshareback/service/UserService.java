@@ -16,10 +16,8 @@ import com.hao.movieshareback.service.auth.JwtUserDetailsService;
 import com.hao.movieshareback.service.mail.MailService;
 import com.hao.movieshareback.service.redis.IRedisService;
 import com.hao.movieshareback.utils.EncryptUtils;
-import com.hao.movieshareback.vo.MenuVo;
-import com.hao.movieshareback.vo.Page;
-import com.hao.movieshareback.vo.PageList;
-import com.hao.movieshareback.vo.XPage;
+import com.hao.movieshareback.utils.SecurityUtils;
+import com.hao.movieshareback.vo.*;
 import com.hao.movieshareback.vo.auth.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
@@ -84,10 +82,10 @@ public class UserService {
     private String resetPasswordKey;
 
 
-    @Value("${server.address}")
+    @Value("${mail.server.address}")
     private String address;
 
-    @Value("${server.port}")
+    @Value("${mail.server.port}")
     private Integer port;
 
     @Value("${client.port}")
@@ -315,5 +313,74 @@ public class UserService {
             userVos.add(new UserVo(user.getUserId(),user.getUserName(),avatarUrl,null,user.getIntroduce(),null,null));
         });
         return XPage.wrap(userVos);
+    }
+
+    public void changePwd(ChangePwdDataReceiver changePwdDataReceiver,HttpServletRequest httpServletRequest){
+        redisService.validateCode(changePwdDataReceiver.getValidCode(),changePwdDataReceiver.getUuid());
+        JwtUser jwtUser = (JwtUser) jwtUserDetailsService.loadUserByUsername(SecurityUtils.getUsername());
+        String salt = jwtUser.getSalt();
+        String passwordWithSalt = EncryptUtils.md5(changePwdDataReceiver.getOldPassword()+salt);
+        if (!StringUtils.equals(passwordWithSalt,jwtUser.getPassword())){
+            throw new RuntimeException("旧密码错误");
+        }
+        String newSalt = EncryptUtils.md5(IdUtil.simpleUUID());
+        String newPasswordWithSalt = EncryptUtils.md5(changePwdDataReceiver.getNewPassword()+newSalt);
+        userMapper.resetUserPassword(newPasswordWithSalt,newSalt,jwtUser.getUserId());
+        logOut(httpServletRequest);
+    }
+    public void sendChangeEmail(String newEmail){
+        if (this.isEmailExist(newEmail)){
+            throw new UserExistException("邮箱已经注册过了");
+        }
+        if (!Strings.isNotBlank(newEmail)){
+            throw new RuntimeException("email为空");
+        }
+        String token = IdUtil.simpleUUID();
+        String value = SecurityUtils.getUsername()+","+newEmail;
+        redisService.saveToken(token,value);
+        String content = createChangeEmailContent(token);
+        threadPoolTaskExecutor.execute(()->{
+            try {
+                mailService.sendHtmlMail(newEmail,"更改邮箱",content);
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public void changeEmail(String token){
+        String value = redisService.getToken(token);
+        if (Strings.isNotBlank(value)){
+            String[] arr = value.split(",");
+            if (arr.length!=2){
+                return;
+            }
+            JwtUser jwtUser = (JwtUser) jwtUserDetailsService.loadUserByUsername(arr[0]);
+            if (jwtUser==null){
+                return;
+            }
+            userMapper.updateEmail(jwtUser.getUserId(),arr[1]);
+        }
+    }
+
+    public String createChangeEmailContent(String changeEmailToken){
+        String html="<html lang=\"en\">\n" +
+                "<head>\n" +
+                "    <meta charset=\"UTF-8\">\n" +
+                "    <title>用户更改邮箱邮件</title>\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "    <div>\n" +
+                "        <img src=\"http://"+address+":"+port+"/logo.png\">\n" +
+                "    </div>\n" +
+                "    <div>\n" +
+                "        <p>\n" +
+                "            亲爱的用户请点击以下链接，更改邮箱：\n" +
+                "        </p>\n" +
+                "        <a href=\"http://"+clientAddress+":"+clientPort+"/#/user/changeEmail?token="+changeEmailToken+"\">更改邮箱</a>\n" +
+                "    </div>\n" +
+                "</body>\n" +
+                "</html>";
+        return html;
     }
 }

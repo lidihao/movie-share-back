@@ -19,4 +19,5 @@ public interface VideoApprovalMapper {
     void updateApprovalStatus(Integer videoApprovalId,Integer approvalType,String remark);
     void updateVideoApprovalMeta(VideoApproval videoApproval);
     void relateVideoId(Integer videoId,Integer videoApprovalId);
+    void deleteVideoApproval(Integer videoApprovalId);
 }

@@ -93,4 +93,10 @@ public class VideoApplyController {
         }
         return ResultBody.success();
     }
+
+    @PostMapping("/delete")
+    public ResultBody deleteVideoApply(Integer videoApprovalId){
+        applyService.deleteVideoApproval(videoApprovalId);
+        return ResultBody.success();
+    }
 }

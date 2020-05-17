@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hao.movieshareback.dao.SystemMessageMapper">
+    <!--
+    `category_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `category_name` VARCHAR(100) NOT NULL COMMENT '类别名',
+    `category_des` VARCHAR(200) NOT NULL COMMENT '描述',
+    `created_time` DATETIME    COMMENT '创建时间' ,
+    `created_by` VARCHAR(32)    COMMENT '创建时间',
+    `updated_time` DATETIME    COMMENT '更新时间' ,
+    `updated_by` VARCHAR(32)    COMMENT '更新人' ,
+    `is_delete` int(1) NOT NULL  DEFAULT 0 COMMENT '是否删除',
+    PRIMARY KEY (category_id),
+    INDEX (is_delete)
+    -->
+    <resultMap id="SystemMessageResultMap" type="com.hao.movieshareback.model.SystemMessage">
+        <id property="systemMessageId" column="system_message_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="systemMessageType" column="system_message_type" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="systemMessageParams" column="system_message_params" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="systemMessageContent" column="system_message_content" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="createdTime" column="created_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result property="createdBy" column="created_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="updatedTime" column="updated_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result property="updatedBy" column="updated_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="isDelete" column="is_delete" javaType="java.lang.Boolean" jdbcType="BIT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        system_message.system_message_id,system_message.system_message_type,system_message.system_message_params,system_message.system_message_content,
+        system_message.user_id,system_message.created_time,system_message.created_by,system_message.updated_time,
+        system_message.updated_by,system_message.is_delete
+    </sql>
+
+    <insert id="save" parameterType="com.hao.movieshareback.model.SystemMessage" useGeneratedKeys="true" keyProperty="systemMessageId">
+        insert into system_message
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="systemMessageType != null" >
+                system_message_type,
+            </if>
+            <if test="systemMessageParams != null" >
+                system_message_params,
+            </if>
+            <if test="systemMessageContent!=null">
+                system_message_content,
+            </if>
+            <if test="userId!=null">
+                user_id,
+            </if>
+            <if test="createdTime != null" >
+                created_time,
+            </if>
+            <if test="createdBy!=null">
+                created_by,
+            </if>
+            <if test="updatedTime!=null">
+                updated_time,
+            </if>
+            <if test="updatedBy!=null">
+                updated_by,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="systemMessageType != null" >
+                #{systemMessageType},
+            </if>
+            <if test="systemMessageParams != null" >
+                #{systemMessageParams},
+            </if>
+            <if test="systemMessageContent!=null">
+                #{systemMessageContent},
+            </if>
+            <if test="userId">
+                #{userId},
+            </if>
+            <if test="createdTime != null" >
+                #{createdTime},
+            </if>
+            <if test="createdBy!=null">
+                #{createdBy},
+            </if>
+            <if test="updatedTime!=null">
+                #{updatedTime},
+            </if>
+            <if test="updatedBy!=null">
+                #{updatedBy},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="getSystemMessageByCondition" resultMap="SystemMessageResultMap">
+        select <include refid="Base_Column_List"></include>
+        from system_message where system_message.user_id=#{userId}
+        <if test="messageType!=null">
+           and system_message.system_message_type=#{messageType}
+        </if>
+        order by system_message.created_time DESC 
+    </select>
+</mapper>

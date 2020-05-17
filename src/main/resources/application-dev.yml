@@ -1,10 +1,10 @@
 server:
   port: 8089
-  address: 192.168.0.112
+
 
 client:
   port: 8080
-  address: 192.168.0.112
+  address: 192.168.0.106
 
 spring:
   datasource:
@@ -73,13 +73,16 @@ reset-password:
 mail:
   fromMail:
     addr: 2315447580@qq.com
+  server:
+    address: 192.168.0.106
+    port: 8089
 
 video:
   upload:
     tmp:
-      dir: /home/lidihao/upload/tmp
+      dir: D:\upload\tmp
     expire: 24
-    root: /home/lidihao/upload/video/root
+    root: D:\upload\video\root
     url:
       root: /video/
 
@@ -87,7 +90,7 @@ video:
 
 pic:
   upload:
-    root: /home/lidihao/upload/image
+    root: D:\upload\image
     url:
       root: /image/
 #showSql

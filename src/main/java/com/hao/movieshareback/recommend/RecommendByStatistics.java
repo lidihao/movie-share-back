@@ -44,6 +44,9 @@ public class RecommendByStatistics {
                 case "favorite_video":videoId=paramsJsonNode.get("favoriteVideo").get("videoId").asInt();break;
                 case "comment_video":videoId=paramsJsonNode.get("videoComment").get("videoId").asInt();break;
             }
+            if (videoId==-1||videoMapper.getVideo(videoId)==null){
+                continue;
+            }
             Double score = weights.get(businessType)==null?1.0:weights.get(businessType)*1.0;
             videoScoreMap.compute(videoId,(key,value)->{
                 if (value==null){
@@ -54,11 +57,13 @@ public class RecommendByStatistics {
             });
         }
 
-        videoScoreMap.remove(-1);
         String cacheKey="RECOMMEND_BY_STATISTICS";
         String categoryCacheKey="CATEGORY_RECOMMEND";
         for (Integer videoId:videoScoreMap.keySet()){
             Video video = videoMapper.getVideo(videoId);
+            if (video==null){
+                continue;
+            }
             double totalScore=weights.get("log_weight")*videoScoreMap.get(videoId)+
                     weights.get("rate_weight")*videoScoreMap.get(videoId);
             Integer categoryId = video.getCategoryId();

@@ -69,7 +69,6 @@ public class QuartzConfig {
     @Bean("quartzScheduler")
     public Scheduler getSchedule(@Qualifier("schedulerFactory")SchedulerFactoryBean schedulerFactoryBean) throws IOException, SchedulerException {
         Scheduler scheduler = schedulerFactoryBean.getScheduler();
-        scheduler.start();
         return scheduler;
     }
 

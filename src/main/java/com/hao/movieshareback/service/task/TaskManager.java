@@ -5,11 +5,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+
 @Component
 public class TaskManager {
     @Autowired
     @Qualifier("quartzScheduler")
     private Scheduler scheduler;
+
 
     /**
      * 添加调度任务

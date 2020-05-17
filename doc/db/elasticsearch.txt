@@ -1,0 +1,38 @@
+PUT /video
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0
+  },
+  "mappings": {
+    "properties": {
+      "videoId":{"type": "integer"},
+      "videoTitle":{"type": "text","analyzer": "ik_max_word","search_analyzer": "ik_smart"},
+      "tags":{"type": "text","analyzer": "whitespace","fielddata": true},
+      "categoryId":{"type": "integer"},
+      "categoryName":{"type": "keyword"},
+      "uploadUserId":{"type": "integer"},
+      "uploaderUserName":{"type": "keyword"},
+      "videoPlayCount":{
+        "type": "long"
+      },
+      "videoCommentPerson":{
+        "type": "long"
+      },
+      "videoDesc":{
+        "type": "text",
+        "analyzer": "ik_max_word","search_analyzer": "ik_smart"
+      },
+      "videoRate":{
+        "type": "double"
+      },
+      "createdTime":{
+        "type": "date"
+      },
+      "isDelete":{
+        "type": "integer"
+      }
+    }
+  }
+}
+

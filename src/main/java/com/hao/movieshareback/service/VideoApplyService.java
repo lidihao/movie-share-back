@@ -1,9 +1,15 @@
 package com.hao.movieshareback.service;
 
+import com.google.common.collect.Sets;
+import com.hao.movieshareback.config.SystemConst;
 import com.hao.movieshareback.dao.*;
 import com.hao.movieshareback.exception.ApplyException;
 import com.hao.movieshareback.model.*;
+import com.hao.movieshareback.model.bo.VideoApplyMessage;
+import com.hao.movieshareback.model.bo.VideoUploadMessage;
 import com.hao.movieshareback.model.type.ApprovalType;
+import com.hao.movieshareback.service.message.MessageConvert;
+import com.hao.movieshareback.service.message.MessageConvertRegistry;
 import com.hao.movieshareback.utils.SecurityUtils;
 import com.hao.movieshareback.vo.*;
 import com.hao.movieshareback.vo.auth.JwtUser;
@@ -15,7 +21,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class VideoApplyService {
@@ -43,6 +52,19 @@ public class VideoApplyService {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private VideoFileService videoFileService;
+
+    @Autowired
+    private VideoService videoService;
+
+    @Autowired
+    private MessageConvertRegistry messageConvertRegistry;
+
+    @Autowired
+    private SystemMessageMapper systemMessageMapper;
+
 
     public XPage<VideoApplyVo> listVideoApply(Integer categoryId, Integer pageNum, Integer pageSize){
         Page page = new Page(pageNum,pageSize);
@@ -88,33 +110,95 @@ public class VideoApplyService {
         if (approvalType==null){
             throw new ApplyException("审批出错");
         }
+        VideoApproval videoApproval = approvalMapper.getVideoApproval(videoApplyActionReceiver.getVideoApprovalId());
+        List<VideoFile> videoFileList = videoFileMapper.listAllVideoFileByApprovalId(videoApplyActionReceiver.getVideoApprovalId());
+        List<Integer> tagIdList = tagMapper.selectTagByVideoApprovalId(videoApplyActionReceiver.getVideoApprovalId());
+        Video video =null;
+        //不通过
         approvalMapper.updateApprovalStatus(videoApplyActionReceiver.getVideoApprovalId(),approvalType.getTag(),videoApplyActionReceiver.getRemark());
         videoFileMapper.updateVideoFileApprovalStatus(videoApplyActionReceiver.getVideoApprovalId(),approvalType.getTag());
-        
-        if (approvalType==ApprovalType.PASS){
-            VideoApproval videoApproval = approvalMapper.getVideoApproval(videoApplyActionReceiver.getVideoApprovalId());
-            List<VideoFile> videoFileList = videoFileMapper.listAllVideoFileByApprovalId(videoApplyActionReceiver.getVideoApprovalId());
-            List<Integer> tagIdList = tagMapper.selectTagByVideoApprovalId(videoApplyActionReceiver.getVideoApprovalId());
-            Video video = new Video(videoApproval.getTitle(),videoApproval.getPosterId(),0L,0L,
-                    videoApproval.getIntroduce(),0.0,
-                    videoApproval.getUploadUserId(),videoApproval.getCategoryId());
-            BaseModel.setNewCreate(video,SecurityUtils.getUsername(),new Date());
-            BaseModel.setUpdated(video,SecurityUtils.getUsername(),new Date());
-            videoMapper.save(video);
-            approvalMapper.relateVideoId(video.getVideoId(),videoApproval.getVideoApprovalId());
-            for (VideoFile videoFile:videoFileList){
-                Episode episode = new Episode(videoFile.getFileName(),
-                        videoFile.getFileUrl(),videoFile.getPosterId(),
-                        videoFile.getSort(),video.getVideoId(),videoFile.getVideoFileId());
-                episodeMapper.save(episode);
-            }
-            for (Integer tagId:tagIdList){
-                tagMapper.savaTagVideoRelation(tagId,video.getVideoId());
-            }
+        // 重新审批退回的申请
+        if (approvalType==ApprovalType.PASS) {
+            //第一次审批
+            if (videoApproval.getVideoId() == -1) {
+                 video=new Video(videoApproval.getTitle(), videoApproval.getPosterId(), 0L, 0L,
+                        videoApproval.getIntroduce(), 0.0,
+                        videoApproval.getUploadUserId(), videoApproval.getCategoryId());
+                BaseModel.setNewCreate(video, SecurityUtils.getUsername(), new Date());
+                BaseModel.setUpdated(video, SecurityUtils.getUsername(), new Date());
+                videoMapper.save(video);
+                //将视频与视频申请进行关联
+                approvalMapper.relateVideoId(video.getVideoId(), videoApproval.getVideoApprovalId());
+                for (VideoFile videoFile : videoFileList) {
+                    Episode episode = new Episode(videoFile.getFileName(),
+                            videoFile.getFileUrl(), videoFile.getPosterId(),
+                            videoFile.getSort(), video.getVideoId(), videoFile.getVideoFileId());
+                    episodeMapper.save(episode);
+                }
+                for (Integer tagId : tagIdList) {
+                    tagMapper.savaTagVideoRelation(tagId, video.getVideoId());
+                }
+                //删除不可见的VideoFile
+                List<VideoFile> videoFiles = videoFileMapper.getInvisibleVideoFile(videoApproval.getVideoApprovalId());
+                videoFiles.forEach(videoFile -> {
+                    videoFileService.deleteVideoFile(videoFile.getVideoFileId());
+                });
 
+                //计算视频相关推荐
+                String queueName = SystemConst.VIDEO_SIMILARITY_QUEUE_NAME;
+                redisTemplate.opsForList().leftPush(queueName, video.getVideoId());
 
-            String queueName="COMPUTE_VIDEO_SIMILARITY_QUEUE";
-            redisTemplate.opsForList().leftPush(queueName,video.getVideoId());
+                //发送提醒消息
+                List<User> followingUserList = userMapper.getAllFollowedUserList(video.getUploadUserId());
+                MessageConvert messageConvert = messageConvertRegistry.getMessageConvert(VideoUploadMessage.class);
+                if (followingUserList!=null){
+                    for (User followingUser:followingUserList) {
+                        VideoUploadMessage videoUploadMessage = new VideoUploadMessage(video.getUploadUserId(),followingUser.getUserId(),video.getVideoId());
+                        SystemMessage systemMessage = messageConvert.convertMessage(videoUploadMessage);
+                        BaseModel.setUpdated(systemMessage, SecurityUtils.getUsername(),new Date());
+                        BaseModel.setNewCreate(systemMessage,SecurityUtils.getUsername(),new Date());
+                        systemMessageMapper.save(systemMessage);
+                    }
+                }
+            }else {
+                video=videoMapper.getVideo(videoApproval.getVideoId());
+                List<Episode> episodeList = episodeMapper.getEpisodeByVideoId(video.getVideoId());
+                videoMapper.updateVideoMeta(videoApproval.getTitle(),videoApproval.getIntroduce(),videoApproval.getPosterId(),video.getVideoId());
+                Set<Integer> oldEpisode=episodeList.stream().map(Episode::getVideoFileId).collect(Collectors.toSet());
+                Set<Integer> newEpisode=videoFileList.stream().map(VideoFile::getVideoFileId).collect(Collectors.toSet());
+                List<VideoFile> videoFiles = videoFileMapper.getInvisibleVideoFile(videoApproval.getVideoApprovalId());
+
+                Set<Integer> deleteSet=Sets.difference(oldEpisode,newEpisode);
+                Set<Integer> addSet=Sets.difference(newEpisode,oldEpisode);
+
+                Set<Integer> readableDeleteSet = new HashSet<>(deleteSet);
+
+                videoFiles.forEach(videoFile -> {
+                    readableDeleteSet.add(videoFile.getVideoFileId());
+                });
+
+                for (Integer deletedVideoFileId:readableDeleteSet){
+                    episodeMapper.deleteEpisodeByVideoFileId(deletedVideoFileId);
+                    videoFileService.deleteVideoFile(deletedVideoFileId);
+                }
+
+                for (Integer addVideoFileId:addSet){
+                    VideoFile addVideoFileDetail=videoFileMapper.getVideoFileDetail(addVideoFileId);
+                    Episode episode = new Episode(addVideoFileDetail.getFileName(),
+                            addVideoFileDetail.getFileUrl(), addVideoFileDetail.getPosterId(),
+                            addVideoFileDetail.getSort(), video.getVideoId(), addVideoFileDetail.getVideoFileId());
+                    episodeMapper.save(episode);
+                }
+            }
+        }
+        //消息通知
+        MessageConvert messageConvert = messageConvertRegistry.getMessageConvert(VideoApplyMessage.class);
+        VideoApplyMessage videoApplyMessage = new VideoApplyMessage(video,videoApproval,approvalType);
+        if (messageConvert!=null){
+            SystemMessage systemMessage = messageConvert.convertMessage(videoApplyMessage);
+            BaseModel.setUpdated(systemMessage, SecurityUtils.getUsername(),new Date());
+            BaseModel.setNewCreate(systemMessage,SecurityUtils.getUsername(),new Date());
+            systemMessageMapper.save(systemMessage);
         }
     }
 
@@ -160,8 +244,25 @@ public class VideoApplyService {
         }
 
         for (Integer videoFileId:videoApplyUpdateVo.getDeleteVideoFile()){
-            episodeMapper.deleteEpisodeByVideoFileId(videoFileId);
-            videoFileMapper.deleteByVideoFileId(videoFileId);
+            videoFileMapper.setVideoFileInvisible(videoFileId);
         }
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void deleteVideoApproval(Integer videoApprovalId){
+        VideoApproval videoApproval = approvalMapper.getVideoApproval(videoApprovalId);
+        JwtUser user= (JwtUser) SecurityUtils.getUserDetails();
+        if (!videoApproval.getUploadUserId().equals(user.getUserId())){
+            return;
+        }
+
+        List<VideoFile> videoFileList = videoFileMapper.listAllVideoFileByApprovalId(videoApprovalId);
+        videoFileList.forEach(videoFile -> {
+            videoFileService.deleteVideoFile(videoFile.getVideoFileId());
+        });
+        if (videoApproval.getVideoId()!=-1) {
+            videoService.deleteVideoClearly(videoApproval.getVideoId());
+        }
+        approvalMapper.deleteVideoApproval(videoApprovalId);
     }
 }

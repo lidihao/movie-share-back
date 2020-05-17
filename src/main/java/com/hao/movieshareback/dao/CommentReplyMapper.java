@@ -13,4 +13,5 @@ public interface CommentReplyMapper {
     void save(CommentReply commentReply);
     PageList<CommentReply> selectCommentReplyListByCommentId(Page page,Integer videoCommentId);
     CommentReply selectCommentReplyByReplyId(Integer replyId);
+    void deleteCommentReply(Integer videoCommentId);
 }

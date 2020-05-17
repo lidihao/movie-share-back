@@ -113,7 +113,7 @@ public class VideoUploadService {
         Picture picture = new Picture(posterDes.getName(),screenPicture.getHeight(),screenPicture.getSize(),
                 screenPicture.getWidth(),imgUrlRoot+posterDes.getName());
         pictureMapper.save(picture);
-        VideoFile videoFile = new VideoFile(videoMergeFileVo.getFileName(), videoMergeFileVo.getSize(),user.getUserId(),
+        VideoFile videoFile = new VideoFile(videoMergeFileVo.getFileName().substring(0,videoMergeFileVo.getFileName().lastIndexOf(".")), videoMergeFileVo.getSize(),user.getUserId(),
                 ApprovalType.PROCESSING.getTag(),fileUrl, FileTypeUtils.getFileType(suffix),picture.getPictureId());
         videoFileMapper.save(videoFile);
         return videoFile;

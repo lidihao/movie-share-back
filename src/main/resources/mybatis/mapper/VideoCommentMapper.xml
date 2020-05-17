@@ -97,4 +97,9 @@
         select <include refid="Base_Column_List"></include> from video_comment
         where video_comment.comment_id=#{commentId}
     </select>
+
+    <delete id="deleteVideoCommentByVideoId">
+        delete from video_comment where video_comment.videoId=#{videoId}
+    </delete>
+
 </mapper>

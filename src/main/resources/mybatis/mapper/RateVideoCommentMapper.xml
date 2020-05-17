@@ -108,4 +108,8 @@
     <select id="selectAllRateComment" resultMap="rateVideoCommentResultMap">
         select <include refid="Base_Column_List"></include> from rate_video_comment
     </select>
+
+    <delete id="deleteRateVideoComment">
+        delete from rate_video_comment where rate_video_comment.video_id=#{videoId}
+    </delete>
 </mapper>

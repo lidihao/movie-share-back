@@ -486,3 +486,18 @@ create table `java_system_taks`(
     PRIMARY KEY (system_task_id),
     INDEX (is_delete)
 )COMMENT 'systemtask' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;
+
+create table `system_message`(
+    `system_message_id` int(11) not null AUTO_INCREMENT,
+    `system_message_type` varchar(30) not null,
+    `system_message_params` varchar(30) not null,
+    `system_message_content` varchar(500) not null,
+    `user_id` int(11) not null,
+    `created_time` DATETIME    COMMENT '创建时间' ,
+    `created_by` VARCHAR(32)    COMMENT '创建时间',
+    `updated_time` DATETIME    COMMENT '更新时间' ,
+    `updated_by` VARCHAR(32)    COMMENT '更新人' ,
+    `is_delete` BIT NOT NULL  DEFAULT 0 COMMENT '是否删除',
+    PRIMARY KEY (system_message_id),
+    INDEX (is_delete)
+)COMMENT 'system_message' ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000;

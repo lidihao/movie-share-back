@@ -1,7 +1,16 @@
 package com.hao.movieshareback.recommend;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Maps;
+import com.hao.movieshareback.config.SystemConst;
+import com.hao.movieshareback.dao.LogMapper;
 import com.hao.movieshareback.dao.RateVideoCommentMapper;
+import com.hao.movieshareback.model.Log;
 import com.hao.movieshareback.model.RateVideoComment;
+import com.hao.movieshareback.model.bo.VisitedRate;
+import com.hao.movieshareback.service.LogService;
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.impl.common.FastByIDMap;
 import org.apache.mahout.cf.taste.impl.model.GenericDataModel;
@@ -19,20 +28,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.*;
 
 @Component
 public class RecommendByCF {
 
     @Autowired
-    private RateVideoCommentMapper videoCommentMapper;
-
-    @Autowired
     private RedisTemplate redisTemplate;
 
-
-    public void recommend(Integer neibor,Integer recommendNum) throws TasteException {
-        DataModel dataModel = createDataModel();
+    public Map<Integer,List<RecommendedItem>> recommend(Integer neibor, Integer recommendNum, Map<Integer,List<VisitedRate>> data) throws TasteException {
+        DataModel dataModel = createDataModel(data);
+        Map<Integer,List<RecommendedItem>> result = new HashMap<>();
         //比较两个用户之间的相似度
         UserSimilarity similarity =
                 new PearsonCorrelationSimilarity(dataModel);
@@ -41,7 +47,6 @@ public class RecommendByCF {
         //合并上述所有组件为用户推荐物品
         Recommender recommender = new GenericUserBasedRecommender(
                 dataModel, neighborhood, similarity);
-        String cachePrefix="RECOMMEND_BY_USER_BASE_CF";
         dataModel.getUserIDs().forEachRemaining(userId-> {
             List<RecommendedItem> recommendations = null;
             try {
@@ -49,34 +54,44 @@ public class RecommendByCF {
             } catch (TasteException e) {
                 e.printStackTrace();
             }
-            for (RecommendedItem recommendation : recommendations) {
-                redisTemplate.opsForZSet().add(cachePrefix+"_"+userId,
-                        recommendation.getItemID(),recommendation.getValue());
-                System.out.println(recommendation);
-            }
+            result.put(Math.toIntExact(userId),recommendations);
         }
         );
+        if (result!=null) {
+            for (Integer userId : result.keySet()) {
+                List<RecommendedItem> recommendedItemList = result.get(userId);
+                String cacheKey = SystemConst.USER_RECOMMEND_CACHE_PREFIX+userId;
+                for (RecommendedItem recommendedItem:recommendedItemList){
+                    Double oldSocre=redisTemplate.opsForZSet().score(cacheKey,recommendedItem.getItemID());
+                    if (oldSocre==null||oldSocre<recommendedItem.getValue()){
+                        redisTemplate.opsForZSet().add(cacheKey,recommendedItem.getItemID(),recommendedItem.getValue());
+                    }
+                }
+            }
+        }
+
+        return result;
     }
 
-    protected DataModel createDataModel(){
-        List<RateVideoComment> rateVideoCommentList = videoCommentMapper.selectAllRateComment();
+    protected DataModel createDataModel(Map<Integer,List<VisitedRate>> data)  {
         FastByIDMap<PreferenceArray> preferenceArrayFastByIDMap = new FastByIDMap<>();
-        for (RateVideoComment rateVideoComment:rateVideoCommentList){
-            PreferenceArray preferenceArray=preferenceArrayFastByIDMap.get(rateVideoComment.getCommentUserId());
+        for (Integer userId:data.keySet()){
+            PreferenceArray preferenceArray=preferenceArrayFastByIDMap.get(userId);
+            List<VisitedRate> visitedRates = data.get(userId);
             if (preferenceArray == null) {
-                preferenceArray = new GenericUserPreferenceArray(1);
-            } else {
-                PreferenceArray newPrefs = new GenericUserPreferenceArray(preferenceArray.length() + 1);
-                for (int i = 0, j = 1; i < preferenceArray.length(); i++, j++) {
-                    newPrefs.set(j, preferenceArray.get(i));
-                }
-                preferenceArray = newPrefs;
+                preferenceArray = new GenericUserPreferenceArray(visitedRates.size());
             }
-            preferenceArray.setUserID(0,rateVideoComment.getCommentUserId());
-            preferenceArray.setItemID(0,rateVideoComment.getVideoId());
-            preferenceArray.setValue(0,rateVideoComment.getRate().floatValue());
-            preferenceArrayFastByIDMap.put(rateVideoComment.getCommentUserId(),preferenceArray);
+            int i = 0;
+            for (VisitedRate rate:visitedRates){
+                preferenceArray.setUserID(i,rate.getUserId());
+                preferenceArray.setItemID(i,rate.getVideoId());
+                preferenceArray.setValue(i,rate.getRate().floatValue());
+                i++;
+            }
+
+            preferenceArrayFastByIDMap.put(userId,preferenceArray);
         }
         return new GenericDataModel(preferenceArrayFastByIDMap);
     }
+
 }

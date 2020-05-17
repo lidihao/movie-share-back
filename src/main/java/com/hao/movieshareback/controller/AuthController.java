@@ -8,6 +8,7 @@ import com.hao.movieshareback.service.UserService;
 import com.hao.movieshareback.service.auth.JwtUserDetailsService;
 import com.hao.movieshareback.service.redis.IRedisService;
 import com.hao.movieshareback.utils.SecurityUtils;
+import com.hao.movieshareback.vo.ChangePwdDataReceiver;
 import com.hao.movieshareback.vo.ImgResult;
 import com.hao.movieshareback.vo.MenuVo;
 import com.hao.movieshareback.vo.ResultBody;
@@ -190,5 +191,30 @@ public class AuthController {
         }catch (Exception e){
             return ResultBody.error(e.getMessage());
         }
+    }
+    @PostMapping("/changePwd")
+    public ResultBody changePwd(@RequestBody ChangePwdDataReceiver changePwdDataReceiver,HttpServletRequest httpServletRequest){
+        try {
+            userService.changePwd(changePwdDataReceiver,httpServletRequest);
+            return ResultBody.success();
+        }catch (Exception e){
+            return ResultBody.error(e.getMessage());
+        }
+    }
+    @PostMapping("/sendChangeEmail")
+    public ResultBody sendChangeEmail(String newEmail){
+        try {
+            userService.sendChangeEmail(newEmail);
+            return ResultBody.success();
+        }catch (Exception e){
+            return ResultBody.error(e.getMessage());
+        }
+    }
+
+    @AnonymousAccess
+    @PostMapping("/doChangeEmail")
+    public ResultBody changeEmail(String token){
+        userService.changeEmail(token);
+        return ResultBody.success();
     }
 }

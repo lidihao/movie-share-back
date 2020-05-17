@@ -23,13 +23,15 @@ public class RestFilter extends OncePerRequestFilter {
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse resp = (HttpServletResponse) response;
 		String originUrl = req.getHeader("Origin");
-		resp.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+		resp.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, range, Referer, method");
 		resp.setHeader("Access-Control-Allow-Methods", "POST, GET, PATCH, DELETE, PUT");
 		if (originUrl != null) {
 			resp.setHeader("Access-Control-Allow-Origin", originUrl);
 			resp.setHeader("Access-Control-Allow-Credentials", "true");
 		} else {
-			resp.setHeader("Access-Control-Allow-Origin", "*");
+			String allowhost=req.getHeader("Referer");
+			resp.setHeader("Access-Control-Allow-Origin", allowhost);
+			resp.setHeader("Access-Control-Allow-Credentials", "true");
 		}
         // 如果是OPTIONS则结束请求
         if (HttpMethod.OPTIONS.toString().equalsIgnoreCase(request.getMethod())) {

@@ -4,12 +4,15 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
+import com.hao.movieshareback.config.SystemConst;
 import com.hao.movieshareback.dao.*;
 import com.hao.movieshareback.model.*;
 import com.hao.movieshareback.vo.*;
 import com.hao.movieshareback.vo.auth.UserVo;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
@@ -19,6 +22,7 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.ml.job.results.Bucket;
 import org.elasticsearch.common.lucene.search.function.FieldValueFactorFunction;
+import org.elasticsearch.common.lucene.search.function.FunctionScoreQuery;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.index.query.functionscore.FieldValueFactorFunctionBuilder;
@@ -36,7 +40,10 @@ import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Range;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -58,6 +65,9 @@ public class VideoService {
 
     @Autowired
     private TagService tagService;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Resource(name = "highLevelElasticsearchClient")
     private RestHighLevelClient highLevelClient;
@@ -129,6 +139,9 @@ public class VideoService {
         if (searchHits!=null&&searchHits.length > 0){
             for (SearchHit searchHit : searchHits) {
                 VideoDetailVo videoDetailVo = getVideoDetail(Integer.parseInt(searchHit.getId()));
+                if (videoDetailVo==null){
+                    continue;
+                }
                 if (searchHit.getHighlightFields() != null) {
                     HighlightField highlightField = searchHit.getHighlightFields().get("videoTitle");
                     if (highlightField != null && highlightField.getFragments().length > 0) {
@@ -189,7 +202,7 @@ public class VideoService {
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         if (searchKey!=null){
             MultiMatchQueryBuilder multiMatchQueryBuilder= QueryBuilders.multiMatchQuery(searchKey).
-                    field("video_title",3).field("uploadUserName",2).field("videoDesc",1).
+                    field("videoTitle",5).field("uploadUserName",2).field("videoDesc",0.1f).
                     field("tags",2).field("categoryName",2);
             boolQueryBuilder.must(multiMatchQueryBuilder);
 
@@ -216,12 +229,11 @@ public class VideoService {
         FieldValueFactorFunctionBuilder videoCommentCount=ScoreFunctionBuilders.fieldValueFactorFunction("videoCommentPerson").factor(2)
                 .modifier(FieldValueFactorFunction.Modifier.LOG2P);
 
-
         FunctionScoreQueryBuilder functionScoreQuery = QueryBuilders.functionScoreQuery(boolQueryBuilder,new FunctionScoreQueryBuilder.FilterFunctionBuilder[]{
                 new FunctionScoreQueryBuilder.FilterFunctionBuilder(videoPlayCount),
                 new FunctionScoreQueryBuilder.FilterFunctionBuilder(videoRate),
                 new FunctionScoreQueryBuilder.FilterFunctionBuilder(videoCommentCount)
-        });
+        }).scoreMode(FunctionScoreQuery.ScoreMode.SUM);
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder().query(functionScoreQuery).
                 sort(SortBuilders.fieldSort(orderField).order(SortOrder.DESC)).from(from).size(size);
@@ -255,5 +267,31 @@ public class VideoService {
         }
         BulkResponse bulkItemResponses = highLevelClient.bulk(bulkRequest,RequestOptions.DEFAULT);
         System.out.println(mapper.writeValueAsString(bulkItemResponses));
+    }
+
+    public void deleteVideoFromElasticSearch(Integer videoId){
+        DeleteRequest deleteRequest = new DeleteRequest("video",videoId.toString());
+        DeleteResponse response = null;
+        try {
+            response=highLevelClient.delete(deleteRequest,RequestOptions.DEFAULT);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println(response);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void deleteVideoClearly(Integer videoId){
+        //删除视频评论与回复
+       // videoCommentMapper.deleteVideoCommentByVideoId(videoId);
+        //删除视频点评
+      //  rateVideoCommentMapper.deleteRateVideoComment(videoId);
+        //删除视频相关推荐
+        redisTemplate.delete(SystemConst.VIDEO_SIMILARITY_CACHE_PREFIX+videoId);
+        //删除视频索引
+        deleteVideoFromElasticSearch(videoId);
+        //删除视频收藏,级联删除
+        //删除视频元信息
+        videoMapper.deleteVideoByVideoId(videoId);
     }
 }

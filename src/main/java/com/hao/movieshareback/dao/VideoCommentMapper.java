@@ -15,4 +15,5 @@ public interface VideoCommentMapper {
     PageList<VideoComment> selectCommentListByVideoId(Page page, Integer videoId);
     Integer getCommentCountByVideoId(Integer videoId);
     VideoComment getCommentById(Integer commentId);
+    void deleteVideoCommentByVideoId(Integer videoId);
 }

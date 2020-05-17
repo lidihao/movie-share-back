@@ -1,6 +1,7 @@
 package com.hao.movieshareback.dao;
 
 import com.hao.movieshareback.model.Video;
+import com.hao.movieshareback.model.VideoFile;
 import com.hao.movieshareback.vo.Page;
 import com.hao.movieshareback.vo.PageList;
 import com.hao.movieshareback.vo.VideoIndexVo;
@@ -20,6 +21,8 @@ public interface VideoMapper {
     void updateRate(Double rate, Integer videoId, Date updateTime,String userName);
     void incrementVideoPlayCount(Integer videoId);
     void incrementVideoCommentPerson(Integer videoId);
+    void updateVideoMeta(String videoTitle,String videoDesc,Integer videoPosterId,Integer videoId);
     PageList<Video> getFavoriteVideoDetailList(Page page,Video video,Integer userId);
     PageList<VideoIndexVo> selectVideoIndexVo(Page page, String curDateTime);
+    void deleteVideoByVideoId(Integer videoId);
 }

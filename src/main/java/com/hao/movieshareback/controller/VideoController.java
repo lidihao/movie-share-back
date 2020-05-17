@@ -76,4 +76,11 @@ public class VideoController {
             return ResultBody.error("error");
         }
     }
+
+    @Log(value = "end_play_video",businessType = "end_play_video")
+    @AnonymousAccess
+    @PostMapping("/endplayVideo")
+    public ResultBody endPlayVideo(Integer videoId){
+        return ResultBody.success();
+    }
 }

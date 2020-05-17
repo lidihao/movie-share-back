@@ -44,6 +44,8 @@ public class RedisServiceImpl implements IRedisService {
     @Value("${reset-password.key}")
     private String resetPasswordKey;
 
+    private final Integer DEFAULT_EXPIRED_TIME=2;
+
     public RedisServiceImpl(RedisTemplate redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
@@ -145,6 +147,21 @@ public class RedisServiceImpl implements IRedisService {
         }
         if(!StringUtils.equals(code,value)){
             throw new ValidateCodeExpireException("验证码错误,请重新输入");
+        }
+    }
+
+    public void saveToken(String key,String value){
+        redisTemplate.opsForValue().set(key,value);
+        redisTemplate.expire(key,DEFAULT_EXPIRED_TIME, TimeUnit.HOURS);
+    }
+
+    public String getToken(String key){
+        try {
+            String res= Objects.requireNonNull(redisTemplate.opsForValue().get(key)).toString();
+            this.delete(key);
+            return res;
+        }catch (Exception e){
+            return "";
         }
     }
 }

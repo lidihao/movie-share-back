@@ -19,4 +19,7 @@ public interface VideoFileMapper {
     List<VideoFile> listAllVideoFileByApprovalId(Integer videoApprovalId);
     Integer getMaxVideoFileIndex(Integer videoApprovalId);
     void deleteByVideoFileId(Integer videoFileId);
+    void setVideoFileInvisible(Integer videoFileId);
+    List<VideoFile> getInvisibleVideoFile(Integer videoApprovalId);
+    VideoFile getVideoFileDetail(Integer videoFileId);
 }

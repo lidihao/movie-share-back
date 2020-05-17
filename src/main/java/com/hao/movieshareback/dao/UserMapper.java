@@ -7,6 +7,8 @@ import com.hao.movieshareback.vo.PageList;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 
 @Mapper
 @Repository
@@ -40,5 +42,9 @@ public interface UserMapper {
 
     PageList<User> getFollowedUserList(Page page,User user);
 
+    List<User> getAllFollowedUserList(Integer userId);
+
     PageList<User> searchUser(Page page,String userName);
+
+    void updateEmail(Integer userId,String email);
 }

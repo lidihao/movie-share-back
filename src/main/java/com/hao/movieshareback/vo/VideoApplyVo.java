@@ -1,5 +1,6 @@
 package com.hao.movieshareback.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.hao.movieshareback.vo.auth.UserVo;
 
 import java.util.Date;
@@ -12,6 +13,7 @@ public class VideoApplyVo {
     private String posterUrl;
     private Integer approvalType;
     private UserVo userVo;
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date createdTime;
     private Integer categoryId;
     private String introduce;

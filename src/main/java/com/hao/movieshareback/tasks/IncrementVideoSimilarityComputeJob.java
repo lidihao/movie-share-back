@@ -1,5 +1,6 @@
 package com.hao.movieshareback.tasks;
 
+import com.hao.movieshareback.config.SystemConst;
 import com.hao.movieshareback.dao.JavaSystemTaskMapper;
 import com.hao.movieshareback.dao.TagMapper;
 import com.hao.movieshareback.dao.VideoMapper;
@@ -46,8 +47,8 @@ public class IncrementVideoSimilarityComputeJob extends QuartzJobBean {
         double similarityThreshold=0.5;
         int size=20;
         int processSize=10;
-        String cacheKeyPrefix="SIMILARITY_";
-        String queueName="COMPUTE_VIDEO_SIMILARITY_QUEUE";
+        String cacheKeyPrefix= SystemConst.VIDEO_SIMILARITY_CACHE_PREFIX;
+        String queueName=SystemConst.VIDEO_SIMILARITY_QUEUE_NAME;
         List<Video> videoList=videoMapper.getAllVideo();
         VideoTagSimilarityComputer videoTagSimilarityComputer = new VideoTagSimilarityComputer(tagArr,new CosineSimilarityComputer());
         for (int i=0;i<processSize;i++) {

@@ -1,5 +1,6 @@
 package com.hao.movieshareback.tasks;
 
+import com.hao.movieshareback.config.SystemConst;
 import com.hao.movieshareback.dao.JavaSystemTaskMapper;
 import com.hao.movieshareback.dao.TagMapper;
 import com.hao.movieshareback.dao.VideoMapper;
@@ -50,7 +51,7 @@ public class FullVideoSimilarityComputeJob extends QuartzJobBean {
         for (Tag tag:tagList){
             tagArr[index++]=tag.getTagId();
         }
-        String cacheKeyPrefix="SIMILARITY_";
+        String cacheKeyPrefix= SystemConst.VIDEO_SIMILARITY_CACHE_PREFIX;
         VideoTagSimilarityComputer videoTagSimilarityComputer = new VideoTagSimilarityComputer(tagArr,new CosineSimilarityComputer());
         Set<String> keyset=redisTemplate.keys(cacheKeyPrefix+"*");
         redisTemplate.delete(keyset);

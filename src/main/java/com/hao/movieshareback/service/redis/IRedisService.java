@@ -55,4 +55,8 @@ public interface IRedisService {
     void saveResetPasswordToken(String key,Object val);
 
     String getResetPasswordToken(String key);
+
+    public void saveToken(String key,String value);
+
+    public String getToken(String key);
 }
