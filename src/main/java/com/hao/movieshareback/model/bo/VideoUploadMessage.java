@@ -1,25 +1,36 @@
 package com.hao.movieshareback.model.bo;
 
+import com.hao.movieshareback.model.Video;
+import com.hao.movieshareback.vo.auth.UserVo;
+
 public class VideoUploadMessage {
-    private Integer uploadUserId;
+    private UserVo uploadUser;
     private Integer followingUserId;
-    private Integer videoId;
+    private Video video;
 
     public VideoUploadMessage() {
     }
 
-    public VideoUploadMessage(Integer uploadUserId, Integer followingUserId, Integer videoId) {
-        this.uploadUserId = uploadUserId;
+    public VideoUploadMessage(UserVo uploadUser, Integer followingUserId, Video video) {
+        this.uploadUser = uploadUser;
         this.followingUserId = followingUserId;
-        this.videoId = videoId;
+        this.video = video;
     }
 
-    public Integer getUploadUserId() {
-        return uploadUserId;
+    public UserVo getUploadUser() {
+        return uploadUser;
     }
 
-    public void setUploadUserId(Integer uploadUserId) {
-        this.uploadUserId = uploadUserId;
+    public void setUploadUser(UserVo uploadUser) {
+        this.uploadUser = uploadUser;
+    }
+
+    public Video getVideo() {
+        return video;
+    }
+
+    public void setVideo(Video video) {
+        this.video = video;
     }
 
     public Integer getFollowingUserId() {
@@ -28,13 +39,5 @@ public class VideoUploadMessage {
 
     public void setFollowingUserId(Integer followingUserId) {
         this.followingUserId = followingUserId;
-    }
-
-    public Integer getVideoId() {
-        return videoId;
-    }
-
-    public void setVideoId(Integer videoId) {
-        this.videoId = videoId;
     }
 }

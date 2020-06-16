@@ -3,15 +3,17 @@ package com.hao.movieshareback.vo;
 import com.hao.movieshareback.model.PrivateMessage;
 import com.hao.movieshareback.vo.auth.UserVo;
 
+import java.util.List;
+
 public class MessageListVo {
     private UserVo user;
     private UserVo friend;
-    private XPage<PrivateMessage> messagePage;
+    private List<PrivateMessage> messagePage;
 
     public MessageListVo() {
     }
 
-    public MessageListVo(UserVo user, UserVo friend, XPage<PrivateMessage> messagePage) {
+    public MessageListVo(UserVo user, UserVo friend, List<PrivateMessage> messagePage) {
         this.user = user;
         this.friend = friend;
         this.messagePage = messagePage;
@@ -33,11 +35,11 @@ public class MessageListVo {
         this.friend = friend;
     }
 
-    public XPage<PrivateMessage> getMessagePage() {
+    public List<PrivateMessage> getMessagePage() {
         return messagePage;
     }
 
-    public void setMessagePage(XPage<PrivateMessage> messagePage) {
+    public void setMessagePage(List<PrivateMessage> messagePage) {
         this.messagePage = messagePage;
     }
 }

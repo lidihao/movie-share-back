@@ -1,6 +1,7 @@
 package com.hao.movieshareback.service;
 
 import cn.hutool.core.util.IdUtil;
+import com.google.common.collect.Sets;
 import com.hao.movieshareback.config.auth.JwtTokenGenerator;
 import com.hao.movieshareback.dao.PictureMapper;
 import com.hao.movieshareback.dao.RoleMapper;
@@ -9,6 +10,7 @@ import com.hao.movieshareback.exception.ActiveUserException;
 import com.hao.movieshareback.exception.LoginException;
 import com.hao.movieshareback.exception.UserExistException;
 import com.hao.movieshareback.exception.ValidateCodeExpireException;
+import com.hao.movieshareback.model.BaseModel;
 import com.hao.movieshareback.model.Picture;
 import com.hao.movieshareback.model.Role;
 import com.hao.movieshareback.model.User;
@@ -36,7 +38,10 @@ import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
@@ -227,6 +232,8 @@ public class UserService {
         String salt = EncryptUtils.md5(IdUtil.simpleUUID());
         String passwordWithSalt = EncryptUtils.md5(registerVo.getPassword()+salt);
         User user = new User(registerVo.getUserName(),passwordWithSalt,salt,registerVo.getEmail());
+        BaseModel.setUpdated(user,"",new Date());
+        BaseModel.setNewCreate(user,"",new Date());
         return user;
     }
     @Transactional(propagation = Propagation.REQUIRED ,rollbackFor = Exception.class)
@@ -382,5 +389,70 @@ public class UserService {
                 "</body>\n" +
                 "</html>";
         return html;
+    }
+
+    public XPage<UserManagerVo> searchUserForManager(String searchKey,Integer pageNum,Integer pageSize){
+        Page page = new Page(pageNum,pageSize);
+        PageList<User> userPageList = userMapper.searchUserForManager(page,searchKey);
+        PageList<UserManagerVo> userManagerVoPageList = new PageList<>();
+        userManagerVoPageList.setPageInfo(userPageList.getPageInfo());
+        userPageList.forEach(user -> {
+            List<Role> roleList = roleMapper.selectRolesByUserName(user.getUserName());
+            userManagerVoPageList.add(new UserManagerVo(user,roleList));
+        });
+        return XPage.wrap(userManagerVoPageList);
+    }
+
+    public void updateUserRoleList(UserManagerVo userManagerVo){
+        List<Role> roleList = roleMapper.selectRolesByUserName(userManagerVo.getUser().getUserName());
+        Set<Integer> oldRoleSet = new HashSet<>();
+        Set<Integer> newRoleSet = new HashSet<>();
+        if (roleList!=null) {
+            for (Role role : roleList) {
+                oldRoleSet.add(role.getRoleId());
+            }
+        }
+        if (userManagerVo.getRoleList()!=null){
+            for (Role role:userManagerVo.getRoleList()){
+                newRoleSet.add(role.getRoleId());
+            }
+        }
+        Set<Integer> deleteSet = Sets.difference(oldRoleSet,newRoleSet);
+        Set<Integer> addSet=Sets.difference(newRoleSet,oldRoleSet);
+
+        for (Integer roleId:deleteSet){
+            roleMapper.deleteUserRoleMapping(userManagerVo.getUser().getUserId(),roleId);
+        }
+        for (Integer roleId:addSet){
+            roleMapper.addUserRole(userManagerVo.getUser().getUserId(),roleId);
+        }
+    }
+
+    @Transactional
+    public void createUserFromManager(UserManagerVo userManagerVo){
+        User user = userManagerVo.getUser();
+        if (user==null){
+            return;
+        }
+        if (this.isUserNameExist(user.getUserName())){
+            throw new UserExistException("用户已经存在");
+        }
+        if (this.isEmailExist(user.getEmail())){
+            throw new UserExistException("邮箱已经注册过了");
+        }
+        RegisterVo registerVo = new RegisterVo(user.getUserName(),user.getPassword(),user.getEmail());
+        User user1 = createUser(registerVo);
+        user1.setHasActive(true);
+        userMapper.save(user1);
+        Set<Integer> newRoleSet = new HashSet<>();
+        List<Role> roleList = userManagerVo.getRoleList();
+        if (roleList!=null){
+            roleList.forEach(role -> {
+                newRoleSet.add(role.getRoleId());
+            });
+        }
+        for (Integer roleId:newRoleSet){
+            roleMapper.addUserRole(user1.getUserId(),roleId);
+        }
     }
 }

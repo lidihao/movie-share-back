@@ -8,6 +8,8 @@ import com.hao.movieshareback.vo.PageList;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 
 @Mapper
 @Repository
@@ -16,7 +18,7 @@ public interface PrivateMessageMapper {
     PageList<PrivateMsgUserItem> getPrivateMsgUserList(Page page, Integer userId);
     PrivateMessage getPrivateMsgByMsgId(Integer messageId);
     Integer getUnReadPrivateMsg(Integer userId,Integer friendId);
-    PageList<PrivateMessage> getMessageList(Page page,Integer userId,Integer friendId);
+    List<PrivateMessage> getMessageList(Integer userId, Integer friendId);
     void saveUserMapping(UserMsgMapping userMsgMapping);
     PrivateMsgUserItem getUserItemDetail(Integer userId,Integer friendId);
 }

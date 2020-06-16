@@ -23,6 +23,10 @@
         user.user_id,user.user_name,user.password,user.salt,user.email,user.introduce,
         user.avatar_pic_id,user.user_skin_id,user.last_password_reset_date,user.has_active,user.created_time,user.created_by,user.updated_time,user.updated_by,user.is_delete
     </sql>
+    <sql id="Security_Column_List" >
+        user.user_id,user.user_name,user.email,user.introduce,
+        user.avatar_pic_id,user.user_skin_id,user.last_password_reset_date,user.has_active,user.created_time,user.created_by,user.updated_time,user.updated_by,user.is_delete
+    </sql>
 
     <insert id="save" parameterType="com.hao.movieshareback.model.User" useGeneratedKeys="true" keyProperty="userId">
         insert into user
@@ -50,6 +54,9 @@
             </if>
             <if test="lastPasswordResetDate!=null">
                 last_password_reset_date,
+            </if>
+            <if test="hasActive!=null">
+                has_active,
             </if>
             <if test="createdTime != null" >
                 created_time,
@@ -89,6 +96,9 @@
             <if test="lastPasswordResetDate != null">
                 #{lastPasswordResetDate},
             </if>
+            <if test="hasActive!=null">
+                #{hasActive},
+            </if>
             <if test="createdTime != null" >
                 #{createdTime},
             </if>
@@ -116,7 +126,7 @@
 
 
     <select id="getUserByEmail" resultMap="UserResultMap">
-        select <include refid="Base_Column_List"></include> from user
+        select <include refid="Security_Column_List"></include> from user
         where user.email=#{email} and is_delete=0
     </select>
 
@@ -142,7 +152,7 @@
     </update>
 
     <select id="getFollowingUserList" resultMap="UserResultMap">
-        select <include refid="Base_Column_List"></include>
+        select <include refid="Security_Column_List"></include>
         from user join follow
         on user.user_id=follow.followed_user_id and follow.user_id=#{user.userId}
         and user.has_active=1 and user.is_delete=0
@@ -153,7 +163,7 @@
     </select>
 
     <select id="getFollowedUserList" resultMap="UserResultMap">
-        select <include refid="Base_Column_List"></include>
+        select <include refid="Security_Column_List"></include>
         from user join follow
         on user.user_id=follow.user_id and follow.followed_user_id=#{user.userId}
         and user.has_active=1 and user.is_delete=0
@@ -164,7 +174,7 @@
     </select>
 
     <select id="getAllFollowedUserList" resultMap="UserResultMap">
-        select <include refid="Base_Column_List"></include>
+        select <include refid="Security_Column_List"></include>
         from user join follow
         on user.user_id=follow.user_id and follow.followed_user_id=#{userId}
         and user.has_active=1 and user.is_delete=0
@@ -172,7 +182,7 @@
     </select>
 
     <select id="searchUser" resultMap="UserResultMap">
-        select <include refid="Base_Column_List"></include>,
+        select <include refid="Security_Column_List"></include>,
         (select count(1) from follow where follow.followed_user_id=user.user_id) as followCount
         from user
         where user.has_active=1 and user.is_delete=0
@@ -180,6 +190,15 @@
             and user.user_name like CONCAT('%',#{userName},'%')
         </if>
         order by  followCount DESC
+    </select>
+
+    <select id="searchUserForManager" resultMap="UserResultMap">
+        select <include refid="Security_Column_List"></include>
+        from user
+        <if test="userName!=null">
+            where user.user_name like CONCAT('%',#{userName},'%')
+        </if>
+        order by  user.created_time DESC
     </select>
 
     <update id="resetUserPassword">
@@ -190,5 +209,5 @@
     <update id="updateEmail">
         update user set user.email=#{email} where user.user_id=#{userId}
     </update>
-    
+
 </mapper>

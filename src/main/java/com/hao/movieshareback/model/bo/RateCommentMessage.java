@@ -1,9 +1,10 @@
 package com.hao.movieshareback.model.bo;
 
 import com.hao.movieshareback.model.Video;
+import com.hao.movieshareback.vo.auth.UserVo;
 
 public class RateCommentMessage {
-    private Integer userId;
+    private UserVo userVo;
     private Video video;
     private String content;
     private Double rate;
@@ -11,19 +12,19 @@ public class RateCommentMessage {
     public RateCommentMessage() {
     }
 
-    public RateCommentMessage(Integer userId, Video video, String content, Double rate) {
-        this.userId = userId;
+    public RateCommentMessage(UserVo userVo, Video video, String content, Double rate) {
+        this.userVo = userVo;
         this.video = video;
         this.content = content;
         this.rate = rate;
     }
 
-    public Integer getUserId() {
-        return userId;
+    public UserVo getUserVo() {
+        return userVo;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setUserVo(UserVo userVo) {
+        this.userVo = userVo;
     }
 
     public Video getVideo() {

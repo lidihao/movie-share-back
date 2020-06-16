@@ -4,7 +4,7 @@ server:
 
 client:
   port: 8080
-  address: 192.168.0.106
+  address: 127.0.0.1
 
 spring:
   datasource:
@@ -74,7 +74,7 @@ mail:
   fromMail:
     addr: 2315447580@qq.com
   server:
-    address: 192.168.0.106
+    address: 127.0.0.1
     port: 8089
 
 video:

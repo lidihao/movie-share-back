@@ -32,6 +32,7 @@ public class MenuService {
     public List<Menu> getMenuListByUserName(String userName){
         List<Role> roleList = roleService.getRolesByUserName(userName);
         return roleList.stream().flatMap(role -> menuMapper.getMenuListByRoleId(role.getRoleId()).stream())
+                .distinct()
                 .collect(Collectors.toList());
     }
 

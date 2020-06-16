@@ -47,4 +47,6 @@ public interface UserMapper {
     PageList<User> searchUser(Page page,String userName);
 
     void updateEmail(Integer userId,String email);
+
+    PageList<User> searchUserForManager(Page page,String userName);
 }

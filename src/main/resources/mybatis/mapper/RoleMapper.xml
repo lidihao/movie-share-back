@@ -91,4 +91,22 @@
     <insert id="addUserRole">
         insert into user_role(user_id,role_id) values (#{userId},#{roleId})
     </insert>
+
+    <delete id="deleteUserRoleMapping">
+        delete from user_role where user_role.user_id=#{userId} and user_role.role_id=#{roleId}
+    </delete>
+    <update id="updateDesc">
+        update  role set role.role_des=#{roleDes},
+                         role.updated_time=now(),role.updated_by=#{updateBy}
+        where role.role_id=#{roleId}
+    </update>
+    <delete id="deleteAllUserRoleMapping">
+        delete from user_role where user_role.role_id=#{roleId}
+    </delete>
+    <delete id="deleteAllMenuRoleMapping">
+        delete from role_menu where role_menu.role_id=#{roleId}
+    </delete>
+    <delete id="deleteRole">
+        delete from role where role.role_id=#{roleId}
+    </delete>
 </mapper>

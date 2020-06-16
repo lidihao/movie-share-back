@@ -2,6 +2,7 @@ package com.hao.movieshareback.controller;
 
 import com.google.common.collect.Sets;
 import com.hao.movieshareback.model.Menu;
+import com.hao.movieshareback.model.Role;
 import com.hao.movieshareback.service.MenuService;
 import com.hao.movieshareback.service.RoleService;
 import com.hao.movieshareback.vo.ResultBody;
@@ -41,6 +42,26 @@ public class RoleController {
     public ResultBody updateMenuTree(Integer roleId, @RequestParam("menuTree") ArrayList<Integer> menuTree){
         Set<Integer> menuSet = Sets.newHashSet(menuTree);
         menuService.updateMenuTreeByRoleId(roleId,menuSet);
+        return ResultBody.success();
+    }
+
+    @PreAuthorize("@el.check('admin')")
+    @PostMapping("/addRole")
+    public ResultBody addRole(@RequestBody Role role){
+        roleService.addRole(role);
+        return ResultBody.success();
+    }
+
+    @PreAuthorize("@el.check('admin')")
+    @PostMapping("/updateRole")
+    public ResultBody updateRole(@RequestBody Role role){
+        roleService.updateRole(role);
+        return ResultBody.success();
+    }
+    @PreAuthorize("@el.check('admin')")
+    @PostMapping("/deleteRole")
+    public ResultBody deleteRole(Integer roleId){
+        roleService.deleteRole(roleId);
         return ResultBody.success();
     }
 }

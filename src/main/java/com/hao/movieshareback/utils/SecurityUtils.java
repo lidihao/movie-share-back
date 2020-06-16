@@ -28,7 +28,11 @@ public class SecurityUtils {
      */
     public static String getUsername(){
         UserDetails userDetails = getUserDetails();
-        return userDetails.getUsername();
+        if (userDetails!=null) {
+            return userDetails.getUsername();
+        }else {
+            return "AnonymousAccess";
+        }
     }
 
     public static boolean isLogin(){

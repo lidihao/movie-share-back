@@ -8,10 +8,7 @@ import com.hao.movieshareback.service.UserService;
 import com.hao.movieshareback.service.auth.JwtUserDetailsService;
 import com.hao.movieshareback.service.redis.IRedisService;
 import com.hao.movieshareback.utils.SecurityUtils;
-import com.hao.movieshareback.vo.ChangePwdDataReceiver;
-import com.hao.movieshareback.vo.ImgResult;
-import com.hao.movieshareback.vo.MenuVo;
-import com.hao.movieshareback.vo.ResultBody;
+import com.hao.movieshareback.vo.*;
 import com.hao.movieshareback.vo.auth.*;
 import com.wf.captcha.ArithmeticCaptcha;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
@@ -216,5 +214,27 @@ public class AuthController {
     public ResultBody changeEmail(String token){
         userService.changeEmail(token);
         return ResultBody.success();
+    }
+
+    @GetMapping("/userManager/searchUser")
+    @PreAuthorize("@el.check('admin')")
+    public ResultBody searchUserForManger(String userName,Integer pageNum,Integer pageSize){
+        return ResultBody.success(userService.searchUserForManager(userName,pageNum,pageSize));
+    }
+    @PreAuthorize("@el.check('admin')")
+    @PostMapping("/userManager/updateRoleList")
+    public ResultBody updateRoleList(@RequestBody UserManagerVo userManagerVo){
+        userService.updateUserRoleList(userManagerVo);
+        return ResultBody.success();
+    }
+    @PreAuthorize("@el.check('admin')")
+    @PostMapping("/userManager/addUser")
+    public ResultBody addUserFromManager(@RequestBody UserManagerVo userManagerVo){
+        try {
+            userService.createUserFromManager(userManagerVo);
+            return ResultBody.success();
+        }catch (Exception e){
+            return ResultBody.error(e.getMessage());
+        }
     }
 }

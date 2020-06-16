@@ -51,6 +51,9 @@ public class VideoApplyService {
     private UserMapper userMapper;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private RedisTemplate redisTemplate;
 
     @Autowired
@@ -151,9 +154,10 @@ public class VideoApplyService {
                 //发送提醒消息
                 List<User> followingUserList = userMapper.getAllFollowedUserList(video.getUploadUserId());
                 MessageConvert messageConvert = messageConvertRegistry.getMessageConvert(VideoUploadMessage.class);
+                UserVo userVo = userService.getUserVoByUserId(video.getUploadUserId());
                 if (followingUserList!=null){
                     for (User followingUser:followingUserList) {
-                        VideoUploadMessage videoUploadMessage = new VideoUploadMessage(video.getUploadUserId(),followingUser.getUserId(),video.getVideoId());
+                        VideoUploadMessage videoUploadMessage = new VideoUploadMessage(userVo,followingUser.getUserId(),video);
                         SystemMessage systemMessage = messageConvert.convertMessage(videoUploadMessage);
                         BaseModel.setUpdated(systemMessage, SecurityUtils.getUsername(),new Date());
                         BaseModel.setNewCreate(systemMessage,SecurityUtils.getUsername(),new Date());

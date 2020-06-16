@@ -14,8 +14,18 @@ public class VideoApplyMessageConvert implements MessageConvert{
     public static class VideoApplyMessageParam{
         private Integer videoApprovalId;
         private ApprovalType approvalType;
+        private String videoTitle;
 
         public VideoApplyMessageParam() {
+        }
+
+
+        public String getVideoTitle() {
+            return videoTitle;
+        }
+
+        public void setVideoTitle(String videoTitle) {
+            this.videoTitle = videoTitle;
         }
 
         public Integer getVideoApprovalId() {
@@ -43,6 +53,7 @@ public class VideoApplyMessageConvert implements MessageConvert{
         String systemContent=null;
         videoApplyMessageParam.setApprovalType(videoApplyMessage.getApprovalType());
         videoApplyMessageParam.setVideoApprovalId(videoApplyMessage.getVideoApproval().getVideoApprovalId());
+        videoApplyMessageParam.setVideoTitle(videoApplyMessage.getVideoApproval().getTitle());
         if (videoApplyMessage.getApprovalType().equals(ApprovalType.PASS)){
             systemContent = "通过审批";
         }

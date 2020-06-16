@@ -28,17 +28,37 @@ public class RecommendService {
 
 
     public XPage<VideoDetailVo> getRecentlyHotVideo(Integer pageNum,Integer pageSize){
-        Integer start = (pageNum-1)*pageSize;
-        Integer end = pageNum*pageSize-1;
-
-        Set<String> hotVideos= redisTemplate.opsForZSet().reverseRange("RECOMMEND_BY_STATISTICS",start,end);
         List<VideoDetailVo> recommendList= new ArrayList<>(pageSize);
+        Integer startPageNum=pageNum;
+        List<String> removeVideoId=new LinkedList<>();
 
+        while (recommendList.size()<pageSize){
+            Integer start = (startPageNum-1)*pageSize;
+            Integer end = startPageNum*pageSize-1;
+            Set<String> hotVideos= redisTemplate.opsForZSet().reverseRange("RECOMMEND_BY_STATISTICS",start,end);
+            if (hotVideos==null||hotVideos.isEmpty()){
+                break;
+            }
 
-        for (String videoCategoryPair:hotVideos){
-            Integer videoId = Integer.valueOf(videoCategoryPair.split(",")[0]);
-            recommendList.add(videoService.getVideoDetail(videoId));
+            for (String videoCategoryPair:hotVideos){
+                Integer videoId = Integer.valueOf(videoCategoryPair.split(",")[0]);
+                VideoDetailVo videoDetailVo = videoService.getVideoDetail(videoId);
+                if (recommendList.size()==pageSize){
+                    break;
+                }
+                if (videoDetailVo != null) {
+                    recommendList.add(videoDetailVo);
+                }else {
+                    //移除不存在的VideoId
+                    removeVideoId.add(videoCategoryPair);
+                }
+            }
+            startPageNum++;
         }
+        if (!removeVideoId.isEmpty()) {
+            redisTemplate.opsForZSet().remove("RECOMMEND_BY_STATISTICS", removeVideoId.toArray());
+        }
+
 
         PageInfo pageInfo = new PageInfo();
         pageInfo.setTotal(redisTemplate.opsForZSet().size("RECOMMEND_BY_STATISTICS"));
@@ -47,51 +67,80 @@ public class RecommendService {
     }
 
     public List<CategoryRecommendVo> getRecentlyHotVideoCategory(Integer pageNum,Integer pageSize){
-        Integer start=(pageNum-1)*pageSize;
-        Integer end=pageNum*pageSize-1;
         List<Category> categoryList = categoryService.listCategory();
         List<CategoryRecommendVo> categoryRecommendVoList = new LinkedList<>();
         categoryList.forEach(category -> {
+            Integer startPageNum=pageNum;
             String cacheKey = "CATEGORY_RECOMMEND"+"_"+category.getCategoryId();
-            Set<Integer> recomendVideoSet = redisTemplate.opsForZSet().reverseRange(cacheKey,start,end);
-            if (recomendVideoSet==null||recomendVideoSet.isEmpty()){
-                return;
+            List<VideoDetailVo> videoDetailVos = new ArrayList<>(pageSize);
+            List<Integer> removeVideoId=new LinkedList<>();
+            while (videoDetailVos.size()<pageSize){
+                Integer start=(startPageNum-1)*pageSize;
+                Integer end=startPageNum*pageSize-1;
+                Set<Integer> recomendVideoSet = redisTemplate.opsForZSet().reverseRange(cacheKey,start,end);
+                if (recomendVideoSet==null||recomendVideoSet.isEmpty()){
+                    break;
+                }
+                for(Integer videoId:recomendVideoSet)
+                {
+                    VideoDetailVo videoDetailVo =videoService.getVideoDetail(videoId);
+                    if (videoDetailVos.size()==pageSize){
+                        break;
+                    }
+                    if (videoDetailVo!=null) {
+                        videoDetailVos.add(videoDetailVo);
+                    }else {
+                        //移除不存在的VideoId
+                        removeVideoId.add(videoId);
+                    }
+                }
+                startPageNum++;
             }
+            if (!removeVideoId.isEmpty()) {
+                redisTemplate.opsForZSet().remove(cacheKey, removeVideoId.toArray());
+            }
+
             PageInfo pageInfo = new PageInfo();
             pageInfo.setTotal(redisTemplate.opsForZSet().size(cacheKey));
-            List<VideoDetailVo> videoDetailVos = new ArrayList<>(recomendVideoSet.size());
-            recomendVideoSet.forEach(videoId->{
-                VideoDetailVo videoDetailVo =videoService.getVideoDetail(videoId);
-                if (videoDetailVo!=null) {
-                    videoDetailVos.add(videoDetailVo);
-                }
-            });
             categoryRecommendVoList.add(new CategoryRecommendVo(category,XPage.newInstance(videoDetailVos,pageInfo)));
         });
         return categoryRecommendVoList;
     }
 
     public XPage<VideoDetailVo> getPersonalRecommendVideoList(Integer pageNum,Integer pageSize){
-        Integer start = (pageNum-1)*pageSize;
-        Integer end = pageNum*pageSize-1;
-
+        Integer startPageNum=pageNum;
         JwtUser user = (JwtUser) SecurityUtils.getUserDetails();
-        String cacheKey="RECOMMEND_BY_USER_BASE_CF_";
-        Set<Integer> videoSet = redisTemplate.opsForZSet().reverseRange(cacheKey+user.getUserId(),start,end);
-        if (videoSet==null){
-            return XPage.wrap(new PageList<>());
-        }
-
+        String cacheKey = "RECOMMEND_BY_USER_BASE_CF_";
         List<VideoDetailVo> videoDetailVoList = new LinkedList<>();
+        List<Integer> removeVideoId=new LinkedList<>();
 
-        PageInfo pageInfo = new PageInfo();
-        pageInfo.setTotal(redisTemplate.opsForZSet().size(cacheKey+user.getUserId()));
-        videoSet.forEach(videoId->{
-            VideoDetailVo videoDetailVo =videoService.getVideoDetail(videoId);
-            if (videoDetailVo!=null) {
-                videoDetailVoList.add(videoDetailVo);
+        while (videoDetailVoList.size()<pageSize) {
+            Integer start = (startPageNum-1)*pageSize;
+            Integer end = startPageNum*pageSize-1;
+            Set<Integer> videoSet = redisTemplate.opsForZSet().reverseRange(cacheKey + user.getUserId(), start, end);
+            if (videoSet == null||videoSet.size()==0) {
+                break;
             }
-        });
+
+            for (Integer videoId:videoSet){
+                VideoDetailVo videoDetailVo = videoService.getVideoDetail(videoId);
+                if (videoDetailVoList.size()==pageSize){
+                    break;
+                }
+                if (videoDetailVo != null) {
+                    videoDetailVoList.add(videoDetailVo);
+                }else {
+                    //移除不存在的VideoId
+                    removeVideoId.add(videoId);
+                }
+            }
+            startPageNum++;
+        }
+        if (!removeVideoId.isEmpty()) {
+            redisTemplate.opsForZSet().remove(cacheKey + user.getUserId(), removeVideoId.toArray());
+        }
+        PageInfo pageInfo = new PageInfo();
+        pageInfo.setTotal(redisTemplate.opsForZSet().size(cacheKey + user.getUserId()));
         return XPage.newInstance(videoDetailVoList,pageInfo);
     }
 

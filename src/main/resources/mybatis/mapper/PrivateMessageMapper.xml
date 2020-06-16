@@ -137,4 +137,5 @@
         select user_msg_mapping.friend_id AS friendId,MAX(user_msg_mapping.message_id) AS messageId
         from user_msg_mapping where user_msg_mapping.user_id=#{userId} and user_msg_mapping.friend_id=#{friendId}
     </select>
+
 </mapper>

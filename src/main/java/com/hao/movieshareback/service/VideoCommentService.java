@@ -83,7 +83,8 @@ public class VideoCommentService {
 
         MessageConvert messageConvert=messageConvertRegistry.getMessageConvert(RateCommentMessage.class);
         Video video = videoMapper.getVideo(rateVideoComment.getVideoId());
-        RateCommentMessage rateCommentMessage = new RateCommentMessage(rateVideoComment.getCommentUserId(),
+        UserVo commentUserVo = userService.getUserVoByUserId(rateVideoComment.getCommentUserId());
+        RateCommentMessage rateCommentMessage = new RateCommentMessage(commentUserVo,
                 video,rateVideoComment.getCommentContent(),rateVideoComment.getRate());
         if (messageConvert!=null){
             SystemMessage systemMessage = messageConvert.convertMessage(rateCommentMessage);

@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class PrivateMessageService {
@@ -48,8 +49,8 @@ public class PrivateMessageService {
         Page page = new Page(pageNum,pageSize);
         UserVo userVo = userService.getUserVoByUserId(userId);
         UserVo friendVo = userService.getUserVoByUserId(friendId);
-        PageList<PrivateMessage> messageList = privateMessageMapper.getMessageList(page,userId,friendId);
-        return new MessageListVo(userVo,friendVo,XPage.wrap(messageList));
+        List<PrivateMessage> messageList = privateMessageMapper.getMessageList(userId,friendId);
+        return new MessageListVo(userVo,friendVo,messageList);
     }
 
     public PrivateMsgUserItemVo getUserItemDetail(Integer userId,Integer friendId){

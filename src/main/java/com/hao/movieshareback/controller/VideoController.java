@@ -83,4 +83,5 @@ public class VideoController {
     public ResultBody endPlayVideo(Integer videoId){
         return ResultBody.success();
     }
+
 }

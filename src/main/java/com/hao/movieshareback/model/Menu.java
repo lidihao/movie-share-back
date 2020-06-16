@@ -1,5 +1,7 @@
 package com.hao.movieshareback.model;
 
+import java.util.Objects;
+
 public class Menu extends BaseModel{
     public final static Integer ROOT_TAG = 0;
     private Integer menuId;
@@ -91,5 +93,18 @@ public class Menu extends BaseModel{
         sb.append(", hasChild=").append(hasChild);
         sb.append('}');
         return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Menu menu = (Menu) o;
+        return menuId.equals(menu.menuId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(menuId);
     }
 }
